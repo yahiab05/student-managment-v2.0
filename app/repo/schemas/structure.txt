@@ -1,0 +1,171 @@
+BaseSchema (Abstract Base)
+├── to_dict()
+├── from_dict()
+├── to_json()
+├── from_json()
+└── update_from_dict()
+
+├── PersonSchema (Abstract)
+│   ├── name: str
+│   ├── user: str
+│   ├── note: str
+│   ├── get_display_name()
+│   │
+│   ├── StudentSchema
+│   │   ├── num_inscrit: int (PK)
+│   │   ├── gender: str
+│   │   ├── birthday: date
+│   │   ├── date_inscrit: date
+│   │   ├── parent: str
+│   │   ├── cin: int
+│   │   ├── activity: str
+│   │   ├── num_tel: str
+│   │   ├── excused: str
+│   │   ├── get_age()
+│   │   └── get_enrolled_classes()
+│   │
+│   └── TeacherSchema
+│       ├── id: int (PK)
+│       ├── date_inscrit: date
+│       ├── birthday: date
+│       ├── phone: str
+│       ├── payed: str
+│       ├── get_teaching_classes()
+│       └── get_absence_count()
+
+├── HistorySchema (Abstract)
+│   ├── date_inscrit: date
+│   ├── user: str
+│   │
+│   ├── StudentHistorySchema
+│   │   ├── id: int (PK)
+│   │   ├── num_inscrit: int (FK)
+│   │   └── student: relationship
+│   │
+│   └── TeacherHistorySchema
+│       ├── id: int (PK)
+│       ├── teacher_id: int (FK)
+│       └── payed: str
+
+├── ClassSchema (Abstract)
+│   ├── name: str
+│   ├── way: str
+│   ├── teacher: str
+│   ├── note: str
+│   ├── user: str
+│   ├── get_monthly_hours()
+│   │
+│   ├── ClassData
+│   │   ├── id: int (PK)
+│   │   ├── price: float
+│   │   ├── seance: int
+│   │   ├── exchange: str
+│   │   ├── teacher_part: float
+│   │   └── get_monthly_revenue()
+│   │
+│   └── EnrollmentSchema (ClassEleve)
+│       ├── id: int (PK)
+│       ├── student_id: int (FK)
+│       ├── class_name: str (FK)
+│       └── validate_enrollment()
+
+├── FinancialSchema (Abstract)
+│   ├── name: str
+│   ├── price: float
+│   ├── user: str
+│   ├── note: str (optional)
+│   ├── code: int
+│   ├── way: str (Cash/Check/Bank Transfer)
+│   ├── get_formatted_price()
+│   │
+│   ├── EntrySchema (Income)
+│   │   ├── id: int (PK)
+│   │   ├── num_inscrit: int (optional)
+│   │   ├── bill_number: str
+│   │   ├── payment_date: date (optional)
+│   │   ├── addition_date: date
+│   │   ├── type: str
+│   │   ├── cheq_num: str (optional)
+│   │   ├── classroom: str (optional)
+│   │   └── generate_bill_number()
+│   │
+│   ├── ExpenseSchema (OutMoney)
+│   │   ├── id: int (PK)
+│   │   ├── bill_num: str
+│   │   ├── date: date
+│   │   ├── cheq_num: str (optional)
+│   │   ├── type: str
+│   │   └── generate_expense_number()
+│   │
+│   ├── CashRegisterSchema (Caisse)
+│   │   ├── id: int (PK)
+│   │   ├── income_id: int (optional)
+│   │   ├── expense_id: int (optional)
+│   │   ├── income: float (optional)
+│   │   ├── expense: float (optional)
+│   │   ├── date: date
+│   │   └── calculate_balance()
+│   │
+│   └── BankSchema
+│       ├── id: int (PK)
+│       ├── income_id: int (optional)
+│       ├── expense_id: int (optional)
+│       ├── income: float (optional)
+│       ├── expense: float (optional)
+│       ├── date: date
+│       └── reconcile()
+
+├── AbsenceSchema (Abstract)
+│   ├── class_ab: str
+│   ├── date_ab: date
+│   ├── du: time
+│   ├── time_last: time
+│   ├── user: str
+│   ├── get_duration_hours()
+│   ├── is_full_day()
+│   │
+│   ├── StudentAbsenceSchema
+│   │   ├── id: int (PK)
+│   │   ├── num_inscrit: int (FK)
+│   │   └── student: relationship
+│   │
+│   └── TeacherAbsenceSchema
+│       ├── id: int (PK)
+│       ├── num_inscrit: int (FK)
+│       ├── rep: str (optional)
+│       ├── date_rep: date (optional)
+│       └── has_replacement()
+
+├── RoleSchema
+│   ├── id: int (PK)
+│   ├── name: str (unique)
+│   ├── classes: bool
+│   ├── students: bool
+│   ├── teachers: bool
+│   ├── payment: bool
+│   ├── money: bool
+│   ├── absent: bool
+│   ├── settings: bool
+│   ├── user: bool
+│   ├── payment_editting: bool
+│   └── has_permission(permission: str) -> bool
+
+├── UserSchema
+│   ├── id: int (PK)
+│   ├── username: str (unique)
+│   ├── password: str (hashed)
+│   ├── role_name: str (FK)
+│   ├── role: relationship
+│   ├── verify_password(password: str) -> bool
+│   └── get_permissions() -> dict
+
+└── SettingsSchema
+    ├── id: int (PK)
+    ├── way_teaching: str
+    ├── entery: str
+    ├── entery_code: int
+    ├── out_money: str
+    ├── out_code: int
+    ├── way_payment: str
+    ├── fr: str
+    └── get_next_entry_code() -> int

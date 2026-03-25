@@ -1,3 +1,9 @@
+from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QDate
+from ..repo.models import SessionLocal
+from ..repo.models import Bank, Caisse
+from PyQt6.QtCore import QSettings
+
 def set_username(username: str) -> None:
     settings = QSettings("Dar Coran", "Gestion")
     settings.setValue("username", username)
@@ -27,6 +33,9 @@ def income_added(where, id, amount , date, note) -> None:
 
     session.commit()
     session.close()
+    
+def pydate_to_qdate(pydate) -> QDate:
+    return QDate.fromString(self.date.strftime("%Y-%m-%d"), "yyyy-MM-dd")
 
 @staticmethod
 def expense_added(where, id, amount, date, note) -> None:
