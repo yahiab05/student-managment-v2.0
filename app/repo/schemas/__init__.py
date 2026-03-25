@@ -8,5 +8,25 @@ from typing import Type
 
 
 class SchemaFactory:
-    pass
+    ABSENT_S = AbsentSSchema
+    ABSENT_T = AbsentTSchema
+    CLASSES = ClassesSchema
+    ENROLLMENT = EnrollmentSchema
+    STUDENT = StudentSchema
+    TEACHER = TeacherSchema
+    STUDENT_HISTORY = StudentHistorySchema
+    TEACHER_HISTORY = TeacherHistorySchema
+    ENTRY = EntrySchema
+    EXPENSES = ExpensesSchema
+    STORAGE = StorageSchema
+    ROLE = RoleSchema
+    SETTINGS = SettingsSchema
+    USER = UserSchema
+    
+    @property
+    def schema_class(self) -> Type:
+        return self.value
+    
+    def create(self, **kwargs):
+        return self.value(**kwargs)
     
