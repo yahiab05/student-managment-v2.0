@@ -17,7 +17,8 @@ class ExcelStrategy(Strategy):
         
     def export(self):
         file = QFileDialog.getSaveFileName(self.parent, 'Save file', '', '*.xlsx')
-        ExcelGenerator(self.headers, self.data).excel(file)
+        if file[0]:
+            ExcelGenerator(self.headers, self.data).excel(file)
         
 class PrintingStrategy(Strategy):
     def __init__(self, headers, data, parent, title:str="", intro:str="", foot:str=""):
@@ -31,13 +32,17 @@ class PrintingStrategy(Strategy):
         dialog.setup_document(self.data, self.headers, self.title, self.intro, self.foot)
         dialog.show()
         
-class StrategyFactory:
-    def __init__(self, strategy):
+class ReportContext:
+    def __init__(self, strategy: Strategy):
         self._strategy = strategy
         
     def export(self):
         self._strategy.export()
         
-    @setattr
-    def strategy(self, strategy):
+    @property
+    def strategy(self):
+        return self._strategy
+    
+    @strategy.setter
+    def strategy(self, strategy: Strategy):
         self._strategy = strategy
