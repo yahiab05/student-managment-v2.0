@@ -3,13 +3,13 @@ from dataclasses import dataclass
 from .base_schema import BaseDataClass
 from datetime import datetime
 
-@dataclass
+@dataclass(kw_only=True)
 class PersonSchema(ABC, BaseDataClass):
     name: str
     birthday: datetime
     date_inscrit: datetime
     # optional
-    note: str=""
+    note: str = ""
     
 @dataclass
 class StudentSchema(PersonSchema):
