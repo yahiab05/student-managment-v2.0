@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Type
 
 
-class SchemaFactory:
+class SchemaFactory(Enum):
     ABSENT_S = AbsentSSchema
     ABSENT_T = AbsentTSchema
     CLASSES = ClassesSchema

@@ -16,13 +16,13 @@ class FinanceSchema(ABC, BaseDataClass):
     
 @dataclass
 class EntrySchema(FinanceSchema):
+    bill_number: str
+
     num_inscrit: int=None
     payment_date: datetime=None
     addition_date: datetime=None
     classroom: str=None
-    
-    bill_number: str
-    
+        
 @dataclass
 class ExpensesSchema(FinanceSchema):
     bill_num: str
@@ -30,11 +30,10 @@ class ExpensesSchema(FinanceSchema):
 
 @dataclass
 class StorageSchema(BaseDataClass):
+    date: datetime
+
     income_id: int=None
     expense_id: int=None
     income: float=None
     expense: float=None
-    note: str=""
-    
-    date: datetime
-    
+    note: str=""    

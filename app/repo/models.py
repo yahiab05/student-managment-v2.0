@@ -22,7 +22,7 @@ class Role(Base):
 
 
     def __repr__(self):
-        return f"Role(id={self.id}, name={self.name}, classes={self.classes}, students={self.students}, teachers={self.teachers}, parents={self.parents})"
+        return f"Role(id={self.id}, name={self.name}, classes={self.classes}, students={self.students}, teachers={self.teachers})"
 
 
 class Users(Base):
@@ -46,7 +46,7 @@ class Students(Base):
     __tablename__ = "students"
     __table_args__ = {"extend_existing": True}
 
-
+    id = Column(Integer, autoincrement=True, index=True)
     num_inscrit = Column(Integer, primary_key=True, index=True) 
     name = Column(String(255), nullable=False)
     gender = Column(String(255), nullable=False)
