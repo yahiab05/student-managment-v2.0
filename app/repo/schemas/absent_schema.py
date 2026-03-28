@@ -4,7 +4,7 @@ from .base_schema import BaseDataClass
 from datetime import datetime
 
 @dataclass
-class AbsentSchema(BaseDataClass):
+class AbsentSchema(ABC, BaseDataClass):
     num_inscrit: int
     class_ab: str
     date_ab: datetime

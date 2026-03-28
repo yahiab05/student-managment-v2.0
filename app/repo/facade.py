@@ -21,15 +21,15 @@ class DBFacade:
                 setattr(obj, key, value)
         return obj
     
-    def delete(self, id, session):
+    def delete(self, id):
         obj = self.session.query(self.table).filter(self.table.id == id).first()
         if not obj:
             raise Exception("Object not found")
-        session.delete(obj)
+        self.session.delete(obj)
         
-    def get_by_filter(self, session, filters:list):
+    def get_by_filter(self, filters:list):
         filters = filters or []
-        return session.query(self.table).filter(*filters).all()
+        return self.session.query(self.table).filter(*filters).all()
     
     def exists(self, **filters):
         return self.session.query(self.table).filter_by(**filters).first() is not None
