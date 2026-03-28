@@ -21,7 +21,7 @@ class RoleSchema(CommonSchema):
     payment_editting:bool
     
     def validate(self):
-        if self.name is None:
+        if self.name is None or (isinstance(self.name, str) and self.name.strip() == ""):
             raise ValueError("اسم الصلاحية مطلوب")
         if self.classes is None:
             raise ValueError("صلاحية الصف مطلوب")

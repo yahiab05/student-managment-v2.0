@@ -32,4 +32,4 @@ class DBFacade:
         return session.query(self.table).filter(*filters).all()
     
     def exists(self, **filters):
-        return True if self.session.query(self.table).filter_by(**filters).scalar() else False
+        return self.session.query(self.table).filter_by(**filters).first() is not None

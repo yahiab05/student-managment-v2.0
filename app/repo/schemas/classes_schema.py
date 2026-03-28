@@ -28,7 +28,7 @@ class ClassesSchema(BaseDataClass):
         if self.exchange is None or self.exchange == "":
             raise ValueError(" المقابل مطلوب")
         if self.teacher_part is None:
-            raise
+            raise ValueError("حصة المعلم مطلوبة")
         return True
     
 @dataclass
