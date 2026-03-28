@@ -1,3 +1,4 @@
+from sqlalchemy.orm import joinedload
 
 class DBFacade:
     def __init__(self, table, session):
@@ -33,3 +34,8 @@ class DBFacade:
     
     def exists(self, **filters):
         return self.session.query(self.table).filter_by(**filters).first() is not None
+    
+    def get_with_joined_load(self, relationship_name, filter_field, filter_value):
+        return self.session.query(self.table).options(
+            joinedload(getattr(self.table, relationship_name))
+        ).filter(filter_field == filter_value).all()
