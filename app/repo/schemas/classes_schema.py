@@ -26,7 +26,7 @@ class ClassesSchema(BaseDataClass):
         if self.seance is None or self.seance == 0:
             raise ValueError("عدد الحصص مطلوب")
         if self.exchange is None or self.exchange == "":
-            raise ValueError(" المقابل مطلوب")
+            raise ValueError("المقابل مطلوب")
         if self.teacher_part is None:
             raise ValueError("حصة المعلم مطلوبة")
         return True

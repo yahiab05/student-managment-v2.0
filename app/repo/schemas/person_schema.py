@@ -14,7 +14,7 @@ class PersonSchema(ABC, BaseDataClass):
     def validate(self):
         if not super().validate():
             return False
-        if self.name is None:
+        if self.name is None or not str(self.name).strip():
             raise ValueError("الاسم مطلوب")
         if self.birthday is None:
             raise ValueError("تاريخ الميلاد مطلوب")
