@@ -35,7 +35,7 @@ class DBFacade:
     def exists(self, **filters):
         return self.session.query(self.table).filter_by(**filters).first() is not None
     
-    def get_with_joined_load(self, model, relationship_name, filter_field, filter_value):
-        return self.session.query(model).options(
-            joinedload(getattr(model, relationship_name))
+    def get_with_joined_load(self, relationship_name, filter_field, filter_value):
+        return self.session.query(self.table).options(
+            joinedload(getattr(self.table, relationship_name))
         ).filter(filter_field == filter_value).all()
