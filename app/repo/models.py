@@ -229,7 +229,7 @@ class Entery(Base):
     classroom = Column(String(255))
 
     def __repr__(self):
-        return f"Entery(id={self.id}, date={self.date}, type={self.type}, code={self.code}, price={self.price})"
+        return f"Entery(id={self.id}, date={self.addition_date}, type={self.type}, code={self.code}, price={self.price})"
     
     def set_add_date(self, date: QDate):
         return date.toPyDate()

@@ -1,5 +1,5 @@
-from facade import DBFacade 
-from models import *
+from .facade import DBFacade 
+from .models import *
 class Repositories:
     # Core entities
     roles = DBFacade(Role)

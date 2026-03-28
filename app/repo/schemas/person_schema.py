@@ -9,7 +9,7 @@ class PersonSchema(ABC, BaseDataClass):
     birthday: datetime
     date_inscrit: datetime
     # optional
-    note: str=""
+    note: str = ""
     
     def validate(self):
         if not super().validate():
