@@ -14,6 +14,8 @@ class BaseDataClass:
     
     @abstractmethod
     def validate(self):
-        pass
+        if self.user is None or self.user == "":
+            raise ValueError("اسم المستخدم مطلوب")
+        return True
     
     
