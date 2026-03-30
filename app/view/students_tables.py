@@ -52,7 +52,7 @@ class StudentsHistoryTableModel(BaseTable):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
             return None
 
-        class_obj = self.students[index.row()]
+        class_obj = self.rows[index.row()]
         column = index.column()
 
         if column == 0:

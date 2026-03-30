@@ -5,7 +5,7 @@ class TeachersTableModel(BaseTable):
     def __init__(self):
         super().__init__()
         
-        self.headers = ["ID", "الاسم", "تاريخ التسجيل", "تاريخ الميلاد", "رقم الهاتف", "بمقابل", "المستخدم" ]
+        self.headers = ["ID", "الاسم", "تاريخ التسجيل", "تاريخ الميلاد", "رقم الهاتف", "بمقابل", "ملاحظات", "المستخدم" ]
 
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
@@ -62,6 +62,7 @@ class TeachersHistoryTableModel(BaseTable):
 class TeacherSearchTableModel(BaseTable):
     def __init__(self):
         super().__init__()
+        self.headers = ["ID", "الاسم"]
         
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
