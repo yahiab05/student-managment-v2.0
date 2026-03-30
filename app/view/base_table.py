@@ -1,4 +1,5 @@
 from PyQt6.QtCore import Qt, QAbstractTableModel
+from abc import ABC, abstractmethod
 
 class BaseTable(QAbstractTableModel, ABC):
     def __init__(self):
@@ -22,3 +23,6 @@ class BaseTable(QAbstractTableModel, ABC):
         self.beginResetModel()
         self.rows = new_data
         self.endResetModel()
+        
+    @abstractmethod
+    def data(self, index, role): pass
