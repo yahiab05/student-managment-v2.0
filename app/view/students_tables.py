@@ -2,8 +2,8 @@ from .base_table import BaseTable
 from PyQt6.QtCore import Qt
 
 class StudentsTableModel(BaseTable):
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self):
+        super().__init__()
         
 
         self.headers = ["المعرف", "الاسم", "تاريخ التسجيل", "تاريخ الولادة", "الجنس", "الولي", "رقم الهاتف", "رقم الهوية",
@@ -43,8 +43,8 @@ class StudentsTableModel(BaseTable):
         return None
     
 class StudentsHistoryTableModel(BaseTable):
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self):
+        super().__init__()
         
         self.headers = ["ID", "الاسم", "تاريخ التسجيل", "تاريخ الميلاد", "الولي", "رقم الهاتف", "المستخدم"]
 
@@ -72,8 +72,8 @@ class StudentsHistoryTableModel(BaseTable):
         return None
     
 class StudentsSearchTableModel(BaseTable):
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self):
+        super().__init__()
 
         self.headers = ["ID", "الاسم"]
         

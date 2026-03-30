@@ -1,13 +1,12 @@
 from PyQt6.QtCore import Qt, QAbstractTableModel
 
-class BaseTable(QAbstractTableModel):
-    def __init__(self, session):
+class BaseTable(QAbstractTableModel, ABC):
+    def __init__(self):
         super().__init__()
-        self.session = session
-        
+                
         self.rows = []
         self.headers = []
-        
+                
     def rowCount(self, parent=None):
         return len(self.rows)
     
