@@ -1,13 +1,13 @@
 from PyQt6.QtCore import Qt, QAbstractTableModel
+from abc import ABC, abstractmethod
 
-class BaseTable(QAbstractTableModel):
-    def __init__(self, session):
+class BaseTable(QAbstractTableModel, ABC):
+    def __init__(self):
         super().__init__()
-        self.session = session
-        
+                
         self.rows = []
         self.headers = []
-        
+                
     def rowCount(self, parent=None):
         return len(self.rows)
     
@@ -23,3 +23,7 @@ class BaseTable(QAbstractTableModel):
         self.beginResetModel()
         self.rows = new_data
         self.endResetModel()
+        self.layoutChanged().emit()
+        
+    @abstractmethod
+    def data(self, index, role): pass
