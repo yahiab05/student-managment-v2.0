@@ -11,7 +11,7 @@ class TeachersTableModel(BaseTable):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
             return None
 
-        class_obj = self.teachers[index.row()]
+        class_obj = self.rows[index.row()]
         column = index.column()
 
         if column == 0:
@@ -42,7 +42,7 @@ class TeachersHistoryTableModel(BaseTable):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
             return None
 
-        class_obj = self.teachers[index.row()]
+        class_obj = self.rows[index.row()]
         column = index.column()
 
         if column == 0:
@@ -68,7 +68,7 @@ class TeacherSearchTableModel(BaseTable):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
             return None
 
-        class_obj = self.teachers[index.row()]
+        class_obj = self.rows[index.row()]
         column = index.column()
 
         if column == 0:

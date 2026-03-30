@@ -23,6 +23,7 @@ class BaseTable(QAbstractTableModel, ABC):
         self.beginResetModel()
         self.rows = new_data
         self.endResetModel()
+        self.layoutChanged().emit()
         
     @abstractmethod
     def data(self, index, role): pass
