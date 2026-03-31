@@ -52,7 +52,11 @@ def test_create_function_absent_t():
         user="user"
     )
     
+<<<<<<< HEAD
     assert schema.to_dict() == {
+=======
+    assert schema.schema_class().to_dict() == {
+>>>>>>> b939638 (unit tests first commit)
         "num_inscrit": 1,
         "class_ab": "A",
         "date_ab": "2022-01-01",
@@ -73,7 +77,11 @@ def test_create_function_absent_t():
         date_rep="2022-01-01"
     )
     
+<<<<<<< HEAD
     assert schema.to_dict() == {
+=======
+    assert schema.schema_class().to_dict() == {
+>>>>>>> b939638 (unit tests first commit)
         "num_inscrit": 1,
         "class_ab": "A",
         "date_ab": "2022-01-01",

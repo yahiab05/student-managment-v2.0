@@ -30,8 +30,8 @@ class AbsentSchema(ABC, BaseDataClass):
     
 @dataclass
 class AbsentTSchema(AbsentSchema):
-    rep: str
-    date_rep: datetime
+    rep: str = ""
+    date_rep: datetime = None
     
     def validate(self):
         if not super().validate():
