@@ -1,25 +1,40 @@
 from app.repo.schemas import SchemaFactory
-from app.repo.schemas import *
+from app.repo.schemas import (
+    AbsentSSchema,
+    AbsentTSchema,
+    ClassesSchema,
+    EnrollmentSchema,
+    StudentSchema,
+    TeacherSchema,
+    StudentHistorySchema,
+    TeacherHistorySchema,
+    EntrySchema,
+    ExpensesSchema,
+    StorageSchema,
+    RoleSchema,
+    SettingsSchema,
+    UserSchema,
+)
 import pytest
 
-@pytest.mark.parametrize("output_schema, expected_schema", [
-    (SchemaFactory.ABSENT_S, AbsentSSchema),
-    (SchemaFactory.ABSENT_T, AbsentTSchema),
-    (SchemaFactory.CLASSES, ClassesSchema),
-    (SchemaFactory.ENROLLMENT, EnrollmentSchema),
-    (SchemaFactory.STUDENT, StudentSchema),
-    (SchemaFactory.TEACHER, TeacherSchema),
-    (SchemaFactory.STUDENT_HISTORY, StudentHistorySchema),
-    (SchemaFactory.TEACHER_HISTORY, TeacherHistorySchema),
-    (SchemaFactory.INCOME, EntrySchema),
-    (SchemaFactory.EXPENSES, ExpensesSchema),
-    (SchemaFactory.STORAGE, StorageSchema),
-    (SchemaFactory.ROLE, RoleSchema),
-    (SchemaFactory.SETTINGS, SettingsSchema),
-    (SchemaFactory.USER, UserSchema)
-    ])
-def test_schema_class_function(output_schema, expected_schema):
-    assert output_schema == expected_schema
+    @pytest.mark.parametrize("schema_factory_member, expected_schema", [
+        (SchemaFactory.ABSENT_S, AbsentSSchema),
+        (SchemaFactory.ABSENT_T, AbsentTSchema),
+        (SchemaFactory.CLASSES, ClassesSchema),
+        (SchemaFactory.ENROLLMENT, EnrollmentSchema),
+        (SchemaFactory.STUDENT, StudentSchema),
+        (SchemaFactory.TEACHER, TeacherSchema),
+        (SchemaFactory.STUDENT_HISTORY, StudentHistorySchema),
+        (SchemaFactory.TEACHER_HISTORY, TeacherHistorySchema),
+        (SchemaFactory.INCOME, EntrySchema),
+        (SchemaFactory.EXPENSES, ExpensesSchema),
+        (SchemaFactory.STORAGE, StorageSchema),
+        (SchemaFactory.ROLE, RoleSchema),
+        (SchemaFactory.SETTINGS, SettingsSchema),
+        (SchemaFactory.USER, UserSchema)
+        ])
+    def test_schema_class_function(schema_factory_member, expected_schema):
+        assert schema_factory_member.value == expected_schema
     
 def test_create_function_absent_s():
     schema = SchemaFactory.ABSENT_S
