@@ -16,7 +16,7 @@ class SchemaFactory(Enum):
     TEACHER = TeacherSchema
     STUDENT_HISTORY = StudentHistorySchema
     TEACHER_HISTORY = TeacherHistorySchema
-    ENTRY = EntrySchema
+    INCOME = EntrySchema
     EXPENSES = ExpensesSchema
     STORAGE = StorageSchema
     ROLE = RoleSchema
