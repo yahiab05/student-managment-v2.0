@@ -28,5 +28,5 @@ class SchemaFactory(Enum):
         return self.value
     
     def create(self, **kwargs):
-        return self.value(**kwargs)
+        self.value(**kwargs)
     
