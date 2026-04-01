@@ -23,10 +23,18 @@ class SchemaFactory(Enum):
     SETTINGS = SettingsSchema
     USER = UserSchema
     
+    def __init__(self, schema_class):
+        self._schema_class = schema_class
+        self_instance = None
+        
+    @property
+    def instance(self):
+        return self._instance
+    
     @property
     def schema_class(self) -> Type:
-        return self.value
+        return self.schema_class
     
     def create(self, **kwargs):
-        self.value(**kwargs)
+        self._instance = self.schema_class(**kwargs)
     
