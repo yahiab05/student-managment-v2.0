@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from .base_schema import BaseDataClass
 
 @dataclass
-class CommonSchema:
+class CommonSchema(BaseDataClass):
     @abstractmethod
     def validate(self):
         pass

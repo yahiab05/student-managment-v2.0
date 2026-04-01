@@ -16,17 +16,25 @@ class SchemaFactory(Enum):
     TEACHER = TeacherSchema
     STUDENT_HISTORY = StudentHistorySchema
     TEACHER_HISTORY = TeacherHistorySchema
-    ENTRY = EntrySchema
+    INCOME = EntrySchema
     EXPENSES = ExpensesSchema
     STORAGE = StorageSchema
     ROLE = RoleSchema
     SETTINGS = SettingsSchema
     USER = UserSchema
     
+    def __init__(self, schema_class):
+        self._schema_class = schema_class
+        self_instance = None
+        
+    @property
+    def instance(self):
+        return self._instance
+    
     @property
     def schema_class(self) -> Type:
-        return self.value
+        return self.schema_class
     
     def create(self, **kwargs):
-        return self.value(**kwargs)
+        self._instance = self.schema_class(**kwargs)
     
