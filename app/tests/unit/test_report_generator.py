@@ -25,7 +25,7 @@ class TestExcelGenerator:
         mock_workbook = Mock()
         mock_sheet = Mock()
 
-        with patch("report_strategy.xlsxwriter.Workbook", return_value=mock_workbook) as mock_wb:
+        with patch("report_strategy.xlsxwriter.Workbook", return_value=mock_workbook, create=True) as mock_wb:
             mock_workbook.add_worksheet.return_value = mock_sheet
             generator = ExcelGenerator(headers, data)
             generator.excel(("dummy.xlsx", "xlsx"))
@@ -49,7 +49,7 @@ class TestExcelGenerator:
         data = [["val1"]]
 
         with patch("report_strategy.xlsxwriter.Workbook") as mock_wb:
-            mock_wb.side_effect = Exception("FileCreateError")  # Simulate error
+            mock_wb.side_effect = Exception("xlsxwriter.exceptions.FileCreateError")  # Simulate error
             generator = ExcelGenerator(headers, data)
             # Should not raise
             generator.excel(("readonly.xlsx", "xlsx"))

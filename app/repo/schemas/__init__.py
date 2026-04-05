@@ -33,7 +33,7 @@ class SchemaFactory(Enum):
     
     @property
     def schema_class(self) -> Type:
-        return self.schema_class
+        return self._schema_class
     
     def create(self, **kwargs):
         self._instance = self.schema_class(**kwargs)
