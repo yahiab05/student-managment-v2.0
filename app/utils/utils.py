@@ -35,7 +35,7 @@ def income_added(where, id, amount , date, note) -> None:
     session.close()
     
 def pydate_to_qdate(pydate) -> QDate:
-    return QDate.fromString(self.date.strftime("%Y-%m-%d"), "yyyy-MM-dd")
+    return QDate.fromString(pydate.strftime("%Y-%m-%d"), "yyyy-MM-dd")
 
 @staticmethod
 def expense_added(where, id, amount, date, note) -> None:
