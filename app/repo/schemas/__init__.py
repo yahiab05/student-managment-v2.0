@@ -25,7 +25,7 @@ class SchemaFactory(Enum):
     
     def __init__(self, schema_class):
         self._schema_class = schema_class
-        self_instance = None
+        self._instance = None
         
     @property
     def instance(self):
