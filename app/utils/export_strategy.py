@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from report_generator import Printing, ExcelGenerator
+from .report_generator import Printing, ExcelGenerator
+from PyQt6.QtWidgets import QFileDialog
 
 class Strategy(ABC):
     def __init__(self, headers, data, parent):

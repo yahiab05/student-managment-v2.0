@@ -8,6 +8,7 @@ class Person(ABC):
     data_to_export: list= None
     footer: str = None
     headers: list = None
+    title: str = None
     
     def __init__(self, session, table):
         self.db = DBFacade(table, session)
@@ -20,10 +21,16 @@ class Person(ABC):
     
     def update(self, id, data_obj:BaseDataClass):
         data = data_obj.to_dict()
-        return self.db.update(id, data)
+        try: 
+            return self.db.update(id, data)
+        except ModuleNotFoundError: 
+            return
         
     def delete(self, id):
-        return self.db.delete(id)
+        try:
+            return self.db.delete(id)
+        except ModuleNotFoundError:
+            return
     
     def get_all(self):
         return self.db.get_all()
