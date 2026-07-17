@@ -1,6 +1,6 @@
 from abc import ABC
 from ..repo.facade import DBFacade
-from ..repo.models import Students
+from ..repo.models import Students, Teachers
 from ..repo.schemas.base_schema import BaseDataClass
 from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
 
@@ -75,4 +75,10 @@ class Student(Person):
     # Concrete child class for student records that uses the students table.
     def __init__(self, session):
         super().__init__(session, Students)
+
+
+class Teacher(Person):
+    # Concrete child class for teacher records that uses the teachers table.
+    def __init__(self, session):
+        super().__init__(session, Teachers)
 
