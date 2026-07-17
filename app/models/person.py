@@ -11,6 +11,7 @@ class Person(ABC):
     footer: str = None
     headers: list = None
     title: str = None
+    
 
     def __init__(self, session, table):
         self.db = DBFacade(table, session)
@@ -26,6 +27,15 @@ class Person(ABC):
             return self.db.update(id, data)
         except ModuleNotFoundError:
             return
+
+    def sup_security(self, id):
+        msg = QMessageBox()
+        ret = msg.question(self, 'حذف', "متأكد من حذف هذا الشخص ؟", msg.StandardButton.Yes | msg.StandardButton.No)
+
+        if ret == msg.StandardButton.Yes:
+            self.delete(id)
+        else:
+            self.reset()
 
     def delete(self, id):
         try:
