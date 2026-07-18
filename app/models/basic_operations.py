@@ -1,4 +1,5 @@
 from abc import ABC
+from PyQt6.QtWidgets import QMessageBox
 from ..repo.facade import DBFacade
 from ..repo.schemas.base_schema import BaseDataClass
 from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
