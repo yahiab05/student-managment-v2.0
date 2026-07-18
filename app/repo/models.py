@@ -243,44 +243,6 @@ class Entery(Base):
     def get_payment_date(self):
         return QDate.fromString(self.payment_date.strftime("%Y-%m"), "yyyy-MM")
 
-
-class Caisse(Base):
-    __tablename__ = "caisse"
-    __table_args__ = {"extend_existing": True}
-
-    id = Column(Integer, primary_key=True, index=True)
-    income_id = Column(Integer)
-    expense_id = Column(Integer)
-    income = Column(Float, nullable=True)
-    expense = Column(Float, nullable=True)
-    date = Column(Date, nullable=False)
-    note = Column(String(255), nullable=False)
-
-    def set_date(self, date: QDate):
-        return date.toPyDate()
-    
-    def get_date(self):
-        return QDate.fromString(self.date.strftime("%Y-%m-%d"), "yyyy-MM-dd")
-
-class Bank(Base):
-    __tablename__ = "bank"
-    __table_args__ = {"extend_existing": True}
-
-    id = Column(Integer, primary_key=True, index=True)
-    income_id = Column(Integer)
-    expense_id = Column(Integer)
-    income = Column(Float, nullable=True)
-    expense = Column(Float, nullable=True)
-    date = Column(Date, nullable=False)
-    note = Column(String(255), nullable=False)
-
-    def set_date(self, date: QDate):
-        return date.toPyDate()
-    
-    def get_date(self):
-        return QDate.fromString(self.date.strftime("%Y-%m-%d"), "yyyy-MM-dd")
-    
-
 class AbsentT(Base):
     __tablename__ = "absent_t"
     __table_args__ = {"extend_existing": True}
