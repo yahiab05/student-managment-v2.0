@@ -16,7 +16,7 @@ class DBFacade:
     def update(self, id, data):
         obj = self.session.query(self.table).filter(self.table.id == id).first()
         if not obj:
-            raise Exception("Object not found")
+            raise ModuleNotFoundError("Object not found")
         for key, value in data.items():
             if hasattr(obj, key) and key != "id":
                 setattr(obj, key, value)
@@ -25,7 +25,7 @@ class DBFacade:
     def delete(self, id):
         obj = self.session.query(self.table).filter(self.table.id == id).first()
         if not obj:
-            raise Exception("Object not found")
+            raise ModuleNotFoundError("Object not found")
         self.session.delete(obj)
         
     def get_by_filter(self, filters:list):

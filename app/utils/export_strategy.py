@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from report_generator import Printing, ExcelGenerator
+from .report_generator import Printing, ExcelGenerator
+from PyQt6.QtWidgets import QFileDialog
 
 class Strategy(ABC):
     def __init__(self, headers, data, parent):
@@ -33,10 +34,12 @@ class PrintingStrategy(Strategy):
         dialog.show()
         
 class ReportContext:
-    def __init__(self, strategy: Strategy):
-        self._strategy = strategy
+    def __init__(self):
+        self._strategy = None
         
     def export(self):
+        if self._strategy is None:
+            raise ValueError("No strategy set")
         self._strategy.export()
         
     @property
