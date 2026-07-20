@@ -1,23 +1,8 @@
 from app.repo.schemas import SchemaFactory
-from app.repo.schemas import (
-    AbsentSSchema,
-    AbsentTSchema,
-    ClassesSchema,
-    EnrollmentSchema,
-    StudentSchema,
-    TeacherSchema,
-    StudentHistorySchema,
-    TeacherHistorySchema,
-    EntrySchema,
-    ExpensesSchema,
-    StorageSchema,
-    RoleSchema,
-    SettingsSchema,
-    UserSchema,
-)
+from app.repo.schemas import *
 import pytest
 
-@pytest.mark.parametrize("schema_factory_member, expected_schema", [
+@pytest.mark.parametrize("output_schema, expected_schema", [
     (SchemaFactory.ABSENT_S, AbsentSSchema),
     (SchemaFactory.ABSENT_T, AbsentTSchema),
     (SchemaFactory.CLASSES, ClassesSchema),
@@ -33,10 +18,10 @@ import pytest
     (SchemaFactory.SETTINGS, SettingsSchema),
     (SchemaFactory.USER, UserSchema)
     ])
-def test_schema_class_function(schema_factory_member, expected_schema):
-    assert schema_factory_member.value == expected_schema
+def test_schema_class_function(output_schema, expected_schema):
+    assert output_schema == expected_schema
     
-def test_create_function_with_args():
+def test_create_function_absent_s():
     schema = SchemaFactory.ABSENT_S
     schema.create(
         num_inscrit=1,
@@ -47,8 +32,7 @@ def test_create_function_with_args():
         user="user"
     )
     
-
-    assert schema.schema_class().to_dict() == {
+    assert schema.to_dict() == {
         "num_inscrit": 1,
         "class_ab": "A",
         "date_ab": "2022-01-01",
@@ -56,9 +40,40 @@ def test_create_function_with_args():
         "time_last": "00:00",
         "user": "user"
     }
-
-@pytest.mark.parametrize("schema_factory_member, expected_schema, optional_args, default_args", [
-    (SchemaFactory.ABSENT_S, {
+    
+def test_create_function_absent_t():
+    schema = SchemaFactory.ABSENT_T
+    schema.create(
+        num_inscrit=1,
+        class_ab="A",
+        date_ab="2022-01-01",
+        du="00:00",
+        time_last="00:00",
+        user="user"
+    )
+    
+    assert schema.to_dict() == {
+        "num_inscrit": 1,
+        "class_ab": "A",
+        "date_ab": "2022-01-01",
+        "du": "00:00",
+        "time_last": "00:00",
+        "user": "user"
+    }
+    
+    schema = SchemaFactory.ABSENT_T
+    schema.create(
+        num_inscrit=1,
+        class_ab="A",
+        date_ab="2022-01-01",
+        du="00:00",
+        time_last="00:00",
+        user="user",
+        rep="rep",
+        date_rep="2022-01-01"
+    )
+    
+    assert schema.to_dict() == {
         "num_inscrit": 1,
         "class_ab": "A",
         "date_ab": "2022-01-01",
