@@ -31,7 +31,11 @@ class AbsentSchema(ABC, BaseDataClass):
 @dataclass
 class AbsentTSchema(AbsentSchema):
     rep: str = ""
+<<<<<<< HEAD
     date_rep: datetime | None = None
+=======
+    date_rep: datetime = None
+>>>>>>> 365ed2b (unit tests first commit)
     
     def validate(self):
         if not super().validate():
