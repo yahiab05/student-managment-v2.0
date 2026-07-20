@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from .base_schema import BaseDataClass
 
 @dataclass
-class CommonSchema(BaseDataClass, ABC):
+class CommonSchema(BaseDataClass):
     @abstractmethod
     def validate(self):
         pass

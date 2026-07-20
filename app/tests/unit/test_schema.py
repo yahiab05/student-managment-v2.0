@@ -65,7 +65,7 @@ def test_create_function_with_args():
         "du": "00:00",
         "time_last": "00:00",
         "user": "user",
-    }),
+    }, None, None),
     (SchemaFactory.ABSENT_T, {
         "num_inscrit": 1,
         "class_ab": "A",
@@ -92,12 +92,12 @@ def test_create_function_with_args():
         "exchange": "test",
         "teacher_part": 1.55,
         "user": "user"
-    }),
+    }, None, None),
     (SchemaFactory.ENROLLMENT, {
         "student_id": 1,
         "class_name": "test",
         "user": "user"
-    }),
+    }, None, None),
     (SchemaFactory.STUDENT, {
         "num_inscrit": 1,
         "name": "test",
@@ -108,7 +108,8 @@ def test_create_function_with_args():
         "cin": 1254668,
         "activity": "test",
         "excused": "test",
-        "user"  : "user"
+        "user"  : "user",
+        "gender": "male"
     }, 
     {
         "note": ""
@@ -135,13 +136,13 @@ def test_create_function_with_args():
         "num_inscrit": 1,
         "date_inscrit": "2022-01-01",
         "user": "user"
-    }),
+    }, None, None),
     (SchemaFactory.TEACHER_HISTORY, {
         "teacher_id": 1,
         "payed": "test",
         "user": "user",
         "date_inscrit": "2022-01-01"
-    }),
+    }, None, None),
     (SchemaFactory.INCOME, {
         "name": "Ali",
         "price": 100.52,
@@ -229,7 +230,7 @@ def test_create_function_with_args():
         "settings": True,
         "user": True,
         "payment_editting": True
-    }),
+    }, None, None),
     (SchemaFactory.SETTINGS, {
         "way_teaching": "test",
         "entery": "test",
@@ -238,12 +239,12 @@ def test_create_function_with_args():
         "out_code": 1,
         "way_payment": "test",
         "fr": "test"
-    }),
+    }, None, None),
     (SchemaFactory.USER, {
         "username": "test",
         "password": "test",
         "role_name": "test"
-    }),
+    }, None, None),
     (SchemaFactory.SETTINGS, {
         "way_teaching": "test",
         "entery": "test",
@@ -251,17 +252,24 @@ def test_create_function_with_args():
         "out_money": "test",
         "out_code": 1,
         "way_payment": "test",
-    }, {
+    }, None, {
         "fr": None
     })
 ])
 def test_create_function(schema_factory_member, expected_schema, optional_args=None, default_args=None):
-    schema_factory_member.create(**expected_schema)
-    output = expected_schema | optional_args
-    
-    assert schema_factory_member.schema_class().to_dict() == output
+    if optional_args is not None:
+        schema_factory_member.create(**expected_schema)
+        output = expected_schema | optional_args
+        
+        assert schema_factory_member.schema_class().to_dict() == output
     
     if default_args is not None and optional_args is None:
+        expected_schema = expected_schema | default_args
+        schema_factory_member.create(**expected_schema)
+        
+        assert schema_factory_member.schema_class().to_dict() == expected_schema
+    
+    if default_args is None and optional_args is not None:
         expected_schema = expected_schema | default_args
         schema_factory_member.create(**expected_schema)
         
