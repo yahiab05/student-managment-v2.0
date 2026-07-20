@@ -33,6 +33,7 @@ class AbsentTSchema(AbsentSchema):
     rep: str = ""
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     date_rep: datetime | None = None
 =======
     date_rep: datetime = None
@@ -40,6 +41,9 @@ class AbsentTSchema(AbsentSchema):
 =======
     date_rep: datetime | None
 >>>>>>> 055508f (copilot review corrected)
+=======
+    date_rep: datetime | None = None
+>>>>>>> f928716 (Apply suggestions from code review)
     
     def validate(self):
         if not super().validate():
