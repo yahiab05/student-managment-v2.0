@@ -32,10 +32,14 @@ class AbsentSchema(ABC, BaseDataClass):
 class AbsentTSchema(AbsentSchema):
     rep: str = ""
 <<<<<<< HEAD
+<<<<<<< HEAD
     date_rep: datetime | None = None
 =======
     date_rep: datetime = None
 >>>>>>> 365ed2b (unit tests first commit)
+=======
+    date_rep: datetime | None
+>>>>>>> 055508f (copilot review corrected)
     
     def validate(self):
         if not super().validate():
