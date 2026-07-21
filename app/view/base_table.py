@@ -19,7 +19,7 @@ class BaseTable(QAbstractTableModel, ABC):
             return self.headers[section]
         return None
     
-    def refresh(self, new_data):
+    def refresh(self, new_data: list):
         self.beginResetModel()
         self.rows = new_data
         self.endResetModel()

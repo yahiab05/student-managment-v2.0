@@ -41,7 +41,7 @@ class CRUD(ABC):
         try:
             return self.db.delete(id)
         except ModuleNotFoundError:
-            return
+            raise ValueError("لا يمكن حذف هذا الشخص لأنه مرتبط ببيانات أخرى في النظام.")
 
     def get_all(self):
         return self.db.get_all()
