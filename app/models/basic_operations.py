@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from PyQt6.QtWidgets import QMessageBox
 from ..repo.facade import DBFacade
 from ..repo.schemas.base_schema import BaseDataClass
@@ -54,6 +54,9 @@ class CRUD(ABC):
         return self.db.get_by_filter(filters)
 
     def print_preview(self, parent):
+        if self.data_to_export is None or self.headers is None:
+            raise ValueError("Data and headers must be set before printing.")
+        
         strategy = PrintingStrategy(
             headers=self.headers,
             data=self.data_to_export,
@@ -67,7 +70,9 @@ class CRUD(ABC):
             self.report_context.export()
         except ValueError as e:
             print(e)
-
+        finally:
+            self.data_to_export = None
+            
     def export_to_excel(self, parent):
         strategy = ExcelStrategy(
             headers=self.headers,
@@ -79,3 +84,7 @@ class CRUD(ABC):
             self.report_context.export()
         except ValueError as e:
             print(e)
+
+    @abstractmethod
+    def set_metadata(self):
+        pass

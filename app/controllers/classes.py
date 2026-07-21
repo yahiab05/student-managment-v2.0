@@ -159,29 +159,11 @@ class ClassesLogic(QWidget):
         self.way.setCurrentIndex(-1)
         self.teacher_search.setCurrentIndex(-1)
 
+    def printing_preview(self):
         try:
-
-            title = "قائمة الأقسام"
-
-            headers = ["الثمن", "الأستاذ", "الطريقة", "الإسم"]
-
-            foot = f"""عدد الأقسام: {self.model.rowCount()}"""
-
-            data = []
-
-            for class_ in self.model.classes:
-                row = [
-                    str(class_.price),
-                    class_.teacher,
-                    class_.way,
-                    class_.name
-                ]
-                data.append(row)
-
-            printer = Printing()
-            printer.setup_document(data, headers, title, "", foot)
-
-            printer.exec()
+            data_to_export = self.model.get_current_data()
+            self.manager.set_dynamic_metadata()
+            
 
         except Exception as e:
             print(e)

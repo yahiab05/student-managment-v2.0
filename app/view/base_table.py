@@ -25,5 +25,8 @@ class BaseTable(QAbstractTableModel, ABC):
         self.endResetModel()
         self.layoutChanged().emit()
         
+    def get_current_data(self):
+        return self.rows
+        
     @abstractmethod
     def data(self, index, role): pass
