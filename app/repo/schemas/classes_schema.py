@@ -14,7 +14,7 @@ class ClassesSchema(BaseDataClass):
     
     def validate(self):
         if not super().validate():
-            return False
+            raise ValueError("Validation failed in BaseDataClass")
         if self.name is None or self.name == "":
             raise ValueError("اسم الصف مطلوب")
         if self.way is None or self.way == "":
