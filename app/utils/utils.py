@@ -1,7 +1,8 @@
 from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtCore import QDate
-from ..repo.models import SessionLocal
-from ..repo.models import Bank, Caisse
+from sqlalchemy import text
+
+from ..repo.models import Bank, Caisse, SessionLocal, Students
 from PyQt6.QtCore import QSettings
 
 def set_username(username: str) -> None:
@@ -36,6 +37,22 @@ def income_added(where, id, amount , date, note) -> None:
     
 def pydate_to_qdate(pydate) -> QDate:
     return QDate.fromString(pydate.strftime("%Y-%m-%d"), "yyyy-MM-dd")
+
+
+def get_student_list(search_text: str):
+    session = SessionLocal()
+
+    try:
+        pattern = f"%{search_text.strip()}%"
+
+        return (
+            session.query(Students.num_inscrit, Students.name)
+            .filter(Students.name.ilike(pattern))
+            .order_by(Students.name.asc(), Students.num_inscrit.asc())
+            .all()
+        )
+    finally:
+        session.close()
 
 @staticmethod
 def expense_added(where, id, amount, date, note) -> None:

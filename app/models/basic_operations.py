@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from PyQt6.QtWidgets import QMessageBox
-from ..repo.facade import DBFacade
+from ..repo import Repository
 from ..repo.schemas.base_schema import BaseDataClass
 from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
 
@@ -13,8 +13,9 @@ class CRUD(ABC):
     title: str = None
     
 
-    def __init__(self, session, table):
-        self.db = DBFacade(table, session)
+    def __init__(self, session, table):        
+        self.repo = Repository(session)
+        self.db = self.repo.get_facade(table)
         self.report_context = ReportContext()
 
     def create(self, data_obj: BaseDataClass):

@@ -1,12 +1,14 @@
 import os
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
+from sqlalchemy.exc import IntegrityError
+
 from ..repo.database import SessionLocal
-from view.classes_model import ClassesTableModel, ClasseleveTableModel
-from view.students_model import StudentsSearchTableModel
+from ..view.classes_tables import ClassesTableModel, ClasseleveTableModel
+from ..view.students_tables import StudentsSearchTableModel
 from ..models.classes import Classes, Enrollment
 from ..repo.schemas import SchemaFactory
-from ..utils.utils import error 
+from ..utils.utils import error, get_student_list
 from ..utils.combo_manager import ComboManager
 
 class ClassesLogic(QWidget):
@@ -204,13 +206,13 @@ class ClasseleveLogic(QWidget):
         self.setup()
 
     def setup(self):
-        self.student_search_list.doubleClicked.connect(self.control)
+        self.student_search_list.doubleClicked.connect(self.add)
         self.students.doubleClicked.connect(self.sup_security)
         self.student_search.textChanged.connect(self.show_students_list)
         self.search_btn.clicked.connect(self.show_classeleve)
         self.reset_btn.clicked.connect(self.reset)
-        self.printing_btn.clicked.connect(self.printing_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export("print"))
+        self.export_btn.clicked.connect(lambda: self.export("excel"))
 
         self.classes.setCurrentIndex(-1)
 
@@ -257,7 +259,7 @@ class ClasseleveLogic(QWidget):
             error("هذا التلميذ موجود في هذا الصف")
             return
         
-        entity = SchemaFactory.CLASSELEVE.create(
+        entity = SchemaFactory.ENROLLMENT.create(
             student_id=student_id,
             class_name=class_name
         )
@@ -268,7 +270,7 @@ class ClasseleveLogic(QWidget):
         
         try:
             self.manager.create(entity)
-        except sqlalchemy.exc.IntegrityError:
+        except IntegrityError:
             error("هذا التلميذ موجود في هذا الصف")
             return
         finally:
@@ -280,7 +282,12 @@ class ClasseleveLogic(QWidget):
 
         if ret == msg.StandardButton.Yes:
             line = self.line_to_delete()
-            self.delete(line)
+            try:
+                self.manager.delete(line)
+                self.show_classeleve()
+            except ValueError as e:
+                error(str(e))
+                return
 
     def line_to_delete(self):
         row = self.students.selectionModel().selectedRows()
@@ -294,29 +301,6 @@ class ClasseleveLogic(QWidget):
 
         return identifier        
 
-    def delete(self, line):
-        session = SessionLocal()
-        student = session.query(ClassEleve).filter(ClassEleve.id == line)
-        if student.first() is not None:
-            if student.first().class_name == "تأمين":
-                HelpLogic.error("لا يمكن الحذف من هذه الفئة")
-                session.close()
-                return
-            class_name = student.first().class_name
-            try:
-                student.delete()
-                session.commit()
-            except IntegrityError as e:
-                print(e)
-                session.rollback()
-            finally:
-                session.close()
-                self.setup_classeleve()
-                self.model_classeleve.refresh(class_name=class_name)
-                self.students.repaint()
-        else:
-            HelpLogic.error("هذا التلميذ غير موجود")
-
     def show_classeleve(self):
         class_name = self.student_search.text()
         if class_name == "":
@@ -324,94 +308,60 @@ class ClasseleveLogic(QWidget):
 
         if self.classes.currentText() != "":
             class_name = self.classes.currentText()
-
-        self.model_classeleve.refresh(class_name)
-        self.students.repaint()
+            
+        filters = self.manager.get_filters(class_name=class_name)
+        students = self.manager.get_by_filter(filters)
+        
+        self.model_classeleve.refresh(students)
 
         self.nb.setText(str(self.model_classeleve.rowCount()))
         
 
-    def show_students_list(self, student = None):
-        if student == "":
-            student = None
+    def show_students_list(self, student = ""):
 
-        self.model.refresh(student) 
-        self.student_search_list.repaint()
+        students = get_student_list(student)
+        
+        self.model.refresh(students)
 
     def reset(self):
         self.classes.setCurrentIndex(-1)
 
     def populate_combo(self):
-        session = SessionLocal()
-        classes = session.query(Classes).with_entities(Classes.name).all()
-        session.close()
+        classes = self.combo_manager.get_cached_data("classes")
 
         for class_name in classes:
             self.classes.addItem(class_name[0])
 
         self.classes.setCurrentIndex(-1)
-
+        
+    def export(self, output_channel: str):
+        data_to_export = self.model_classeleve.get_current_data()
+        row_count = self.model_classeleve.rowCount()
+        class_name = self.classes.currentText()
+        self.manager.set_dynamic_metadata(
+            data_to_export=data_to_export, 
+            row_count=row_count, 
+            class_name=class_name
+            )
+        
+        if output_channel == "print":
+            self.printing_preview()
+        elif output_channel == "excel":
+            self.excel()
+        else:
+            ValueError(f"Unknown output channel: {output_channel}")
+            
     def printing_preview(self):
         try:
-
-            title = "قائمة التلاميذ"
-
-            headers = ["رقم الهاتف", "تاريخ الولادة", "رقم الترسيم", "السيد(ة)"]
-
-            foot = f"""عدد التلاميذ: {self.model_classeleve.rowCount()}"""
-
-            intro = self.model_classeleve.intro + "\n"
-
-            tracher = self.get_teacher_name(self.classes.currentText())
-
-            intro += f"اسم المعلم: {tracher}"
-
-            data = []
-
-            for student in self.model_classeleve.classeseleve:
-                row = [
-                    str(student.num_tel),
-                    student.birthday.strftime("%Y-%m-%d"),
-                    str(student.num_inscrit),
-                    student.name, 
-                ]
-                data.append(row)
-
-            printer = Printing()
-            printer.setup_document(data, headers, title, intro, foot)
-
-            printer.exec()
-
+            self.manager.print_preview(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك الطباعة")
+            error("لا يمكنك الطباعة")
 
     def excel(self):
         try:
-            headers = ["رقم الهاتف", "تاريخ الولادة", "رقم الترسيم", "السيد(ة)"]
-            data = []
-
-            for student in self.model.students:
-                row = [
-                    str(student.num_tel),
-                    student.birthday.strftime("%Y-%m-%d"),
-                    str(student.num_inscrit),
-                    student.name, 
-                ]
-                data.append(row)
-            
-            HelpLogic.excel(self, headers, data)
-
+            self.manager.export_to_excel(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك تحميل الملف")
-
-    def get_teacher_name(self, class_name):
-        session = SessionLocal()
-        teacher = session.query(Classes).filter(Classes.name == class_name).with_entities(Classes.teacher).first()
-        session.close()
-        return teacher
-
+            error("لا يمكنك تحميل الملف")
 
 if __name__ == "__main__":
     app = QApplication([])
