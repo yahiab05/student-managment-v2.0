@@ -48,11 +48,15 @@ class Enrollment(CRUD):
         
         return verdict
     
-    def get_filters(self, class_name=None):
+    def get_filters(self, class_name=None, student_id=None, not_class_name=None):
         # Return a list of filters based on the provided class_name.
         filters = []
         if class_name:
             filters.append(self.db.table.class_name == class_name)
+        if student_id:
+            filters.append(self.db.table.student_id == student_id)
+        if not_class_name:
+            filters.append(self.db.table.class_name != not_class_name)
         return filters
 
     def set_static_metadata(self):

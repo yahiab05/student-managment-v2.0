@@ -55,7 +55,7 @@ class Repositories:
             "students_absent": self.students_absent,
         }
 
-    def get_repo(self, name: str):
+    def get_repo(self, name: str) -> DBFacade:
         """Return the requested repository by name in O(1) time.
 
         This method uses a pre-built mapping of names to repository instances

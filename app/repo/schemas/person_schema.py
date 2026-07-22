@@ -24,7 +24,7 @@ class PersonSchema(ABC, BaseDataClass):
     
 @dataclass
 class StudentSchema(PersonSchema):
-    num_inscrit: int
+    num_inscrit: int = None
     gender: str
     parent: str
     cin: int

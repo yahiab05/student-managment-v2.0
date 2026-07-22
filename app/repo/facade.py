@@ -39,3 +39,9 @@ class DBFacade:
         return self.session.query(self.table).options(
             joinedload(getattr(self.table, relationship_name))
         ).filter(filter_field == filter_value).all()
+        
+    def rollback(self):
+        self.session.rollback()
+        
+    def commit(self):
+        self.session.commit()

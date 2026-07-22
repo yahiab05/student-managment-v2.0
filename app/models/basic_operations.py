@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QMessageBox
 from ..repo import Repository
 from ..repo.schemas.base_schema import BaseDataClass
 from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
+from ..repo import Repositories
 
 
 class CRUD(ABC):
@@ -14,8 +15,8 @@ class CRUD(ABC):
     
 
     def __init__(self, session, table):        
-        self.repo = Repository(session)
-        self.db = self.repo.get_facade(table)
+        self.repo = Repositories(session)
+        self.db = self.repo.get_repo(table)
         self.report_context = ReportContext()
 
     def create(self, data_obj: BaseDataClass):

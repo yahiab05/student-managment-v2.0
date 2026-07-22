@@ -46,8 +46,7 @@ class Students(Base):
     __tablename__ = "students"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, autoincrement=True, index=True)
-    num_inscrit = Column(Integer, primary_key=True, index=True) 
+    num_inscrit = Column(Integer, primary_key=True, autoincrement=True, index=True) 
     name = Column(String(255), nullable=False)
     gender = Column(String(255), nullable=False)
     birthday = Column(Date, nullable=False)
