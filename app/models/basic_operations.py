@@ -52,6 +52,10 @@ class CRUD(ABC):
     def get_by_filter(self, filters: list):
         # Delegate filter-based queries to the shared database facade.
         return self.db.get_by_filter(filters)
+    
+    def exists(self, filters: list):
+        # Check for existence of records matching the provided filters.
+        return self.db.exists(filters)
 
     def print_preview(self, parent):
         if self.data_to_export is None or self.headers is None:

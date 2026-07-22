@@ -1,7 +1,7 @@
 import os
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
-from .database import SessionLocal
+from ..repo.database import SessionLocal
 from view.classes_model import ClassesTableModel, ClasseleveTableModel
 from view.students_model import StudentsSearchTableModel
 from ..models.classes import Classes, Enrollment
@@ -29,7 +29,6 @@ class ClassesLogic(QWidget):
         self.set_table()
         self.populate_combos()
 
-
     def set_table(self):
         session = SessionLocal()
         self.model = ClassesTableModel(session)
@@ -41,12 +40,12 @@ class ClassesLogic(QWidget):
         self.new_btn.clicked.connect(self.reset)
         self.add_btn.clicked.connect(lambda: self.control("add"))
         self.update_btn.clicked.connect(lambda: self.control("update"))
-        self.delete_btn.clicked.connect(self.sup_security)
+        self.delete_btn.clicked.connect(self.delete_class)
         self.class_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_class)
         self.teacher_search.currentTextChanged.connect(self.show_class)
-        self.printing_btn.clicked.connect(self.printing_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export("print"))
+        self.export_btn.clicked.connect(lambda: self.export("excel"))
 
     def control(self, action):
         name = self.name.text()
@@ -159,51 +158,29 @@ class ClassesLogic(QWidget):
         self.way.setCurrentIndex(-1)
         self.teacher_search.setCurrentIndex(-1)
 
+    def export(self, output_channel: str):
+        data_to_export = self.model.get_current_data()
+        row_count = self.model.rowCount()
+        self.manager.set_dynamic_metadata(data_to_export, row_count)
+        
+        if output_channel == "print":
+            self.printing_preview()
+        elif output_channel == "excel":
+            self.excel()
+        else:
+            ValueError(f"Unknown output channel: {output_channel}")
+            
     def printing_preview(self):
         try:
-            data_to_export = self.model.get_current_data()
-            self.manager.set_dynamic_metadata()
-            
-
+            self.manager.print_preview(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك الطباعة")
+            error("لا يمكنك الطباعة")
 
     def excel(self):
         try:
-            headers = ["الثمن", "الأستاذ", "الطريقة", "الإسم"]
-            data = []
-            for class_ in self.model.classes:
-                row = [
-                    str(class_.price),
-                    class_.teacher,
-                    class_.way,
-                    class_.name
-                ]
-                data.append(row)
-            HelpLogic.excel(self, headers, data)
+            self.manager.excel(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك تحميل الملف")
-
-    # static methods
-    @staticmethod
-    def check(name):
-        session = SessionLocal()
-        data = session.query(Classes).filter(Classes.name == name).first()
-        session.close()
-        if data is None:
-            return False
-        else:
-            return True
-
-    @staticmethod    
-    def is_float(value):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
+            error("لا يمكنك تحميل الملف")
 
 
 class ClasseleveLogic(QWidget):
@@ -215,6 +192,10 @@ class ClasseleveLogic(QWidget):
 
         self.model = None
         self.model_classeleve = None
+        
+        session = SessionLocal()
+        self.manager = Enrollment(session)
+        self.combo_manager = ComboManager(session)
 
         self.setup_students()
         self.setup_classeleve()
@@ -254,7 +235,7 @@ class ClasseleveLogic(QWidget):
     def get_student_id(self):
         row = self.student_search_list.selectionModel().selectedRows()
         if not row:
-            HelpLogic.error("يرجى تحديد التلميذ")
+            error("يرجى تحديد التلميذ")
             return
         
         row_index = row[0].row()    
@@ -263,48 +244,35 @@ class ClasseleveLogic(QWidget):
 
         return identifier
 
-    def control(self):
+    def add(self):
         class_name = self.classes.currentText()
 
         if class_name == "":
-            HelpLogic.error("يرجى اختيار صف")
+            error("يرجى اختيار صف")
             return
 
         student_id = self.get_student_id()
 
-        if self.check(student_id, class_name):
-            HelpLogic.error("هذا التلميذ موجود في هذا الصف")
+        if not self.manager.check(student_id, class_name):
+            error("هذا التلميذ موجود في هذا الصف")
             return
         
-        self.add(student_id, class_name)
-    
-    def add(self, student_id, class_name):
-        session = SessionLocal()
-
-        new_classeleve = ClassEleve(student_id=student_id, class_name=class_name)
-
+        entity = SchemaFactory.CLASSELEVE.create(
+            student_id=student_id,
+            class_name=class_name
+        )
+        
+        if not entity.validate():
+            error("الرجاء ملء جميع الحقول")
+            return
+        
         try:
-            session.add(new_classeleve)
-            session.commit()
-        except IntegrityError as e:
-            print(e)
-            session.rollback()
-            HelpLogic.error("هذا التلميذ موجود في هذا الصف")
+            self.manager.create(entity)
+        except sqlalchemy.exc.IntegrityError:
+            error("هذا التلميذ موجود في هذا الصف")
+            return
         finally:
-            session.close()
-            self.setup_classeleve()
-            self.model_classeleve.refresh(class_name=class_name)
-            self.students.repaint()
-
-    @staticmethod
-    def check(student_id, class_name):        
-        session = SessionLocal()
-        data = session.query(ClassEleve).filter(ClassEleve.student_id == student_id, ClassEleve.class_name == class_name).first()
-        session.close()
-        if data is None:
-            return False
-        else:
-            return True
+            pass # Replace it with refreshing the table
 
     def sup_security(self):
         msg = QMessageBox()
@@ -317,7 +285,7 @@ class ClasseleveLogic(QWidget):
     def line_to_delete(self):
         row = self.students.selectionModel().selectedRows()
         if not row:
-            HelpLogic.error("يرجى تحديد التلميذ")
+            error("يرجى تحديد التلميذ")
             return
         
         row_index = row[0].row()    
