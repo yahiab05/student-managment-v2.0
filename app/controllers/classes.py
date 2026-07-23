@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from ..repo.database import SessionLocal
 from ..view.classes_tables import ClassesTableModel, ClasseleveTableModel
 from ..view.students_tables import StudentsSearchTableModel
-from ..models.classes import Classes, Enrollment
+from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils.utils import error, get_student_list
 from ..utils.combo_manager import ComboManager
@@ -24,7 +24,7 @@ class ClassesLogic(QWidget):
         
         session = SessionLocal()
         
-        self.manager = Classes(session)
+        self.manager = get_model(session, "classes")
         self.combo_manager = ComboManager(session)
         
         self.setup()
@@ -196,7 +196,7 @@ class ClasseleveLogic(QWidget):
         self.model_classeleve = None
         
         session = SessionLocal()
-        self.manager = Enrollment(session)
+        self.manager = get_model(session, "enrollment")
         self.combo_manager = ComboManager(session)
 
         self.setup_students()

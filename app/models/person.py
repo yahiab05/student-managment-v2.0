@@ -96,7 +96,7 @@ class Student(CRUD):
 class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
     def __init__(self, session):
-        super().__init__(session, Teachers)
+        super().__init__(session, "teachers")
 
 
 class StudentHistory(CRUD):
@@ -111,5 +111,5 @@ class StudentHistory(CRUD):
 class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.
     def __init__(self, session):
-        super().__init__(session, TeachersHistoryModel)
+        super().__init__(session, "teachers_history")
 

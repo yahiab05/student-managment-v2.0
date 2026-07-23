@@ -2,8 +2,7 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
 from app.repo.database import SessionLocal
-from ..repo.models import Students
-from ..models.person import Student
+from ..models import get_model
 from sqlalchemy.exc import IntegrityError
 from ..view.students_tables import StudentsSearchTableModel, StudentsTableModel, StudentsHistoryTableModel
 from os import path
@@ -23,7 +22,7 @@ class StudentsLogic(QWidget):
         self.model = None
         
         session = SessionLocal()
-        self.manager = Student(session)
+        self.manager = get_model(session, "student")
         self.combo_manager = ComboManager(session)
 
         self.to.setDate(QDate.currentDate())
@@ -238,7 +237,6 @@ class StudentsLogic(QWidget):
             self.manager.db.rollback()
             error("لم تتم الاضافة")
 
-
     def reset(self):
         self.name.setText("")
         self.birthday.setDate(QDate.fromString("2000-01-01", "yyyy-MM-dd"))
@@ -327,6 +325,10 @@ class StudentsHistoryLogic(QWidget):
         loadUi(ui_path, self)
 
         self.model = None
+        
+        session = SessionLocal()
+        self.manager = get_model(session, "student_history")
+        self.combo_manager = ComboManager(session)
 
         self.setup_table()
 
@@ -347,11 +349,13 @@ class StudentsHistoryLogic(QWidget):
 
     def search(self):
         identifier = self.num_ins_search.text()
-        
         if identifier == "":
-            identifier = None
+            self.model.refresh([])
+            return
+            
+        student = self.manager.get_by_id(identifier)
 
-        self.model.refresh(identifier)
+        self.model.refresh(student)
 
     def print_preview(self):
         try:
@@ -475,6 +479,6 @@ class ClassesPerStudentLogic(QWidget):
 
 if __name__ == '__main__':
     app = QApplication([])
-    window = Students()
+    window = StudentsLogic()
     window.show()
     app.exec()
