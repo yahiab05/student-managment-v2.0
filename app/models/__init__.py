@@ -1,3 +1,5 @@
+from typing import overload, Literal
+
 from .absents import AbsentStudent, AbsentTeacher
 from .admin import Roles, Users
 from .basic_operations import CRUD
@@ -48,27 +50,95 @@ class ModelFactory:
 
 		return model_class(session)
 
+@overload
+def get_model(session, 
+            model_name: Literal[
+                "absent_student", 
+                "absent_students",
+                "students_absent"]
+            ) -> AbsentStudent: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "absent_teacher",
+                "absent_teachers",
+                "teachers_absent"]
+            ) -> AbsentTeacher: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "enrollment",
+                "enrollments"]
+            ) -> Enrollment: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "classes"]    
+            ) -> Classes: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "expense",
+                "expenses"]
+            ) -> Expense: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "income"]
+            ) -> Income: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "role",
+                "roles"]
+            ) -> Roles: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "settings"]
+            ) -> Settings: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "student",
+                "students"]
+            ) -> Student: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "student_history",
+                "students_history"]
+            ) -> StudentHistory: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "teacher",
+                "teachers"]
+            ) -> Teacher: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "teacher_history",
+                "teachers_history"]
+            ) -> TeacherHistory: ...
+
+@overload
+def get_model(session,
+            model_name: Literal[
+                "user",
+                "users"]
+            ) -> Users: ...
 
 def get_model(session, model_name):
 	return ModelFactory(session, model_name)
-
-
-__all__ = [
-	"CRUD",
-	"AbsentStudent",
-	"AbsentTeacher",
-	"Classes",
-	"Enrollment",
-	"Expense",
-	"Income",
-	"ModelFactory",
-	"MODEL_REGISTRY",
-	"Roles",
-	"Settings",
-	"Student",
-	"StudentHistory",
-	"Teacher",
-	"TeacherHistory",
-	"Users",
-	"get_model",
-]
