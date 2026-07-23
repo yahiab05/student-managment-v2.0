@@ -316,7 +316,6 @@ class StudentsLogic(QWidget):
         except Exception as e:
             error("لا يمكنك تحميل الملف")
 
-
 class StudentsHistoryLogic(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -328,7 +327,6 @@ class StudentsHistoryLogic(QWidget):
         
         session = SessionLocal()
         self.manager = get_model(session, "student_history")
-        self.combo_manager = ComboManager(session)
 
         self.setup_table()
 
@@ -370,9 +368,7 @@ class StudentsHistoryLogic(QWidget):
         elif output_channel == "excel":
             self.excel()
         else:
-            ValueError(f"Unknown output channel: {output_channel}")
-            
-    
+            ValueError(f"Unknown output channel: {output_channel}")    
 
     def print_preview(self):
         try:
@@ -396,7 +392,11 @@ class ClassesPerStudentLogic(QWidget):
 
         self.model = None
         self.name = ""
-
+        
+        session = SessionLocal()
+        self.enrollment_manager = get_model(session, "enrollment")
+        self.student_manager = get_model(session, "student")
+        
         self.setup_table()
         self.setup()
 
@@ -416,14 +416,14 @@ class ClassesPerStudentLogic(QWidget):
 
     def student_search(self):
         name = self.search_ent.text()
-
-        self.model.refresh(name)
-        self.student_list.repaint()
+        filters = self.student_manager.get_filters(name=name)
+        students = self.student_manager.get_by_filter(filters)
+        self.model.refresh(students)
 
     def get_id(self):
         row = self.student_list.selectionModel().selectedRows()
         if not row:
-            HelpLogic.error("يرجى تحديد التلميذ")
+            error("يرجى تحديد التلميذ")
             return
         
         row_index = row[0].row()
@@ -434,12 +434,9 @@ class ClassesPerStudentLogic(QWidget):
 
     def list_of_classes(self):
         id = self.get_id()
-
-        session = SessionLocal()
-
-        classes = session.query(ClassEleve).with_entities(ClassEleve.class_name).filter(ClassEleve.student_id == id, ClassEleve.class_name != "تأمين").all()
-
-        session.close()
+        
+        filters = self.enrollment_manager.get_filters(student_id=id, not_class_name="تأمين")
+        classes = self.enrollment_manager.get_by_filter(filters)
 
         self.class_list.clear()
 
@@ -448,8 +445,7 @@ class ClassesPerStudentLogic(QWidget):
                 self.class_list.addItem(class_name[0])
 
         else:
-            HelpLogic.error("لا يوجد صفوف لهذا التلميذ")
-
+            error("لا يوجد صفوف لهذا التلميذ")
 
     def reset(self):
         self.search_ent.setText("")
