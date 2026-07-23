@@ -107,6 +107,15 @@ class StudentHistory(CRUD):
     def set_date(self, date):
         return self.db.table.set_date_inscrit(date)
     
+    def set_static_metadata(self):
+        self.title = "قائمة التلميذ"
+        self.header = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.data_to_export = data_to_export
+        self.foot = "المجموع: " + str(row_count)
+        self.intro = "تلميذ برقم الهوية: " + str(self.data_to_export[0].id) if self.data_to_export else "تلميذ غير موجود"
+
 
 class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.

@@ -356,58 +356,36 @@ class StudentsHistoryLogic(QWidget):
         student = self.manager.get_by_id(identifier)
 
         self.model.refresh(student)
+        
+    def export(self, output_channel: str):
+        data_to_export = self.model.get_current_data()
+        row_count = self.model.rowCount()
+        self.manager.set_dynamic_metadata(
+            data_to_export=data_to_export, 
+            row_count=row_count
+            )
+        
+        if output_channel == "print":
+            self.print_preview()
+        elif output_channel == "excel":
+            self.excel()
+        else:
+            ValueError(f"Unknown output channel: {output_channel}")
+            
+    
 
     def print_preview(self):
         try:
-            title = "قائمة التلميذ"
-
-            intro = self.model.intro
-
-            header = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
-
-            foot = "المجموع: " + str(self.model.rowCount())
-
-            data = []
-
-            for student in self.model.students:
-                row = [
-                    student.student.excused,
-                    student.student.num_tel,
-                    student.date_inscrit.strftime("%Y-%m-%d"),
-                    student.student.birthday.strftime("%Y-%m-%d"),
-                    student.student.name
-                ]
-                data.append(row)
-            
-            printer = Printing()
-            printer.setup_document(data, header, title, intro, foot)
-            printer.exec()
-
+            self.manager.print_preview(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك الطباعة")
+            error("لا يمكنك الطباعة")
 
 
     def excel(self):
         try:
-            header = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
-            data = []
-
-            for student in self.model.students:
-                row = [
-                    student.student.excused,
-                    student.student.num_tel,
-                    student.date_inscrit.strftime("%Y-%m-%d"),
-                    student.student.birthday.strftime("%Y-%m-%d"),
-                    student.student.name
-                ]
-                data.append(row)
-
-            HelpLogic.excel(self, header, data)
-
+            self.manager.export_to_excel(self)
         except Exception as e:
-            print(e)
-            HelpLogic.error("لا يمكنك تحميل الملف")
+            error("لا يمكنك تحميل الملف")
 
 class ClassesPerStudentLogic(QWidget):
     def __init__(self, parent = None):
