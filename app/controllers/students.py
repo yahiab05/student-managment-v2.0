@@ -80,7 +80,7 @@ class StudentsLogic(QWidget):
                 error("يرجى تحديد التلميذ")
                 return
 
-        entity = SchemaFactory.STUDENT.create(
+        entity = SchemaFactory.STUDENT(
             name=name,
             birthday=self.birthday.date().toPyDate(),
             date_inscrit=date.toPyDate(),
@@ -91,7 +91,7 @@ class StudentsLogic(QWidget):
             cin=cin,
             activity=activity,
             num_tel=f"{num_tel}/{num_tel_2}" if num_tel_2 else num_tel,
-            excused=excused, 
+            excused=excused
         )
         
         try:
@@ -125,7 +125,7 @@ class StudentsLogic(QWidget):
         self.show_table()
     
     def add_ensurance(self, student_id, class_name):
-        ensurance = SchemaFactory.ENROLLMENT.create(
+        ensurance = SchemaFactory.ENROLLMENT(
             student_id=student_id, 
             class_name=class_name
             )
@@ -218,8 +218,8 @@ class StudentsLogic(QWidget):
         self.show_table()
     
     def add_history(self, student_id, date): 
-        entity = SchemaFactory.STUDENT_HISTORY.create(
-            student_id=student_id,
+        entity = SchemaFactory.STUDENT_HISTORY(
+            num_inscrit=student_id,
             date_inscrit= self.manager.history.set_date(date),
             user=get_username()
         )
@@ -351,9 +351,15 @@ class StudentsHistoryLogic(QWidget):
             self.model.refresh([])
             return
             
-        student = self.manager.get_by_id(identifier)
+        try:
+            student_id = int(identifier)
+        except ValueError:
+            self.model.refresh([])
+            return
 
-        self.model.refresh(student)
+        history_records = self.manager.search_by_num_inscrit(student_id)
+
+        self.model.refresh(history_records)
         
     def export(self, output_channel: str):
         data_to_export = self.model.get_current_data()
@@ -455,4 +461,4 @@ if __name__ == '__main__':
     app = QApplication([])
     window = StudentsLogic()
     window.show()
-    app.exec()
+    app.exec() 

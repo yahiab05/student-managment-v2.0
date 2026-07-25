@@ -59,6 +59,18 @@ class CRUD(ABC):
         # Check for existence of records matching the provided filters.
         return self.db.exists(filters)
 
+    def get_with_joined_load(self, relationship_name: str, filters: list = None):
+        """Generic joined-load query helper.
+
+        Eager-loads `relationship_name` on the current table while applying
+        optional filter conditions. Returns results with the relationship
+        already populated (avoids N+1 queries).
+
+        Example:
+            results = self.get_with_joined_load("student", [self.db.table.num_inscrit == 5])
+        """
+        return self.db.get_with_joined_load(relationship_name, filters)
+
     def print_preview(self, parent):
         if self.data_to_export is None or self.headers is None:
             raise ValueError("Data and headers must be set before printing.")
@@ -94,3 +106,9 @@ class CRUD(ABC):
     @abstractmethod
     def set_metadata(self):
         pass
+    
+    def rollback(self):
+        self.db.rollback()
+        
+    def commit(self):
+        self.db.commit()

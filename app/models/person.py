@@ -97,7 +97,24 @@ class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
     def __init__(self, session):
         super().__init__(session, "teachers")
+        
+        self.set_static_metadata()
+        
+    def get_filters(self, name=None):
+        filters = []
+        if name is not None:
+            filters.append(self.db.table.name.ilike(f"%{name}%"))
+            
+        return filters
+    
+    def set_static_metadata(self):
+        self.title = "قائمة الأساتذة"
 
+        self.header = ["رقم الهاتف", "تاريخ الولادة", "الإسم"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.foot = "المجموع: " + str(row_count)
+        self.data_to_export = data_to_export
 
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.
@@ -106,7 +123,13 @@ class StudentHistory(CRUD):
 
     def set_date(self, date):
         return self.db.table.set_date_inscrit(date)
-    
+
+    def search_by_num_inscrit(self, num_inscrit: int):
+        """Search history records by student number, joined with the student table."""
+
+        filters = [self.db.table.num_inscrit == num_inscrit]
+        return self.get_with_joined_load("student", filters)
+
     def set_static_metadata(self):
         self.title = "قائمة التلميذ"
         self.header = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]

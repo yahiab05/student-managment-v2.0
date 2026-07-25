@@ -7,14 +7,16 @@ class Classes(CRUD):
         super().__init__(session, "classes")
         self.set_static_metadata()
         
-    def get_filters(self, name=None, teacher=None):
+    def get_filters(self, name=None, teacher=None, exact_teacher=None):
         # Return a list of filters based on the provided name and teacher.
         filters = []
         if name:
             filters.append(self.db.table.name.ilike(f"%{name}%"))
         if teacher:
             filters.append(self.db.table.teacher.ilike(f"%{teacher}%"))
-        return filters
+        if exact_teacher:
+            filters.append(self.db.table.teacher == exact_teacher)
+        return self.get_by_filter(filters)
     
     def set_static_metadata(self):
         self.title = "قائمة الأقسام"

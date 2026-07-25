@@ -1,13 +1,23 @@
+from typing import Type
+
 from .absent_schema import AbsentSSchema, AbsentTSchema
 from .classes_schema import ClassesSchema, EnrollmentSchema
 from .person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
 from .money_schema import EntrySchema, ExpensesSchema, StorageSchema
 from .others_schema import RoleSchema, SettingsSchema, UserSchema
-from enum import Enum
-from typing import Type
 
 
-class SchemaFactory(Enum):
+class SchemaFactory:
+    """Single entry point for all schema dataclasses.
+
+    Static use (preferred — full autocomplete on schema name and fields):
+        instance = SchemaFactory.CLASSES(name="Math", ...)
+
+    Dynamic use (name only known at runtime):
+        Schema = SchemaFactory.get_schema("CLASSES")
+        instance = Schema(**payload)
+    """
+
     ABSENT_S = AbsentSSchema
     ABSENT_T = AbsentTSchema
     CLASSES = ClassesSchema
@@ -22,11 +32,20 @@ class SchemaFactory(Enum):
     ROLE = RoleSchema
     SETTINGS = SettingsSchema
     USER = UserSchema
-        
-    @property
-    def schema_class(self):
-        return self.value
 
-    def create(self, **kwargs):
-        return self.value(**kwargs)
-    
+    @classmethod
+    def get_schema(cls, name: str) -> Type:
+        try:
+            return getattr(cls, name)
+        except AttributeError:
+            raise ValueError(
+                f"Unknown schema: '{name}'. Available schemas: {cls.available()}"
+            )
+
+    @classmethod
+    def create(cls, name: str, **kwargs):
+        return cls.get_schema(name)(**kwargs)
+
+    @classmethod
+    def available(cls) -> list[str]:
+        return [k for k, v in vars(cls).items() if isinstance(v, type)]

@@ -6,7 +6,10 @@ class DBFacade:
         self.session = session
         
     def get_all(self):
-        return self.session.query(self.table).all()  
+        return self.session.query(self.table).all()
+    
+    def get_by_id(self, id):
+        return self.session.query(self.table).filter(self.table.id == id).all()
     
     def add(self, data):
         obj = self.table(**data)
@@ -35,10 +38,19 @@ class DBFacade:
     def exists(self, **filters):
         return self.session.query(self.table).filter_by(**filters).first() is not None
     
-    def get_with_joined_load(self, relationship_name, filter_field, filter_value):
+    def get_with_joined_load(self, relationship_name: str, filters: list = None):
+        """Generic joined-load query.
+        
+        Eager-loads `relationship_name` on the queried table while applying
+        the optional list of filter conditions.
+        
+        Example:
+            repo.get_with_joined_load("student", [StudentsHistory.num_inscrit == 5])
+        """
+        filters = filters or []
         return self.session.query(self.table).options(
             joinedload(getattr(self.table, relationship_name))
-        ).filter(filter_field == filter_value).all()
+        ).filter(*filters).all()
         
     def rollback(self):
         self.session.rollback()

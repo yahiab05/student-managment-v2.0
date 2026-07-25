@@ -8,7 +8,7 @@ from ..view.classes_tables import ClassesTableModel, ClasseleveTableModel
 from ..view.students_tables import StudentsSearchTableModel
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
-from ..utils.utils import error, get_student_list
+from ..utils.utils import error, get_student_list, get_username
 from ..utils.combo_manager import ComboManager
 
 class ClassesLogic(QWidget):
@@ -59,7 +59,7 @@ class ClassesLogic(QWidget):
         teacher_part = self.teacher_price.value()
         seance = self.seance.value()
 
-        entity = SchemaFactory.CLASSES.create(
+        entity = SchemaFactory.CLASSES(
             name=name,
             way=way,
             teacher=teacher,
@@ -67,7 +67,8 @@ class ClassesLogic(QWidget):
             price=price,
             exchange=exchange,
             teacher_part=teacher_part,
-            seance=seance
+            seance=seance,
+            user=get_username()
         )
         try:
             if not entity.validate():
@@ -127,7 +128,7 @@ class ClassesLogic(QWidget):
         if teacher == "":
             teacher = None
 
-        filters = self.manager.get_filters(name=name, teacher=teacher)
+        filters = self.manager.get_data_using_filters(name=name, teacher=teacher)
 
         data = self.manager.get_by_filter(filters)
         self.model.refresh(data)
@@ -183,7 +184,6 @@ class ClassesLogic(QWidget):
             self.manager.excel(self)
         except Exception as e:
             error("لا يمكنك تحميل الملف")
-
 
 class ClasseleveLogic(QWidget):
     def __init__(self, parent=None):
@@ -259,9 +259,10 @@ class ClasseleveLogic(QWidget):
             error("هذا التلميذ موجود في هذا الصف")
             return
         
-        entity = SchemaFactory.ENROLLMENT.create(
+        entity = SchemaFactory.ENROLLMENT(
             student_id=student_id,
-            class_name=class_name
+            class_name=class_name,
+            user=get_username()
         )
         
         if not entity.validate():
