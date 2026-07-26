@@ -145,3 +145,17 @@ class TeacherHistory(CRUD):
     def __init__(self, session):
         super().__init__(session, "teachers_history")
 
+    def search_by_id(self, teacher_id: int):
+        """Search history records by teacher ID, joined with the teacher table."""
+
+        filters = [self.db.table.teacher_id == teacher_id]
+        return self.get_with_joined_load("teacher", filters)
+    
+    def set_static_metadata(self):
+        self.title = "قائمة الأساتذة"
+
+        self.headers = ["تاريخ الولادة", "سنوات التدريس", "الإسم", "رقم التسجيل"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.foot = f"""عدد الأساتذة: {row_count}"""
+        self.data_to_export = data_to_export

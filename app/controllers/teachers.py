@@ -43,8 +43,8 @@ class TeacherLogic(QWidget):
         self.teachers_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_teachers)
         self.new_year_btn.clicked.connect(self.new_year_security)
-        self.printing_btn.clicked.connect(self.printing_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export("print"))
+        self.export_btn.clicked.connect(lambda: self.export("excel"))
 
     def setup_table(self):
         session = SessionLocal()
@@ -277,58 +277,35 @@ class TeachersHistoryLogic(QWidget):
 
     def show_table(self, teacher_id=None):
         if teacher_id == "": teacher_id = None
-        if teacher_id is not None:
-
-            self.model.refresh(teacher_id)
+        
+        data = self.manager.search_by_id(teacher_id))
+        
+        self.model.refresh(data)    
 
         self.nb.setText(str(self.model.rowCount()))
+        
+    def export(self, output_channel: str):
+        data_to_export = self.model.get_current_data()
+        row_count = self.model.rowCount()
+        self.manager.set_dynamic_metadata(data_to_export, row_count)
+        
+        if output_channel == "excel":
+            self.excel()
+        elif output_channel == "print":
+            self.printing_preview()
 
     def printing_preview(self):
         try:
-
-            title = "قائمة الأساتذة"
-
-            headers = ["تاريخ الولادة", "سنوات التدريس", "الإسم", "رقم التسجيل"]
-
-            foot = f"""عدد الأساتذة: {self.model.rowCount()}"""
-
-            data = []
-
-            for teacher in self.model.teachers:
-                row = [
-                    teacher.teacher.birthday.strftime("%Y-%m-%d"),
-                    teacher.date_inscrit.strftime("%Y-%m-%d"),
-                    teacher.teacher.name,
-                    teacher.teacher_id
-                ]
-                data.append(row)
-
-            printer = Printing()
-            printer.setup_document(data, headers, title, "", foot)
-
-            printer.exec()
-
+            self.manager.print_preview(self)
         except Exception as e:
             print(e)
-            HelpLogic.error("لا يمكنك الطباعة")
+            error("لا يمكنك الطباعة")
 
     def excel(self):
         try:
-            headers = ["تاريخ الولادة", "سنوات التدريس", "الإسم", "رقم التسجيل"]
-            data = []
-
-            for teacher in self.model.teachers:
-                row = [
-                    teacher.teacher.birthday.strftime("%Y-%m-%d"),
-                    teacher.date_inscrit.strftime("%Y-%m-%d"),
-                    teacher.teacher.name,
-                    teacher.teacher_id
-                ]
-                data.append(row)
-
-            HelpLogic.excel(self, headers, data)
+            self.manager.export_to_excel(self)
         except Exception as e:
             print(e)
-            HelpLogic.error("لا يمكنك تحميل الملف")
+            error("لا يمكنك تحميل الملف")
 
     
