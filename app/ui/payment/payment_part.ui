@@ -32,10 +32,7 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -69,17 +66,14 @@
          <string>مراقبة الخلاص</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QFrame" name="frame_3">
         <property name="frameShape">
-         <enum>QFrame::Shape::NoFrame</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
@@ -121,27 +115,6 @@
            </property>
            <property name="text">
             <string>مراقبة الوصول</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="add_payment">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>15</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border: 2px solid black</string>
-           </property>
-           <property name="text">
-            <string>إضافة وصل</string>
            </property>
           </widget>
          </item>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>absents</class>
- <widget class="QWidget" name="absents">
+ <class>teacher</class>
+ <widget class="QWidget" name="teacher">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>701</height>
+    <width>1320</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,32 +17,27 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>15</number>
-      </property>
-      <property name="leftMargin">
-       <number>15</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>15</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
       <item>
-       <widget class="QPushButton" name="view_student">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="add_role_3">
         <property name="minimumSize">
          <size>
-          <width>150</width>
+          <width>200</width>
           <height>30</height>
          </size>
         </property>
@@ -55,15 +50,15 @@
          <string notr="true">border: 2px solid black</string>
         </property>
         <property name="text">
-         <string>مراقبة غيابات التلاميذ</string>
+         <string>الموردون</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_student">
+       <widget class="QPushButton" name="add_role_2">
         <property name="minimumSize">
          <size>
-          <width>150</width>
+          <width>200</width>
           <height>30</height>
          </size>
         </property>
@@ -76,15 +71,15 @@
          <string notr="true">border: 2px solid black</string>
         </property>
         <property name="text">
-         <string>إضافة غياب تلميذ</string>
+         <string>طريقة الدفع</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="view_teacher">
+       <widget class="QPushButton" name="user_2">
         <property name="minimumSize">
          <size>
-          <width>150</width>
+          <width>200</width>
           <height>30</height>
          </size>
         </property>
@@ -97,15 +92,15 @@
          <string notr="true">border: 2px solid black</string>
         </property>
         <property name="text">
-         <string>مراقبة غيابات الأساتذة</string>
+         <string>نوع المصروف</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_teacher">
+       <widget class="QPushButton" name="add_role">
         <property name="minimumSize">
          <size>
-          <width>150</width>
+          <width>200</width>
           <height>30</height>
          </size>
         </property>
@@ -118,7 +113,28 @@
          <string notr="true">border: 2px solid black</string>
         </property>
         <property name="text">
-         <string>إضافة غياب أستاذ</string>
+         <string>نوع الدخل</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="user">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 2px solid black</string>
+        </property>
+        <property name="text">
+         <string>طريقة التدريس</string>
         </property>
        </widget>
       </item>
@@ -126,7 +142,15 @@
     </widget>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget"/>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QWidget" name="stackedWidgetPage1" native="true"/>
+    </widget>
    </item>
   </layout>
  </widget>

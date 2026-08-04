@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>394</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QFrame" name="frame_4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>520</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="8" column="0">
+       <widget class="QDoubleSpinBox" name="price">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::UpDownArrows</enum>
+        </property>
+        <property name="maximum">
+         <double>111111111111111113774877033367601152.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="bill_num">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 3px solid black;
+border-left: none;
+border-right: none;
+border-top: none 
+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_19">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>الرمز:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QComboBox" name="way">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QSpinBox" name="code_input">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QDateEdit" name="date">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="displayFormat">
+         <string>dd-MM-yyyy</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>التاريخ:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QComboBox" name="type">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_14">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>رقم الفاتورة:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QComboBox" name="bank_caisse">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <item>
+         <property name="text">
+          <string>الخزينة</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>البنك</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>ملاحظة:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="label_15">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>رقم الصك:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLineEdit" name="note">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 3px solid black;
+border-left: none;
+border-right: none;
+border-top: none 
+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="label_18">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>من:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLineEdit" name="nb_cheque">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 3px solid black;
+border-left: none;
+border-right: none;
+border-top: none 
+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_13">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>إسم المستفيد:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>وسيلة الدفع:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>نوع المصروف:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLabel" name="label_5">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>المبلغ:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QComboBox" name="name">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -17,17 +17,11 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>40</width>
@@ -74,9 +68,6 @@ border-top: none
         <property name="text">
          <string>رقم التسجيل:</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
        </widget>
       </item>
      </layout>
@@ -90,22 +81,22 @@ border-top: none
       </font>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+      <enum>QAbstractItemView::NoSelection</enum>
      </property>
      <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+      <enum>QAbstractItemView::SelectItems</enum>
      </property>
      <property name="verticalScrollMode">
-      <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+      <enum>QAbstractItemView::ScrollPerItem</enum>
      </property>
      <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+      <enum>QAbstractItemView::ScrollPerItem</enum>
      </property>
      <property name="showGrid">
       <bool>false</bool>
@@ -115,10 +106,7 @@ border-top: none
    <item>
     <widget class="QFrame" name="frame_7">
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
@@ -147,6 +135,12 @@ border-top: none
       </item>
       <item>
        <widget class="QPushButton" name="export_btn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>150</width>
@@ -171,9 +165,6 @@ border-top: none
       </item>
       <item>
        <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>40</width>
