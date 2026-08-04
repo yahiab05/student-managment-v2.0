@@ -278,7 +278,7 @@ class TeachersHistoryLogic(QWidget):
     def show_table(self, teacher_id=None):
         if teacher_id == "": teacher_id = None
         
-        data = self.manager.search_by_id(teacher_id))
+        data = self.manager.search_by_id(teacher_id)
         
         self.model.refresh(data)    
 

@@ -1,6 +1,5 @@
 from typing import overload, Literal
 
-from .absents import AbsentStudent, AbsentTeacher
 from .admin import Roles, Users
 from .basic_operations import CRUD
 from .classes import Classes, Enrollment
@@ -9,12 +8,6 @@ from .person import Student, StudentHistory, Teacher, TeacherHistory
 from .settings import Settings
 
 MODEL_REGISTRY = {
-	"absent_student": AbsentStudent,
-	"absent_students": AbsentStudent,
-	"students_absent": AbsentStudent,
-	"absent_teacher": AbsentTeacher,
-	"absent_teachers": AbsentTeacher,
-	"teachers_absent": AbsentTeacher,
 	"classes": Classes,
 	"enrollment": Enrollment,
 	"enrollments": Enrollment,
@@ -49,22 +42,6 @@ class ModelFactory:
 			raise ValueError(f"Unknown model '{model_name}'. Available models: {available}") from exc
 
 		return model_class(session)
-
-@overload
-def get_model(session, 
-            model_name: Literal[
-                "absent_student", 
-                "absent_students",
-                "students_absent"]
-            ) -> AbsentStudent: ...
-
-@overload
-def get_model(session,
-            model_name: Literal[
-                "absent_teacher",
-                "absent_teachers",
-                "teachers_absent"]
-            ) -> AbsentTeacher: ...
 
 @overload
 def get_model(session,
