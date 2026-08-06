@@ -1,4 +1,5 @@
 from .basic_operations import CRUD
+from ..utils.utils import error
 
 
 class Roles(CRUD):
@@ -23,5 +24,12 @@ class Login(CRUD):
             self.db.table.username == username,
             self.db.table.password == password
         ]
-        return self.exists(filters)
+        if not self.exists([filters[0]]):
+            error("اسم المستخدم غير صحيح")
+            return False
         
+        if not self.exists(filters):
+            error("كلمة المرور غير صحيحة")
+            return False
+        
+        return True

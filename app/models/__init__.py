@@ -28,6 +28,7 @@ MODEL_REGISTRY = {
 	"teachers_history": TeacherHistory,
 	"user": Users,
 	"users": Users,
+	"login": Login,
 }
 
 

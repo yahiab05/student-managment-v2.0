@@ -285,7 +285,7 @@ class SettingsLogic(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath("./ui/settings.ui")
+        ui_path = path.abspath("../ui/others/settings.ui")
 
         loadUi(ui_path, self)
 
