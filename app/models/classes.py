@@ -7,7 +7,7 @@ class Classes(CRUD):
         super().__init__(session, "classes")
         self.set_static_metadata()
         
-    def get_filters(self, name=None, teacher=None, exact_teacher=None):
+    def get_filters(self, name=None, teacher=None, way_teaching= None, exact_teacher=None):
         # Return a list of filters based on the provided name and teacher.
         filters = []
         if name:
@@ -16,6 +16,8 @@ class Classes(CRUD):
             filters.append(self.db.table.teacher.ilike(f"%{teacher}%"))
         if exact_teacher:
             filters.append(self.db.table.teacher == exact_teacher)
+        if way_teaching:
+            filters.append(self.db.table.way_teaching == way_teaching)
         return self.get_by_filter(filters)
     
     def set_static_metadata(self):

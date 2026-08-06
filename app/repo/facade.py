@@ -31,12 +31,27 @@ class DBFacade:
             raise ModuleNotFoundError("Object not found")
         self.session.delete(obj)
         
+    def update_by_filter(self, filters: list, data: dict):
+        obj = self.session.query(self.table).filter(*filters).first()
+        if not obj:
+            raise ModuleNotFoundError("Object not found")
+        for key, value in data.items():
+            if hasattr(obj, key) and key != "id":
+                setattr(obj, key, value)
+        return obj
+    
+    def delete_by_filter(self, filters: list):
+        obj = self.session.query(self.table).filter(*filters).first()
+        if not obj:
+            raise ModuleNotFoundError("Object not found")
+        self.session.delete(obj)
+        
     def get_by_filter(self, filters:list):
         filters = filters or []
         return self.session.query(self.table).filter(*filters).all()
     
     def exists(self, **filters):
-        return self.session.query(self.table).filter_by(**filters).first() is not None
+        return self.session.query(self.table).filter_by(*filters).first() is not None
     
     def get_with_joined_load(self, relationship_name: str, filters: list = None):
         """Generic joined-load query.

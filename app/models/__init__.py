@@ -1,7 +1,8 @@
 from typing import overload, Literal
 
-from .admin import Roles, Users
-from .basic_operations import CRUD
+from app.repo.database import SessionLocal
+
+from .admin import Roles, Users, Login
 from .classes import Classes, Enrollment
 from .finance import Expense, Income
 from .person import Student, StudentHistory, Teacher, TeacherHistory
@@ -44,78 +45,90 @@ class ModelFactory:
 		return model_class(session)
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "enrollment",
-                "enrollments"]
-            ) -> Enrollment: ...
+def get_model(
+			model_name: Literal[
+				"enrollment",
+				"enrollments"]
+			) -> Enrollment: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "classes"]    
-            ) -> Classes: ...
+def get_model(
+			model_name: Literal[
+				"classes"]    
+			) -> Classes: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "expense",
-                "expenses"]
-            ) -> Expense: ...
+def get_model(
+			model_name: Literal[
+				"expense",
+				"expenses"]
+			) -> Expense: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "income"]
-            ) -> Income: ...
+def get_model(
+			model_name: Literal[
+				"income"]
+			) -> Income: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "role",
-                "roles"]
-            ) -> Roles: ...
+def get_model(
+			model_name: Literal[
+				"role",
+				"roles"]
+			) -> Roles: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "settings"]
-            ) -> Settings: ...
+def get_model(
+			model_name: Literal[
+				"settings"]
+			) -> Settings: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "student",
-                "students"]
-            ) -> Student: ...
+def get_model(
+			model_name: Literal[
+				"student",
+				"students"]
+			) -> Student: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "student_history",
-                "students_history"]
-            ) -> StudentHistory: ...
+def get_model(
+			model_name: Literal[
+				"student_history",
+				"students_history"]
+			) -> StudentHistory: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "teacher",
-                "teachers"]
-            ) -> Teacher: ...
+def get_model(
+			model_name: Literal[
+				"teacher",
+				"teachers"]
+			) -> Teacher: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "teacher_history",
-                "teachers_history"]
-            ) -> TeacherHistory: ...
+def get_model(
+			model_name: Literal[
+				"teacher_history",
+				"teachers_history"]
+			) -> TeacherHistory: ...
 
 @overload
-def get_model(session,
-            model_name: Literal[
-                "user",
-                "users"]
-            ) -> Users: ...
+def get_model(
+			model_name: Literal[
+				"user",
+				"users"]
+			) -> Users: ...
 
-def get_model(session, model_name):
+@overload
+def get_model(
+			model_name: Literal[
+				"login"]
+			) -> Login: ...
+
+def get_model_list() -> list:
+	"""Return a list of all available model classes."""
+	return list(MODEL_REGISTRY.values())
+
+def get_model(model_name):
+	session = SessionLocal()
 	return ModelFactory(session, model_name)
+

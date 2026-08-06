@@ -1,5 +1,6 @@
 from .facade import DBFacade
 from .models import *
+from .database import create_db
 
 
 class Repositories:
@@ -33,10 +34,6 @@ class Repositories:
 
         # Settings and other
         self.settings = DBFacade(Settings, session)
-
-        # Absence tracking
-        self.teachers_absent = DBFacade(AbsentT, session)
-        self.students_absent = DBFacade(AbsentS, session)
 
         # Lightweight name -> repo mapping for O(1) access without copying data
         self._map = {

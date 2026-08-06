@@ -58,6 +58,19 @@ class CRUD(ABC):
     def exists(self, filters: list):
         # Check for existence of records matching the provided filters.
         return self.db.exists(filters)
+    
+    def update_by_filter(self, filters: list, data_obj: BaseDataClass):
+        data = data_obj.to_dict()
+        try:
+            return self.db.update_by_filter(filters, data)
+        except ModuleNotFoundError:
+            return
+        
+    def delete_by_filter(self, filters: list):
+        try:
+            return self.db.delete_by_filter(filters)
+        except ModuleNotFoundError:
+            return
 
     def get_with_joined_load(self, relationship_name: str, filters: list = None):
         """Generic joined-load query helper.
