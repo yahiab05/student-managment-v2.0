@@ -1,24 +1,26 @@
-from datetime import date
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, Float, Time
-from sqlalchemy.orm import relationship
-from PyQt6.QtCore import QDate, QTime
+from datetime import date as DateType
+from typing import Optional
+
+from sqlalchemy import ForeignKey, String, Enum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from PyQt6.QtCore import QDate
 from .database import Base
+from ..utils.utils import Account
 
 class Role(Base):
     __tablename__ = "role"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False, unique=True)
-    classes = Column(Boolean, nullable=False)
-    students = Column(Boolean, nullable=False)
-    teachers = Column(Boolean, nullable=False)
-    payment = Column(Boolean, nullable=False)
-    money = Column(Boolean, nullable=False)
-    absent = Column(Boolean, nullable=False)
-    settings = Column(Boolean, nullable=False)
-    user = Column(Boolean, nullable=False)
-    payment_editting = Column(Boolean, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    classes: Mapped[bool] = mapped_column( nullable=False)
+    students: Mapped[bool] = mapped_column( nullable=False)
+    teachers: Mapped[bool] = mapped_column( nullable=False)
+    payment: Mapped[bool] = mapped_column( nullable=False)
+    money: Mapped[bool] = mapped_column( nullable=False)
+    settings: Mapped[bool] = mapped_column( nullable=False)
+    user: Mapped[bool] = mapped_column( nullable=False)
+    payment_editting: Mapped[bool] = mapped_column( nullable=False)
 
 
     def __repr__(self):
@@ -29,14 +31,12 @@ class Users(Base):
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
 
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    role_name: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("role.name"))
 
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255), nullable=False, unique=True)
-    password = Column(String(255), nullable=False)
-    role_name = Column(String(255), ForeignKey("role.name"))
-
-    role = relationship("Role", backref="users", lazy=True)
+    role: Mapped[Optional["Role"]] = relationship("Role", backref="users", lazy=True)
 
     def __repr__(self):
         return f"User(id={self.id}, username={self.username}, password={self.password})"
@@ -46,23 +46,23 @@ class Students(Base):
     __tablename__ = "students"
     __table_args__ = {"extend_existing": True}
 
-    num_inscrit = Column(Integer, primary_key=True, autoincrement=True, index=True) 
-    name = Column(String(255), nullable=False)
-    gender = Column(String(255), nullable=False)
-    birthday = Column(Date, nullable=False)
-    date_inscrit = Column(Date, nullable=False)
-    parent = Column(String(255), nullable=False)
-    cin = Column(Integer, nullable=False)
-    activity = Column(String(255), nullable=False)
-    num_tel = Column(String(255), nullable=False)
-    excused = Column(String(255), nullable=False)
-    note = Column(String(255), nullable=False)
-    user = Column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    gender: Mapped[str] = mapped_column(String(255), nullable=False)
+    birthday: Mapped[DateType] = mapped_column(nullable=False)
+    date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
+    parent: Mapped[str] = mapped_column(String(255), nullable=False)
+    cin: Mapped[int] = mapped_column(Integer, nullable=False)
+    activity: Mapped[str] = mapped_column(String(255), nullable=False)
+    num_tel: Mapped[str] = mapped_column(String(255), nullable=False)
+    excused: Mapped[str] = mapped_column(String(255), nullable=False)
+    note: Mapped[str] = mapped_column(String(255), nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    courses = relationship("Classes", secondary='classeleve', back_populates="students")
+    courses: Mapped[list["Classes"]] = relationship("Classes", secondary='classeleve', back_populates="students")
 
     def __repr__(self):
-        return f"Student {self.num_inscrit}"
+        return f"Student {self.id}"
     
     def set_birthday(self, date: QDate):
         return date.toPyDate()
@@ -80,10 +80,10 @@ class StudentsHistory(Base):
     __tablename__ = "students_history"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True) 
-    num_inscrit = Column(Integer, ForeignKey("students.num_inscrit", ondelete="CASCADE"))
-    date_inscrit = Column(Date, nullable=False)
-    user = Column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    num_inscrit: Mapped[Optional[int]] = mapped_column(ForeignKey("students.num_inscrit", ondelete="CASCADE"))
+    date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def set_date_inscrit(self, date: QDate):
         return date.toPyDate()
@@ -91,7 +91,7 @@ class StudentsHistory(Base):
     def get_date_inscrit(self):
         return QDate.fromString(str(self.date_inscrit), "yyyy-MM-dd")
 
-    student = relationship("Students", backref="students_history")
+    student: Mapped["Students"] = relationship("Students", backref="students_history")
     
 
 class Classes(Base):
@@ -99,18 +99,15 @@ class Classes(Base):
     __table_args__ = {"extend_existing": True}
 
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False, index=True)
-    way = Column(String(255), nullable=False)
-    teacher = Column(String(255), nullable=False)
-    note = Column(String(255), nullable=False)
-    price = Column(Float, nullable=False)
-    user = Column(String(255), nullable=False)
-    seance = Column(Integer, nullable=False)
-    exchange = Column(String(255), nullable=False)
-    teacher_part = Column(Float, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, unique=True)
+    way: Mapped[str] = mapped_column(String(255), nullable=False)
+    teacher: Mapped[str] = mapped_column(String(255), nullable=False)
+    note: Mapped[str] = mapped_column(String(255), nullable=False)
+    price: Mapped[float] = mapped_column(nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    students = relationship("Students", secondary="classeleve", back_populates="courses")
+    students: Mapped[list["Students"]] = relationship("Students", secondary="classeleve", back_populates="courses")
 
     def __repr__(self):
         return f"Class(id={self.id}, name={self.name}, way={self.way}, teacher={self.teacher}, price={self.price})"
@@ -119,14 +116,13 @@ class Teachers(Base):
     __tablename__ = "teachers"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False, unique=True)
-    date_inscrit = Column(Date, nullable=False)
-    birthday = Column(Date, nullable=False)
-    phone = Column(String(255), nullable=False)
-    note = Column(String(255), nullable=False)
-    payed = Column(String(255), nullable=False)
-    user = Column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
+    birthday: Mapped[DateType] = mapped_column(nullable=False)
+    phone: Mapped[str] = mapped_column(String(255), nullable=False)
+    note: Mapped[str] = mapped_column(String(255), nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def set_birthday(self, date: QDate):
         return date.toPyDate()
@@ -144,11 +140,10 @@ class TeachersHistory(Base):
     __tablename__ = "teachershistory"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
-    date_inscrit = Column(Date, nullable=False)
-    payed = Column(String(255), nullable=False)
-    user = Column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"), nullable=False)
+    date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def set_date_inscrit(self, date: QDate):
         return date.toPyDate()
@@ -156,48 +151,49 @@ class TeachersHistory(Base):
     def get_date_inscrit(self):
         return QDate.fromString(str(self.date_inscrit), "yyyy-MM-dd")
 
-    teacher = relationship("Teachers", backref="teachershistory")
+    teacher: Mapped["Teachers"] = relationship("Teachers", backref="teachershistory")
     
 class ClassEleve(Base):
     __tablename__ = "classeleve"
     __table_args__ = {"extend_existing": True}
     
-    id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.num_inscrit", ondelete="CASCADE"))
-    class_name = Column(String(255), ForeignKey("classes.name"))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    student_id: Mapped[Optional[int]] = mapped_column(ForeignKey("students.num_inscrit", ondelete="CASCADE"))
+    class_name: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("classes.name"))
     
-    students = relationship("Students", backref="classeleve", lazy=True, viewonly=True)
+    students: Mapped["Students"] = relationship("Students", backref="classeleve", lazy=True, viewonly=True)
 
 
 class Settings(Base):
     __tablename__ = "settings"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    way_teaching = Column(String(255), unique=True)
-    entery = Column(String(255), unique=True)
-    entery_code = Column(Integer, unique=True)
-    out_money = Column(String(255), unique=True)
-    out_code = Column(Integer, unique=True)
-    way_payment = Column(String(255), unique=True)
-    fr = Column(String(255), unique=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    way_teaching: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    entery: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    entery_code: Mapped[Optional[int]] = mapped_column(unique=True)
+    out_money: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    out_code: Mapped[Optional[int]] = mapped_column(unique=True)
+    way_payment: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    fr: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
 
 
 class OutMoney(Base):
     __tablename__ = "outmoney"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False)
-    bill_num = Column(String(255), nullable=False)
-    date = Column(Date, nullable=False)
-    price = Column(Float, nullable=False)
-    way = Column(String(255), nullable=False)	
-    cheq_num = Column(String(255))
-    note = Column(String(255),  nullable=False)
-    code = Column(Integer, nullable=False)
-    type = Column(String(255), nullable=False)
-    user = Column(String(255), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    bill_number: Mapped[str] = mapped_column(String(255), nullable=False)
+    date: Mapped[DateType] = mapped_column(nullable=False)
+    price: Mapped[float] = mapped_column(nullable=False)
+    way: Mapped[str] = mapped_column(String(255), nullable=False)
+    cheq_num: Mapped[Optional[str]] = mapped_column(String(255))
+    note: Mapped[str] = mapped_column(String(255),  nullable=False)
+    code: Mapped[int] = mapped_column(nullable=False)
+    type: Mapped[str] = mapped_column(String(255), nullable=False)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
+    in_bank: Mapped[bool] = mapped_column(nullable=False)
 
     def __repr__(self):
         return f"OutMoney(id={self.id}, name={self.name}, bill_num={self.bill_num}, date={self.date}, price={self.price})"
@@ -212,20 +208,21 @@ class Entery(Base):
     __tablename__ = "entery"
     __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    num_inscrit = Column(Integer)
-    name = Column(String(255), nullable=False)
-    bill_number = Column(String(255), nullable=False)
-    payment_date = Column(Date)
-    addition_date = Column(Date, nullable=False)
-    way = Column(String(255), nullable=False)
-    type = Column(String(255), nullable=False) 
-    code = Column(Integer, nullable=False)
-    price = Column(Float, nullable=False)
-    note = Column(String(255))
-    user = Column(String(255), nullable=False)
-    cheq_num = Column(String(255))
-    classroom = Column(String(255))
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    num_inscrit: Mapped[Optional[int]] = mapped_column()
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    bill_number: Mapped[str] = mapped_column(String(255), nullable=False)
+    payment_date: Mapped[Optional[DateType]] = mapped_column()
+    addition_date: Mapped[DateType] = mapped_column(nullable=False)
+    way: Mapped[str] = mapped_column(String(255), nullable=False)
+    type: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[int] = mapped_column(nullable=False)
+    price: Mapped[float] = mapped_column(nullable=False)
+    note: Mapped[Optional[str]] = mapped_column(String(255))
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
+    cheq_num: Mapped[Optional[str]] = mapped_column(String(255))
+    classroom: Mapped[Optional[str]] = mapped_column(String(255))
+    in_bank: Mapped[bool] = mapped_column(nullable=False)
 
     def __repr__(self):
         return f"Entery(id={self.id}, date={self.addition_date}, type={self.type}, code={self.code}, price={self.price})"
@@ -241,3 +238,16 @@ class Entery(Base):
 
     def get_payment_date(self):
         return QDate.fromString(self.payment_date.strftime("%Y-%m"), "yyyy-MM")
+
+
+class Transfer(Base):
+    __tablename__ = "transfer"
+    __table_args__ = {"extend_existing": True}
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    price: Mapped[float] = mapped_column(nullable=False)
+    origin: Mapped[Account] = mapped_column(Enum(Account), nullable=False)
+    destination: Mapped[Account] = mapped_column(Enum(Account), nullable=False)
+    date: Mapped[DateType] = mapped_column(nullable=False)
+    note: Mapped[str] = mapped_column(String(255))
+    user: Mapped[str] = mapped_column(String(255), nullable=False)

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from .base_schema import BaseDataClass
 from datetime import datetime
 from abc import ABC
+from app.utils.utils import Account
 
 @dataclass
 class FinanceSchema(ABC, BaseDataClass):
@@ -10,6 +11,8 @@ class FinanceSchema(ABC, BaseDataClass):
     code: int
     way: str
     type:str
+    in_bank: bool
+    bill_number: str
     #optional
     cheq_num: str=""
     note: str=""
@@ -27,12 +30,12 @@ class FinanceSchema(ABC, BaseDataClass):
             raise ValueError("طريقة الدفع مطلوب")
         if self.type is None or self.type == "":
             raise ValueError("نوع مطلوب")
+        if self.bill_number is None or self.bill_number == "":
+            raise ValueError("رقم الفاتورة مطلوب")
         return True
     
 @dataclass
 class EntrySchema(FinanceSchema):
-    bill_number: str
-
     num_inscrit: int=None
     payment_date: datetime=None
     addition_date: datetime=None
@@ -41,13 +44,10 @@ class EntrySchema(FinanceSchema):
     def validate(self):
         if not super().validate():
             return False
-        if self.bill_number is None or self.bill_number == "":
-            raise ValueError("رقم الفاتورة مطلوب")
         return True
         
 @dataclass
 class ExpensesSchema(FinanceSchema):
-    bill_num: str
     date: datetime
     
     def validate(self):
@@ -60,22 +60,26 @@ class ExpensesSchema(FinanceSchema):
         return True
 
 @dataclass
-class StorageSchema(BaseDataClass):
+class TransferSchema(BaseDataClass):
+    price: float
+    origin: Account
+    destination: Account
     date: datetime
-
-    income_id: int=None
-    expense_id: int=None
-    income: float=None
-    expense: float=None
-    note: str=""    
+    user: str
+    #optional
+    note: str=""
     
     def validate(self):
         if not super().validate():
             return False
+        if self.price is None or self.price == 0:
+            raise ValueError("المبلغ مطلوب")
+        if self.origin is None or self.origin == "":
+            raise ValueError("الحساب الأصلي مطلوب")
+        if self.destination is None or self.destination == "":
+            raise ValueError("الحساب الوجهة مطلوب")
         if self.date is None:
-            raise ValueError("تاريخ الفاتورة مطلوب")
-        if self.income is None and self.income_id is not None:
-            raise ValueError("الدخل مطلوب")
-        if self.expense is None and self.expense_id is not None:
-            raise ValueError("الصرف مطلوب")
+            raise ValueError("تاريخ التحويل مطلوب")
+        if self.destination == self.origin:
+            raise ValueError("الحساب الوجهة لا يمكن أن يكون نفس الحساب الأصلي")
         return True

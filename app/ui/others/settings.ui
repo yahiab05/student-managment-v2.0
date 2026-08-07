@@ -34,7 +34,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="add_role_3">
+       <widget class="QPushButton" name="fr_btn">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -55,7 +55,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_role_2">
+       <widget class="QPushButton" name="payment_btn">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -76,7 +76,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="user_2">
+       <widget class="QPushButton" name="expense_btn">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -97,7 +97,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_role">
+       <widget class="QPushButton" name="income_btn">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -118,7 +118,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="user">
+       <widget class="QPushButton" name="way_btn">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -142,14 +142,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget">
+    <widget class="QStackedWidget" name="plane">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QWidget" name="stackedWidgetPage1" native="true"/>
+     <widget class="QWidget" name="stackedWidgetPage1"/>
     </widget>
    </item>
   </layout>

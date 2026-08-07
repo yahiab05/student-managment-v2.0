@@ -5,6 +5,8 @@ from sqlalchemy import text
 from ..repo.models import Bank, Caisse, SessionLocal, Students
 from PyQt6.QtCore import QSettings
 
+from enum import StrEnum, auto
+
 def set_username(username: str) -> None:
     settings = QSettings("Dar Coran", "Gestion")
     settings.setValue("username", username)
@@ -130,3 +132,8 @@ def bank_or_caisse(where, identifier) -> int:
             return 0
         else:
             return 1
+        
+class Account(StrEnum):
+    BANK = auto()
+    CAISSE = auto()
+    

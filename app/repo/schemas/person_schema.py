@@ -88,13 +88,10 @@ class StudentHistorySchema(HistorySchema):
 @dataclass
 class TeacherHistorySchema(HistorySchema):
     teacher_id: int
-    payed: str
     
     def validate(self):
         if not super().validate():
             return False
         if self.teacher_id is None:
             raise ValueError("رقم المعلم مطلوب")
-        if self.payed is None or self.payed == "":
-            raise ValueError("الدفع مطلوب")
         return True

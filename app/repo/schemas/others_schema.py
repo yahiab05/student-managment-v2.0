@@ -16,7 +16,6 @@ class RoleSchema(CommonSchema):
     teachers:bool
     payment:bool
     money:bool
-    absent:bool
     settings:bool
     user:bool
     payment_editting:bool
@@ -34,8 +33,6 @@ class RoleSchema(CommonSchema):
             raise ValueError("صلاحية الدفع مطلوب")
         if self.money is None:
             raise ValueError("صلاحية المال مطلوب")
-        if self.absent is None:
-            raise ValueError("صلاحية الغياب مطلوب")
         if self.settings is None:
             raise ValueError("صلاحية الاعدادات مطلوب")
         if self.user is None:

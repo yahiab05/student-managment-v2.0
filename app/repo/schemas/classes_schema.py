@@ -8,9 +8,6 @@ class ClassesSchema(BaseDataClass):
     teacher: str
     note: str
     price: float
-    seance: int
-    exchange: str
-    teacher_part: float
     
     def validate(self):
         if not super().validate():
@@ -23,12 +20,6 @@ class ClassesSchema(BaseDataClass):
             raise ValueError("اسم المعلم مطلوب")
         if self.price is None or self.price == 0:
             raise ValueError("سعر الصف مطلوب")
-        if self.seance is None or self.seance == 0:
-            raise ValueError("عدد الحصص مطلوب")
-        if self.exchange is None or self.exchange == "":
-            raise ValueError("المقابل مطلوب")
-        if self.teacher_part is None:
-            raise ValueError("حصة المعلم مطلوبة")
         return True
     
 @dataclass
