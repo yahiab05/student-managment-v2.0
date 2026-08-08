@@ -2,11 +2,10 @@ from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtCore import QDate
 from sqlalchemy import text
 
-from ..repo.models import Bank, Caisse, SessionLocal, Students
+from ..repo.models import SessionLocal, Students
 from PyQt6.QtCore import QSettings
 
 from enum import StrEnum, auto
-
 def set_username(username: str) -> None:
     settings = QSettings("Dar Coran", "Gestion")
     settings.setValue("username", username)
@@ -21,6 +20,30 @@ def error(message: str) -> None:
     msg.setText(message)
     msg.exec()
     msg.show()
+    
+def get_student_list(search_text: str):
+    session = SessionLocal()
+
+    try:
+        pattern = f"%{search_text.strip()}%"
+
+        return (
+            session.query(Students.num_inscrit, Students.name)
+            .filter(Students.name.ilike(pattern))
+            .order_by(Students.name.asc(), Students.num_inscrit.asc())
+            .all()
+        )
+    finally:
+        session.close()
+        
+class Account(StrEnum):
+    BANK = auto()
+    CAISSE = auto()
+    
+class ReportType(StrEnum):
+    PRINT = auto()
+    EXCEL = auto()
+    
     
 def income_added(where, id, amount , date, note) -> None:
     session = SessionLocal()
@@ -39,22 +62,6 @@ def income_added(where, id, amount , date, note) -> None:
     
 def pydate_to_qdate(pydate) -> QDate:
     return QDate.fromString(pydate.strftime("%Y-%m-%d"), "yyyy-MM-dd")
-
-
-def get_student_list(search_text: str):
-    session = SessionLocal()
-
-    try:
-        pattern = f"%{search_text.strip()}%"
-
-        return (
-            session.query(Students.num_inscrit, Students.name)
-            .filter(Students.name.ilike(pattern))
-            .order_by(Students.name.asc(), Students.num_inscrit.asc())
-            .all()
-        )
-    finally:
-        session.close()
 
 @staticmethod
 def expense_added(where, id, amount, date, note) -> None:
@@ -133,7 +140,4 @@ def bank_or_caisse(where, identifier) -> int:
         else:
             return 1
         
-class Account(StrEnum):
-    BANK = auto()
-    CAISSE = auto()
-    
+
