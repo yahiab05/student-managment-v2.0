@@ -2,6 +2,8 @@ from PyQt6.QtCore import Qt, QAbstractTableModel
 from abc import ABC, abstractmethod
 
 class BaseTable(QAbstractTableModel, ABC):
+    ID_COLUMN = 0
+    
     def __init__(self):
         super().__init__()
                 

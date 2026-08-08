@@ -127,7 +127,7 @@ class StudentHistory(CRUD):
     def search_by_num_inscrit(self, num_inscrit: int):
         """Search history records by student number, joined with the student table."""
 
-        filters = [self.db.table.num_inscrit == num_inscrit]
+        filters = [self.db.table.id == num_inscrit]
         return self.get_with_joined_load("student", filters)
 
     def set_static_metadata(self):

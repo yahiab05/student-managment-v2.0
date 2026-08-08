@@ -81,7 +81,7 @@ class StudentsHistory(Base):
     __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    num_inscrit: Mapped[Optional[int]] = mapped_column(ForeignKey("students.num_inscrit", ondelete="CASCADE"))
+    num_inscrit: Mapped[Optional[int]] = mapped_column(ForeignKey("students.id", ondelete="CASCADE"))
     date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
     user: Mapped[str] = mapped_column(String(255), nullable=False)
 
@@ -158,8 +158,9 @@ class ClassEleve(Base):
     __table_args__ = {"extend_existing": True}
     
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    student_id: Mapped[Optional[int]] = mapped_column(ForeignKey("students.num_inscrit", ondelete="CASCADE"))
+    student_id: Mapped[Optional[int]] = mapped_column(ForeignKey("students.id", ondelete="CASCADE"))
     class_name: Mapped[Optional[str]] = mapped_column(String(255), ForeignKey("classes.name"))
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
     
     students: Mapped["Students"] = relationship("Students", backref="classeleve", lazy=True, viewonly=True)
 

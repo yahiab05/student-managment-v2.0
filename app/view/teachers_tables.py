@@ -24,8 +24,6 @@ class TeachersTableModel(BaseTable):
             return class_obj.get_birthday()
         elif column == 4:
             return class_obj.phone
-        elif column == 5:
-            return class_obj.payed
         elif column == 6:
             return class_obj.note
         elif column == 7:
@@ -53,8 +51,6 @@ class TeachersHistoryTableModel(BaseTable):
             return class_obj.get_date_inscrit()
         elif column == 3:
             return class_obj.teacher.get_birthday()
-        elif column == 4:
-            return class_obj.payed
         elif column == 5:
             return class_obj.user
         return None   

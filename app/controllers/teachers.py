@@ -52,6 +52,7 @@ class TeacherLogic(QWidget):
         self.model = TeachersTableModel(session)
 
         self.teachers_table.setModel(self.model)
+        self.teachers_table.hideColumn(self.model.ID_COLUMN)
 
         session.close()
 
@@ -272,6 +273,7 @@ class TeachersHistoryLogic(QWidget):
         self.model = TeachersHistoryTableModel(session)
 
         self.history_table.setModel(self.model)
+        self.history_table.hideColumn(self.model.ID_COLUMN)
 
         session.close()
 

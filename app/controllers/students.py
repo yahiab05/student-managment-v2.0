@@ -58,6 +58,7 @@ class StudentsLogic(QWidget):
         self.model = StudentsTableModel(session)
 
         self.student_tab.setModel(self.model)
+        self.student_tab.hideColumn(self.model.ID_COLUMN)
 
         session.close()
 
@@ -344,6 +345,9 @@ class StudentsHistoryLogic(QWidget):
         self.model = StudentsHistoryTableModel(session)
 
         self.student_tab.setModel(self.model)
+        self.student_tab.hideColumn(self.model.ID_COLUMN)
+
+        session.close()
 
     def search(self):
         identifier = self.num_ins_search.text()
@@ -417,7 +421,8 @@ class ClassesPerStudentLogic(QWidget):
         self.model = StudentsSearchTableModel(session)
 
         self.student_list.setModel(self.model)
-
+        self.student_list.hideColumn(self.model.ID_COLUMN)
+        
         session.close()
 
     def student_search(self):

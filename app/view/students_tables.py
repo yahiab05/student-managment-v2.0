@@ -17,7 +17,7 @@ class StudentsTableModel(BaseTable):
         column = index.column()
 
         if column == 0:
-            return obj.num_inscrit
+            return obj.id
         elif column == 1:
             return obj.name
         elif column == 2:
@@ -56,7 +56,7 @@ class StudentsHistoryTableModel(BaseTable):
         column = index.column()
 
         if column == 0:
-            return class_obj.num_inscrit
+            return class_obj.id
         elif column == 1:
             return class_obj.student.name
         elif column == 2:
@@ -85,6 +85,6 @@ class StudentsSearchTableModel(BaseTable):
         column = index.column()
 
         if column == 0:
-            return student.num_inscrit
+            return student.id
         elif column == 1:
             return student.name
