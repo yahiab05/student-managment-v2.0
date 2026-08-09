@@ -1,16 +1,10 @@
-import code
-
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem
-from .help import HelpLogic
-from .models import Settings, OutMoney, Entery, Classes
-from .database import SessionLocal
 from sqlalchemy.exc import IntegrityError
 from os import path
-from repo.schemas import SchemaFactory
-from utils.utils import get_username, error
-from models import get_model, get_model_list
-from utils.combo_manager import ComboManager
+from ..repo.schemas import SchemaFactory
+from ..utils import get_username, error, get_combo_manager
+from ..models import get_model
 from abc import ABC, abstractmethod
 
 class BaseSettings(QWidget, ABC):
@@ -18,8 +12,7 @@ class BaseSettings(QWidget, ABC):
         super().__init__(parent=parent)
         
         self.manager = get_model("settings")
-        session = SessionLocal()
-        self.combo_manager = ComboManager(session)
+        self.combo_manager = get_combo_manager()
 
     """Out section"""
     def setup(self):

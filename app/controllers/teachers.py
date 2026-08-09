@@ -1,16 +1,12 @@
-from wsgiref import headers
-
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox
 from PyQt6.QtCore import QDate
-from .database import SessionLocal
 from os import path
 from sqlalchemy.exc import IntegrityError
 from ..view.teachers_tables import TeachersTableModel, TeachersHistoryTableModel
 from ..models import get_model
-from ..utils.combo_manager import ComboManager
 from ..repo.schemas import SchemaFactory
-from ..utils.utils import error, get_username
+from ..utils import error, get_username, get_combo_manager, ReportType
 
 
 class TeacherLogic(QWidget):
@@ -21,11 +17,10 @@ class TeacherLogic(QWidget):
         loadUi(ui_path, self)
 
         self.model = None
-        session = SessionLocal()
-        self.manager = get_model(session, "teachers")
-        self.combo_manager = ComboManager("teachers")
-        self.classes_manager = get_model(session, "classes")
-        self.history_manager = get_model(session, "teachers_history")
+        self.manager = get_model("teachers")
+        self.combo_manager = get_combo_manager()
+        self.classes_manager = get_model("classes")
+        self.history_manager = get_model("teachers_history")
 
         self.identifier = None
         
@@ -43,18 +38,14 @@ class TeacherLogic(QWidget):
         self.teachers_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_teachers)
         self.new_year_btn.clicked.connect(self.new_year_security)
-        self.printing_btn.clicked.connect(lambda: self.export("print"))
-        self.export_btn.clicked.connect(lambda: self.export("excel"))
+        self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def setup_table(self):
-        session = SessionLocal()
-
-        self.model = TeachersTableModel(session)
+        self.model = TeachersTableModel()
 
         self.teachers_table.setModel(self.model)
         self.teachers_table.hideColumn(self.model.ID_COLUMN)
-
-        session.close()
 
     def control(self, action):
         name = self.name.text()
@@ -221,30 +212,15 @@ class TeacherLogic(QWidget):
         except IntegrityError:
             error("لم تتم الاضافة")
             
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
         row_count = self.model.rowCount()
         self.manager.set_dynamic_metadata(data_to_export, row_count)
         
-        if output_channel == "excel":
-            self.excel()
-        elif output_channel == "print":
-            self.printing_preview()
-
-    def printing_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except Exception as e:
-            print(e)
-            error("لا يمكنك الطباعة")
-
-    def excel(self):
-        try: 
-            self.manager.export_to_excel(self)
-        except Exception as e:
-            print(e)
-            error("لا يمكنك تحميل الملف")
-
+        self.manager.export_data(
+            report_type=output_channel, 
+            parent=self
+            )
 
 class TeachersHistoryLogic(QWidget):
     def __init__(self, parent=None):
@@ -254,31 +230,27 @@ class TeachersHistoryLogic(QWidget):
         loadUi(ui_path, self)
 
         self.model = None
-        session = SessionLocal()
-        self.manager = get_model(session, "teachers_history")
+        self.manager = get_model("teachers_history")
         
-        self.setup_tables()
+        self.setup_table()
         self.setup()
 
 
     def setup(self):
         self.search_btn.clicked.connect(lambda: self.show_table(self.search.text()))
         self.reset_btn.clicked.connect(lambda: self.search.setText(""))
-        self.printing_btn.clicked.connect(self.printing_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
-    def setup_tables(self):
-        session = SessionLocal()
-
-        self.model = TeachersHistoryTableModel(session)
+    def setup_table(self):
+        self.model = TeachersHistoryTableModel()
 
         self.history_table.setModel(self.model)
         self.history_table.hideColumn(self.model.ID_COLUMN)
 
-        session.close()
-
     def show_table(self, teacher_id=None):
-        if teacher_id == "": teacher_id = None
+        if teacher_id == "": 
+            teacher_id = None
         
         data = self.manager.search_by_id(teacher_id)
         
@@ -286,28 +258,14 @@ class TeachersHistoryLogic(QWidget):
 
         self.nb.setText(str(self.model.rowCount()))
         
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
         row_count = self.model.rowCount()
         self.manager.set_dynamic_metadata(data_to_export, row_count)
         
-        if output_channel == "excel":
-            self.excel()
-        elif output_channel == "print":
-            self.printing_preview()
-
-    def printing_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except Exception as e:
-            print(e)
-            error("لا يمكنك الطباعة")
-
-    def excel(self):
-        try:
-            self.manager.export_to_excel(self)
-        except Exception as e:
-            print(e)
-            error("لا يمكنك تحميل الملف")
+        self.manager.export_data(
+            report_type=output_channel, 
+            parent=self
+            )
 
     

@@ -3,13 +3,17 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
 from sqlalchemy.exc import IntegrityError
 
-from ..repo.database import SessionLocal
 from ..view.classes_tables import ClassesTableModel, ClasseleveTableModel
 from ..view.students_tables import StudentsSearchTableModel
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
-from ..utils.utils import error, get_student_list, get_username
-from ..utils.combo_manager import ComboManager
+from ..utils import (
+    get_username,
+    get_student_list,
+    error,
+    ReportType,
+    get_combo_manager,
+)
 
 class ClassesLogic(QWidget):
     def __init__(self, parent=None):
@@ -22,20 +26,17 @@ class ClassesLogic(QWidget):
 
         self.identifier = 0
         
-        session = SessionLocal()
-        
-        self.manager = get_model(session, "classes")
-        self.combo_manager = ComboManager(session)
+        self.manager = get_model("classes")
+        self.combo_manager = get_combo_manager()
         
         self.setup()
         self.set_table()
         self.populate_combos()
 
     def set_table(self):
-        session = SessionLocal()
-        self.model = ClassesTableModel(session)
+        self.model = ClassesTableModel()
         self.class_table.setModel(self.model)
-        session.close()
+        self.class_table.hideColumn(self.model.ID_COLUMN)
 
 
     def setup(self):
@@ -46,8 +47,8 @@ class ClassesLogic(QWidget):
         self.class_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_class)
         self.teacher_search.currentTextChanged.connect(self.show_class)
-        self.printing_btn.clicked.connect(lambda: self.export("print"))
-        self.export_btn.clicked.connect(lambda: self.export("excel"))
+        self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def control(self, action):
         name = self.name.text()
@@ -161,29 +162,12 @@ class ClassesLogic(QWidget):
         self.way.setCurrentIndex(-1)
         self.teacher_search.setCurrentIndex(-1)
 
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
         row_count = self.model.rowCount()
         self.manager.set_dynamic_metadata(data_to_export, row_count)
         
-        if output_channel == "print":
-            self.printing_preview()
-        elif output_channel == "excel":
-            self.excel()
-        else:
-            ValueError(f"Unknown output channel: {output_channel}")
-            
-    def printing_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except Exception as e:
-            error("لا يمكنك الطباعة")
-
-    def excel(self):
-        try:
-            self.manager.excel(self)
-        except Exception as e:
-            error("لا يمكنك تحميل الملف")
+        self.manager.export_data(report_type=output_channel, parent=self)
 
 class ClasseleveLogic(QWidget):
     def __init__(self, parent=None):
@@ -195,12 +179,10 @@ class ClasseleveLogic(QWidget):
         self.model = None
         self.model_classeleve = None
         
-        session = SessionLocal()
-        self.manager = get_model(session, "enrollment")
-        self.combo_manager = ComboManager(session)
+        self.manager = get_model("enrollment")
+        self.combo_manager = get_combo_manager()
 
-        self.setup_students()
-        self.setup_classeleve()
+        self.set_table()
         self.populate_combo()
 
         self.setup()
@@ -211,28 +193,24 @@ class ClasseleveLogic(QWidget):
         self.student_search.textChanged.connect(self.show_students_list)
         self.search_btn.clicked.connect(self.show_classeleve)
         self.reset_btn.clicked.connect(self.reset)
-        self.printing_btn.clicked.connect(lambda: self.export("print"))
-        self.export_btn.clicked.connect(lambda: self.export("excel"))
+        self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
         self.classes.setCurrentIndex(-1)
 
-    def setup_classeleve(self):
-        session = SessionLocal()
+    def set_table(self):
+        self.setup_classeleve()
+        self.setup_students()
 
-        self.model_classeleve = ClasseleveTableModel(session)
+    def setup_classeleve(self):
+        self.model_classeleve = ClasseleveTableModel()
 
         self.students.setModel(self.model_classeleve)
 
-        session.close()
-
     def setup_students(self):
-        session = SessionLocal()
-
-        self.model = StudentsSearchTableModel(session)
+        self.model = StudentsSearchTableModel()
 
         self.student_search_list.setModel(self.model)
-
-        session.close()
 
     def get_student_id(self):
         row = self.student_search_list.selectionModel().selectedRows()
@@ -335,7 +313,7 @@ class ClasseleveLogic(QWidget):
 
         self.classes.setCurrentIndex(-1)
         
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model_classeleve.get_current_data()
         row_count = self.model_classeleve.rowCount()
         class_name = self.classes.currentText()
@@ -345,24 +323,10 @@ class ClasseleveLogic(QWidget):
             class_name=class_name
             )
         
-        if output_channel == "print":
-            self.printing_preview()
-        elif output_channel == "excel":
-            self.excel()
-        else:
-            ValueError(f"Unknown output channel: {output_channel}")
-            
-    def printing_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except Exception as e:
-            error("لا يمكنك الطباعة")
-
-    def excel(self):
-        try:
-            self.manager.export_to_excel(self)
-        except Exception as e:
-            error("لا يمكنك تحميل الملف")
+        self.manager.export_data(
+            report_type=output_channel,
+            parent=self
+        )
 
 if __name__ == "__main__":
     app = QApplication([])

@@ -3,7 +3,8 @@ from .combo_manager import ComboManager
 from .utils import ( 
     get_username,
     get_student_list,
-    error
+    error,
+    ReportType
 )
 from ..repo.database import SessionLocal
 

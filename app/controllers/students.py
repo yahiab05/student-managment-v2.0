@@ -1,14 +1,18 @@
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
-from app.repo.database import SessionLocal
 from ..models import get_model
 from sqlalchemy.exc import IntegrityError
 from ..view.students_tables import StudentsSearchTableModel, StudentsTableModel, StudentsHistoryTableModel
 from os import path
 from ..repo.schemas import SchemaFactory
-from ..utils.combo_manager import ComboManager
-from ..utils.utils import error, get_username
+from ..utils import (
+    error, 
+    get_username,
+    get_combo_manager,
+    export_report,
+    ReportType
+)
 
 
 class StudentsLogic(QWidget):
@@ -21,9 +25,8 @@ class StudentsLogic(QWidget):
         self.identifier = None
         self.model = None
         
-        session = SessionLocal()
-        self.manager = get_model(session, "student")
-        self.combo_manager = ComboManager(session)
+        self.manager = get_model("student")
+        self.combo_manager = get_combo_manager()
 
         self.to.setDate(QDate.currentDate())
         self.date_inscrit.setDate(QDate.currentDate())
@@ -36,9 +39,9 @@ class StudentsLogic(QWidget):
 
         self.setup_table()
 
-        self.setup_ui()
+        self.setup()
 
-    def setup_ui(self):
+    def setup(self):
         self.new_btn.clicked.connect(self.reset)
         self.add_btn.clicked.connect(lambda: self.controls("add"))
         self.update_btn.clicked.connect(lambda: self.controls("update"))
@@ -49,18 +52,14 @@ class StudentsLogic(QWidget):
         self.student_tab.doubleClicked.connect(self.select_student)
         self.search_btn.clicked.connect(self.show_table)
         self.new_year.clicked.connect(self.set_new_year)
-        self.printing_btn.clicked.connect(self.export("print"))
-        self.export_btn.clicked.connect(self.export("excel"))
+        self.printing_btn.clicked.connect(lambda: self.export(output_channel=ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(output_channel=ReportType.EXCEL))
 
     def setup_table(self):
-        session = SessionLocal()
-
-        self.model = StudentsTableModel(session)
+        self.model = StudentsTableModel()
 
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
-
-        session.close()
 
     def controls(self, action):
         name = self.name.text()
@@ -288,7 +287,7 @@ class StudentsLogic(QWidget):
         self.model.refresh(data)
         self.nb.setText(str(self.model.rowCount()))
         
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
         row_count = self.model.rowCount()
         self.manager.set_dynamic_metadata(
@@ -296,26 +295,10 @@ class StudentsLogic(QWidget):
             row_count=row_count
             )
         
-        if output_channel == "print":
-            self.print_preview()
-        elif output_channel == "excel":
-            self.excel()
-        else:
-            ValueError(f"Unknown output channel: {output_channel}")
-
-    def print_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except ValueError as e:
-            error("لا يمكنك الطباعة")
-        except Exception as e:
-            error("لا يمكنك الطباعة")
-
-    def excel(self):
-        try:
-            self.manager.export_to_excel(self)
-        except Exception as e:
-            error("لا يمكنك تحميل الملف")
+        self.manager.export_data(
+            report_type=output_channel,
+            parent=self
+        )
 
 class StudentsHistoryLogic(QWidget):
     def __init__(self, parent=None):
@@ -326,8 +309,7 @@ class StudentsHistoryLogic(QWidget):
 
         self.model = None
         
-        session = SessionLocal()
-        self.manager = get_model(session, "student_history")
+        self.manager = get_model("student_history")
 
         self.setup_table()
 
@@ -336,18 +318,14 @@ class StudentsHistoryLogic(QWidget):
     def setup(self):
         self.search_btn.clicked.connect(self.search)
         self.reset_btn.clicked.connect(lambda: self.num_ins_search.setText(""))
-        self.printing_btn.clicked.connect(self.print_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export(output_channel=ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(output_channel=ReportType.EXCEL))
 
     def setup_table(self):
-        session = SessionLocal()
-
-        self.model = StudentsHistoryTableModel(session)
+        self.model = StudentsHistoryTableModel()
 
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
-
-        session.close()
 
     def search(self):
         identifier = self.num_ins_search.text()
@@ -365,7 +343,7 @@ class StudentsHistoryLogic(QWidget):
 
         self.model.refresh(history_records)
         
-    def export(self, output_channel: str):
+    def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
         row_count = self.model.rowCount()
         self.manager.set_dynamic_metadata(
@@ -373,25 +351,10 @@ class StudentsHistoryLogic(QWidget):
             row_count=row_count
             )
         
-        if output_channel == "print":
-            self.print_preview()
-        elif output_channel == "excel":
-            self.excel()
-        else:
-            ValueError(f"Unknown output channel: {output_channel}")    
-
-    def print_preview(self):
-        try:
-            self.manager.print_preview(self)
-        except Exception as e:
-            error("لا يمكنك الطباعة")
-
-
-    def excel(self):
-        try:
-            self.manager.export_to_excel(self)
-        except Exception as e:
-            error("لا يمكنك تحميل الملف")
+        self.manager.export_data(
+            report_type=output_channel,
+            parent=self
+        )
 
 class ClassesPerStudentLogic(QWidget):
     def __init__(self, parent = None):
@@ -403,9 +366,8 @@ class ClassesPerStudentLogic(QWidget):
         self.model = None
         self.name = ""
         
-        session = SessionLocal()
-        self.enrollment_manager = get_model(session, "enrollment")
-        self.student_manager = get_model(session, "student")
+        self.enrollment_manager = get_model("enrollment")
+        self.student_manager = get_model("student")
         
         self.setup_table()
         self.setup()
@@ -416,15 +378,11 @@ class ClassesPerStudentLogic(QWidget):
         self.student_list.doubleClicked.connect(self.list_of_classes)
 
     def setup_table(self):
-        session = SessionLocal()
-
-        self.model = StudentsSearchTableModel(session)
+        self.model = StudentsSearchTableModel()
 
         self.student_list.setModel(self.model)
         self.student_list.hideColumn(self.model.ID_COLUMN)
         
-        session.close()
-
     def student_search(self):
         name = self.search_ent.text()
         filters = self.student_manager.get_filters(name=name)

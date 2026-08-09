@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from PyQt6.QtWidgets import QMessageBox
 from ..repo import Repository
 from ..repo.schemas.base_schema import BaseDataClass
-from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
+from ..utils import export_report, ReportType
 from ..repo import Repositories
 
 
@@ -66,7 +66,7 @@ class CRUD(ABC):
         except ModuleNotFoundError:
             return
         
-    def delete_by_filter(self, filters: list):
+    def delete_by_filter(self, filters: list): #this is a comment
         try:
             return self.db.delete_by_filter(filters)
         except ModuleNotFoundError:
@@ -83,38 +83,25 @@ class CRUD(ABC):
             results = self.get_with_joined_load("student", [self.db.table.num_inscrit == 5])
         """
         return self.db.get_with_joined_load(relationship_name, filters)
-
-    def print_preview(self, parent):
+            
+    def export_data(self, report_type: ReportType, parent):
         if self.data_to_export is None or self.headers is None:
-            raise ValueError("Data and headers must be set before printing.")
+            raise ValueError("Data and headers must be set before exporting.")
         
-        strategy = PrintingStrategy(
-            headers=self.headers,
-            data=self.data_to_export,
-            parent=parent,
-            title=self.title,
-            intro=self.intro,
-            foot=self.footer
-        )
-        self.report_context.strategy = strategy
         try:
-            self.report_context.export()
+            export_report(
+                report_type=report_type,
+                parent=parent,
+                headers=self.headers,
+                data=self.data_to_export,
+                title=self.title,
+                intro=self.intro,
+                foot=self.footer
+            )
         except ValueError as e:
             print(e)
         finally:
             self.data_to_export = None
-            
-    def export_to_excel(self, parent):
-        strategy = ExcelStrategy(
-            headers=self.headers,
-            data=self.data_to_export,
-            parent=parent
-        )
-        self.report_context.strategy = strategy
-        try:
-            self.report_context.export()
-        except ValueError as e:
-            print(e)
 
     @abstractmethod
     def set_metadata(self):
