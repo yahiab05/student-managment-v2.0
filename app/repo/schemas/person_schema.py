@@ -35,14 +35,12 @@ class StudentSchema(PersonSchema):
     def validate(self):
         if not super().validate():
             return False
-        if self.num_inscrit is None:
+        if self.id is None:
             raise ValueError("رقم الطالب مطلوب")
         if self.gender is None or  self.gender == "":
             raise ValueError("الجنس مطلوب")
         if self.parent is None or self.parent == "":
             raise ValueError("اسم الولي مطلوب")
-        if self.cin is None:
-            raise ValueError("رقم الهوية مطلوب")
         if self.activity is None or self.activity == "":
             raise ValueError("النشاط مطلوب")
         if self.num_tel is None or self.num_tel == "":

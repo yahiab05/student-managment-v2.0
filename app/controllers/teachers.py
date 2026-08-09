@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QWidget, QMessageBox
 from PyQt6.QtCore import QDate
 from os import path
 from sqlalchemy.exc import IntegrityError
-from ..view.teachers_tables import TeachersTableModel, TeachersHistoryTableModel
+from ..view import TableType, create_table_model
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import error, get_username, get_combo_manager, ReportType
@@ -42,7 +42,7 @@ class TeacherLogic(QWidget):
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def setup_table(self):
-        self.model = TeachersTableModel()
+        self.model = create_table_model(TableType.TEACHERS)
 
         self.teachers_table.setModel(self.model)
         self.teachers_table.hideColumn(self.model.ID_COLUMN)
@@ -243,7 +243,7 @@ class TeachersHistoryLogic(QWidget):
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def setup_table(self):
-        self.model = TeachersHistoryTableModel()
+        self.model = create_table_model(TableType.TEACHER_HISTORY)
 
         self.history_table.setModel(self.model)
         self.history_table.hideColumn(self.model.ID_COLUMN)

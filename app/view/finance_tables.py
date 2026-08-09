@@ -90,29 +90,6 @@ class BalanceTableModel(BaseTable):
             return balances.date.strftime("%Y-%m-%d")
         elif column == 4:
             return balances.way 
-        return None 
-    
-class StorageTableModel(BaseTable):
-    def __init__(self):
-        super().__init__()
-        
-        self.headers = ["المداخيل", "المصاريف", "التاريخ", "ملاحظة"]
-
-    def data(self, index, role):
-        if not index.isValid() or not role == Qt.ItemDataRole.DisplayRole:
-            return None
-        
-        storage = self.rows[index.row()]
-        column = index.column()
-        
-        if column == 0:
-            return storage.income
-        elif column == 1:
-            return storage.expense
-        elif column == 2:
-            return storage.date.strftime("%Y-%m-%d")
-        elif column == 3:
-            return storage.note
         return None           
     
 class PaymentTableModel(BaseTable):
@@ -151,4 +128,32 @@ class PaymentTableModel(BaseTable):
             return payment.cheq_num
         elif column == 10:
             return payment.user
+        return None
+    
+class TransferTableModel(BaseTable):
+    def __init__(self):
+        super().__init__()
+        
+        self.headers = ["ID", "montant", "origine", "destination", "date", "note", "utilisateur"]        
+    def data(self, index, role):
+        if not index.isValid() or not role == Qt.ItemDataRole.DisplayRole:
+            return None 
+        
+        transfer = self.rows[index.row()]
+        column = index.column()
+        
+        if column == 0:
+            return transfer.id
+        elif column == 1:
+            return transfer.price
+        elif column == 2:
+            return transfer.origin
+        elif column == 3:
+            return transfer.destination
+        elif column == 4:
+            return transfer.date.strftime("%Y-%m-%d")
+        elif column == 5:
+            return transfer.note
+        elif column == 6:
+            return transfer.user
         return None

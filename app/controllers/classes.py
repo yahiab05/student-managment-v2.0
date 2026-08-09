@@ -3,8 +3,7 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
 from sqlalchemy.exc import IntegrityError
 
-from ..view.classes_tables import ClassesTableModel, ClasseleveTableModel
-from ..view.students_tables import StudentsSearchTableModel
+from ..view import TableType, create_table_model
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import (
@@ -34,7 +33,7 @@ class ClassesLogic(QWidget):
         self.populate_combos()
 
     def set_table(self):
-        self.model = ClassesTableModel()
+        self.model = create_table_model(TableType.CLASSES)
         self.class_table.setModel(self.model)
         self.class_table.hideColumn(self.model.ID_COLUMN)
 
@@ -203,12 +202,12 @@ class ClasseleveLogic(QWidget):
         self.setup_students()
 
     def setup_classeleve(self):
-        self.model_classeleve = ClasseleveTableModel()
+        self.model_classeleve = create_table_model(TableType.CLASS_ENROLLMENT)
 
         self.students.setModel(self.model_classeleve)
 
     def setup_students(self):
-        self.model = StudentsSearchTableModel()
+        self.model = create_table_model(TableType.STUDENT_SEARCH)
 
         self.student_search_list.setModel(self.model)
 

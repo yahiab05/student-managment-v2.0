@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
 from ..models import get_model
 from sqlalchemy.exc import IntegrityError
-from ..view.students_tables import StudentsSearchTableModel, StudentsTableModel, StudentsHistoryTableModel
+from ..view import TableType, create_table_model
 from os import path
 from ..repo.schemas import SchemaFactory
 from ..utils import (
@@ -56,7 +56,7 @@ class StudentsLogic(QWidget):
         self.export_btn.clicked.connect(lambda: self.export(output_channel=ReportType.EXCEL))
 
     def setup_table(self):
-        self.model = StudentsTableModel()
+        self.model = create_table_model(TableType.STUDENTS)
 
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
@@ -322,7 +322,7 @@ class StudentsHistoryLogic(QWidget):
         self.export_btn.clicked.connect(lambda: self.export(output_channel=ReportType.EXCEL))
 
     def setup_table(self):
-        self.model = StudentsHistoryTableModel()
+        self.model = create_table_model(TableType.STUDENT_HISTORY)
 
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
@@ -378,7 +378,7 @@ class ClassesPerStudentLogic(QWidget):
         self.student_list.doubleClicked.connect(self.list_of_classes)
 
     def setup_table(self):
-        self.model = StudentsSearchTableModel()
+        self.model = create_table_model(TableType.STUDENT_SEARCH)
 
         self.student_list.setModel(self.model)
         self.student_list.hideColumn(self.model.ID_COLUMN)
