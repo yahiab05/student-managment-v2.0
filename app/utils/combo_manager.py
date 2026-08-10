@@ -34,8 +34,6 @@ class ComboManager:
             "teachers": (TeachersCombo, "name"),
             "roles": (RolesCombo, "name"),
             "way teaching": (SettingsCombo, "way_teaching"),
-            "types": (SettingsCombo, "way_teaching"),
-            "names": (SettingsCombo, "way_teaching"),
             "income": (SettingsCombo, "entery"),
             "income code": (SettingsCombo, "entery_code"),
             "expenses": (SettingsCombo, "out_money"),
@@ -67,4 +65,15 @@ class ComboManager:
             return self.cached[data_name]
         except KeyError as error:
             raise KeyError(f"Unknown cached data name: {data_name}") from error
+        
+    def update_combo(self, combo_widget, data_name):
+        """Update a combo box widget with the cached data for the specified name."""
+        try:
+            data = self.get_cached_data(data_name)
+        except KeyError as error:
+            raise KeyError(f"Unknown cached data name: {data_name}") from error
+
+        combo_widget.clear()
+        combo_widget.addItems(data)
+        combo_widget.setCurrentIndex(-1)  # Reset selection to no selection
     
