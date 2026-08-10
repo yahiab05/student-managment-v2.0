@@ -1,0 +1,13 @@
+[project]
+name = "dar-coran"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "yahiab05", email = "yahiaboukharrata092@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pyqt6>=6.11.0",
+    "sqlalchemy>=2.0.51",
+]
