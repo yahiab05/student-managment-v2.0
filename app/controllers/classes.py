@@ -117,6 +117,7 @@ class ClassesLogic(QWidget, ClassesUI):
 
     def delete_class(self):
         self.manager.sup_security(self.identifier)
+        self.combo_manager.update_cache_from_db("classes")
 
     def show_class(self):
         name = self.search.text()
@@ -134,17 +135,6 @@ class ClassesLogic(QWidget, ClassesUI):
         self.model.refresh(data)
 
         self.nb.setText(str(self.model.rowCount()))       
-
-    def reset(self):
-        self.name.setText("")
-        self.way.setCurrentIndex(-1)
-        self.teacher.setCurrentIndex(-1)
-        self.note.setText("")
-        self.price.setText("")
-        self.in_exchange.setCurrentIndex(-1)
-        self.teacher_price.setValue(0)
-        self.seance.setValue(0)
-
 
     def populate_combos(self):
         teachers = self.combo_manager.get_cached_data("teachers")

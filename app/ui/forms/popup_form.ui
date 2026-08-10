@@ -31,6 +31,9 @@
      <property name="text">
       <string>الوصول:</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -53,7 +56,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="delete_btn">
+       <widget class="QPushButton" name="cancel_btn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -86,7 +89,7 @@ border-radius: 10px;</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_btn">
+       <widget class="QPushButton" name="confirm_btn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
           <horstretch>0</horstretch>

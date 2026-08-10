@@ -35,9 +35,7 @@ class ComboManager:
             "roles": (RolesCombo, "name"),
             "way teaching": (SettingsCombo, "way_teaching"),
             "income": (SettingsCombo, "entery"),
-            "income code": (SettingsCombo, "entery_code"),
             "expenses": (SettingsCombo, "out_money"),
-            "expenses code": (SettingsCombo, "out_code"),
             "fr": (SettingsCombo, "fr"),
             "way payment": (SettingsCombo, "way_payment"),
         }

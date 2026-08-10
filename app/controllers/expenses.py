@@ -140,9 +140,6 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.total.setText(str(self.model.total_price))
 
     def populate_combo(self):
-        self.combo_manager.update_combo(self.name, "fr")
-        self.combo_manager.update_combo(self.types, "expenses")
-        self.combo_manager.update_combo(self.way, "way payment")
         self.combo_manager.update_combo(self.name_search, "fr")
         self.combo_manager.update_combo(self.type_search, "expenses")
         self.combo_manager.update_combo(self.way_search, "way payment")

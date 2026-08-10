@@ -81,6 +81,7 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
         self.reset_enteries()
         self.identifier = None
         self.show_data()
+        self.combo_manager.update_cache_from_db("entery" if self.income else "out_money")
         
     def delete(self):
         code = int(self.entery.text())
@@ -160,11 +161,11 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         name = self.entery.text()
         username = get_username()
         
-        if self.setting == "way":
+        if self.setting == "way teaching":
             entity = SchemaFactory.SETTINGS(way_teaching=name, user=username)
-        elif self.setting == "payment":
+        elif self.setting == "way payment":
             entity = SchemaFactory.SETTINGS(way_payment=name, user=username)
-        elif self.setting == "fournisseur":
+        elif self.setting == "fr":
             entity = SchemaFactory.SETTINGS(fr=name, user=username)
         else:
             error("Invalid setting type")
@@ -182,6 +183,7 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         self.reset_enteries()
         self.identifier = None
         self.show_data()
+        self.combo_manager.update_cache_from_db(self.setting)
         
     def delete(self):
         name = self.entery.text()
@@ -197,13 +199,13 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
             finally:
                 self.reset_enteries()
                 self.identifier = None
-                
+                self.combo_manager.update_cache_from_db(self.setting)
     def get_appropriate_filter(self, name):
-        if self.setting == "way":
+        if self.setting == "way teaching":
             return self.manager.get_filter(way_teaching=name)
-        elif self.setting == "payment":
+        elif self.setting == "way payment":
             return self.manager.get_filter(way_payment=name)
-        elif self.setting == "fournisseur":
+        elif self.setting == "fr":
             return self.manager.get_filter(fr=name)
         else:
             raise ValueError("Invalid setting type")
@@ -218,18 +220,18 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         
         if len(data) > 0:
             for i, class_obj in enumerate(data):
-                if self.setting == "way":
+                if self.setting == "way teaching":
                     self.list.addItem(class_obj.way_teaching)
-                elif self.setting == "payment":
+                elif self.setting == "way payment":
                     self.list.addItem(class_obj.way_payment)
-                elif self.setting == "fournisseur":
+                elif self.setting == "fr":
                     self.list.addItem(class_obj.fr)
                     
         self.nb.setText(str(len(data))) 
 
 class WaySettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="way", parent=parent)
+        super().__init__(setting="way teaching", parent=parent)
 
         self.setup()
     def check_used(self, way):
@@ -243,7 +245,7 @@ class WaySettings(SettingsWithoutCode):
 
 class PaymentSettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="payment", parent=parent)
+        super().__init__(setting="way payment", parent=parent)
 
         self.setup()
 
@@ -262,7 +264,7 @@ class PaymentSettings(SettingsWithoutCode):
 
 class FournisseurSettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="fournisseur", parent=parent)
+        super().__init__(setting="fr", parent=parent)
 
         self.setup()
 

@@ -105,6 +105,7 @@ class TeacherLogic(QWidget, TeacherUI):
                 return
         self.reset()
         self.show_teachers()
+        self.combo_manager.update_cache_from_db("teachers")
 
     def delete(self):
         if self.identifier is not None and not self.has_classes():
@@ -115,6 +116,7 @@ class TeacherLogic(QWidget, TeacherUI):
                     self.manager.delete(self.identifier)
                     self.identifier = None  # Reset identifier after deletion
                     self.show_teachers()
+                    self.combo_manager.update_cache_from_db("teachers")
                 else:
                     error(f"لا يمكن حذف المعلم {name} لوجود قسم له")
             except IntegrityError:
@@ -126,16 +128,6 @@ class TeacherLogic(QWidget, TeacherUI):
     def has_classes(self, name):
         filters = self.classes_manager.get_filters(exact_teacher=name)
         return self.classes_manager.exists(filters)
-
-    def reset(self):
-        self.name.setText("")
-        self.date_inscrit.setDate(QDate.currentDate())
-        self.birthday.setDate(QDate.currentDate())
-        self.phone.setText("")
-        self.phone_2.setText("")
-        self.note.setText("")
-
-        self.identifier = None
 
     def select_row(self):
         row = self.teachers_table.selectionModel().selectedRows()
@@ -190,7 +182,7 @@ class TeacherLogic(QWidget, TeacherUI):
         teacher = self.manager.get_by_id(teacher_id)
         if teacher is not None:
             try:
-                teacher.date_inscrit = teacher.set_date_iscrit(QDate.currentDate())
+                teacher[0].date_inscrit = teacher.set_date_iscrit(QDate.currentDate())
                 self.manager.commit()
             except IntegrityError:
                 error("هذا المعلم موجود.")
