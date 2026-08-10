@@ -56,7 +56,7 @@
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item>
+       <item alignment="Qt::AlignTop">
         <widget class="QFrame" name="frame_11">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -64,10 +64,13 @@
          <layout class="QHBoxLayout" name="horizontalLayout_9">
           <item>
            <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -123,13 +126,16 @@ border-radius: 15px</string>
           </item>
           <item>
            <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
             <property name="sizeType">
              <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -230,10 +236,13 @@ border-radius: 15px</string>
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
                  <spacer name="horizontalSpacer_7">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>20</width>
+                    <height>40</height>
                    </size>
                   </property>
                  </spacer>
@@ -322,10 +331,13 @@ border-radius: 15px</string>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
                  <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>20</width>
+                    <height>40</height>
                    </size>
                   </property>
                  </spacer>
@@ -510,10 +522,13 @@ border-radius: 15px</string>
                 </item>
                 <item>
                  <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>20</width>
+                    <height>40</height>
                    </size>
                   </property>
                  </spacer>
@@ -834,6 +849,9 @@ border-top: none
          <layout class="QHBoxLayout" name="horizontalLayout_14">
           <item>
            <spacer name="horizontalSpacer_15">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
@@ -868,6 +886,9 @@ border-top: none
           </item>
           <item>
            <spacer name="horizontalSpacer_16">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
             <property name="sizeType">
              <enum>QSizePolicy::Fixed</enum>
             </property>
@@ -902,6 +923,9 @@ border-top: none
           </item>
           <item>
            <spacer name="horizontalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>

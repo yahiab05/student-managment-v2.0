@@ -8,6 +8,7 @@ from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import error, get_username, get_combo_manager, ReportType
 from ..ui.ui_forms import TeacherUI, TeacherHistoryUI
+from .popup import create_popup_factory, PopupKind
 
 
 class TeacherLogic(QWidget, TeacherUI):
@@ -48,26 +49,30 @@ class TeacherLogic(QWidget, TeacherUI):
         self.teachers_table.setModel(self.model)
         self.teachers_table.hideColumn(self.model.ID_COLUMN)
 
-    def control(self, action):
-        name = self.name.text()
-        date_ins = self.date_inscrit.date()
-        birthday = self.birthday.date()
-        phone1 = self.phone.text()
-        phone2 = self.phone_2.text()
-        note = self.note.text()
-        money = self.money.currentText()
+    def aquire_data(self, action):
+        dialog = create_popup_factory(
+            kind=PopupKind.TEACHER, 
+            title="إضافة معلم" if action == "add" else "تعديل معلم", 
+            parent=self
+        )
+        dialog.confirmed.connect(lambda: self.controls(action, dialog.content.get_data()))
+        dialog.show()
+
+    def control(self, action, data):
+        phone1 = data["phone"]
+        phone2 = data["phone_2"]
+
         
         if len(phone2) == 8 and phone2.isdigit():
             phone1 += f"/{phone2}"
             
         
         entity = SchemaFactory.TEACHER(
-            name=name,
-            date_inscrit=date_ins,
-            birthday=birthday,
+            name=data["name"],
+            date_inscrit=data["date_inscrit"],
+            birthday=data["birthday"],
             phone=phone1,
-            note=note,
-            payed=money,
+            note=data["note"],
             user=get_username()
         )
         
@@ -82,7 +87,9 @@ class TeacherLogic(QWidget, TeacherUI):
         if action == "add":
             try: 
                 self.manager.create(entity)
-                self.add_history(self.manager.get_last_id(), date_ins, money)
+                self.add_history(self.manager.get_last_id(), 
+                                date_inscrit=data["date_inscrit"] 
+                                )                
             except IntegrityError:
                 error("هذا المعلم موجود.")
                 return
@@ -102,7 +109,7 @@ class TeacherLogic(QWidget, TeacherUI):
     def delete(self):
         if self.identifier is not None and not self.has_classes():
             line = self.manager.get_by_id(self.identifier)
-            name = line.name
+            name = line[0].name
             try:
                 if not self.has_classes():
                     self.manager.delete(self.identifier)

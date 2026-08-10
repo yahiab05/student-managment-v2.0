@@ -10,10 +10,10 @@ from ..utils import (
     error, 
     get_username,
     get_combo_manager,
-    export_report,
     ReportType
 )
 from ..ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
+from .popup import create_popup_factory, PopupKind
 
 
 class StudentsLogic(QWidget, StudentsUI):
@@ -62,16 +62,21 @@ class StudentsLogic(QWidget, StudentsUI):
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
 
-    def controls(self, action):
-        name = self.name.text()
-        parent = self.parent.text()
-        num_tel = self.num_tel.text()
-        num_tel_2 = self.num_tel_2.text()
-        cin = self.cin.text()
-        activity = self.activity.currentText()
-        excused = self.excused.currentText()
-        date = self.date_inscrit.date()
+    def aquire_data(self, action):
+        dialog = create_popup_factory(
+            kind=PopupKind.STUDENT,
+            title="إضافة تلميذ" if action == "add" else "تعديل تلميذ",
+            parent=self
+        )
+        def on_confirmed():
+            data = dialog.content.get_data()
+            self.controls(action, data)
+            
+        dialog.confirmed.connect(on_confirmed)
+        dialog.show()
 
+    def controls(self, action, data): 
+        name, parent, _date = data["name"], data["parent"], data["date_inscrit"]
         if action == "add":
             if self.manager.exists(name, parent):
                 error("التلميذ موجود")
@@ -83,16 +88,16 @@ class StudentsLogic(QWidget, StudentsUI):
 
         entity = SchemaFactory.STUDENT(
             name=name,
-            birthday=self.birthday.date().toPyDate(),
-            date_inscrit=date.toPyDate(),
-            note=self.note.text(),
+            birthday=data["birthday"],
+            date_inscrit=data["date_inscrit"],
+            note=data["note"],
             user=get_username(),
-            gender=self.gender.currentText(),
+            gender=data["gender"],
             parent=parent,
-            cin=cin,
-            activity=activity,
-            num_tel=f"{num_tel}/{num_tel_2}" if num_tel_2 else num_tel,
-            excused=excused
+            cin=data["cin"],
+            activity=data["activity"],
+            num_tel=f"{data['num_tel']}/{data['num_tel_2']}" if data['num_tel_2'] else data['num_tel'],
+            excused=data["excused"]
         )
         
         try:
@@ -106,9 +111,9 @@ class StudentsLogic(QWidget, StudentsUI):
         if action == "add":
             try:
                 self.manager.create(entity)
-                student_id = self.manager.get_last_student().num_inscrit
+                student_id = self.manager.get_last_student().id
                 self.add_ensurance(student_id, "تأمين")
-                self.add_history(student_id, date)
+                self.add_history(student_id, _date)
             except Exception as e:
                 error(str(e))
                 self.manager.db.rollback()

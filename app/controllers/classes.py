@@ -3,6 +3,8 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
 from sqlalchemy.exc import IntegrityError
 
+from .popup import create_popup_factory, PopupKind
+
 from ..view import TableType, create_table_model
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
@@ -50,25 +52,22 @@ class ClassesLogic(QWidget, ClassesUI):
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
-    def control(self, action):
-        name = self.name.text()
-        way = self.way.currentText()
-        teacher = self.teacher.currentText()
-        note = self.note.text()
-        price = self.price.text()
-        exchange = self.in_exchange.currentText()
-        teacher_part = self.teacher_price.value()
-        seance = self.seance.value()
+    def aquire_data(self, action):
+        dialog = create_popup_factory(
+            kind=PopupKind.CLASS_FORM, 
+            title="إضافة قسم" if action == "add" else "تعديل قسم", 
+            parent=self
+        )
+        dialog.confirmed.connect(lambda: self.control(action, dialog.content.get_data()))
+        dialog.show()
 
+    def control(self, action, data):
         entity = SchemaFactory.CLASSES(
-            name=name,
-            way=way,
-            teacher=teacher,
-            note=note,
-            price=price,
-            exchange=exchange,
-            teacher_part=teacher_part,
-            seance=seance,
+            name=data["name"],
+            way=data["way"],
+            teacher=data["teacher"],
+            note=data["note"],
+            price=data["price"],
             user=get_username()
         )
         try:

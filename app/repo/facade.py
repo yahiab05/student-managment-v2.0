@@ -8,7 +8,7 @@ class DBFacade:
     def get_all(self):
         return self.session.query(self.table).all()
     
-    def get_by_id(self, id):
+    def get_by_id(self, id) -> list:
         return self.session.query(self.table).filter(self.table.id == id).all()
     
     def add(self, data):

@@ -1,18 +1,14 @@
 from PyQt6.uic import loadUi
-from PyQt6.QtWidgets import QWidget, QMessageBox
+from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from .help import HelpLogic, Printing
 from os import path
-from .database import SessionLocal
-from .models import Entery, Settings, OutMoney, Caisse, Bank
-from tables_model.money_tables import EnteryTableModel, OutMoneyTableModel, BalanceTableModel, CaisseTabelModel, BankTabelModel
-from sqlalchemy import func
 
 from ..view import TableType, create_table_model
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import error, get_username, get_combo_manager, ReportType
 from ..ui.ui_forms import OutMoneyUI
+from .popup import create_popup_factory, PopupKind
 
 
 class OutMoneyLogic(QWidget, OutMoneyUI):
@@ -55,30 +51,31 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
         self.total.setText(str(self.model.total_price))
         self.tbl.hideColumn(self.model.ID_COLUMN)
-
-    def control(self, action):
-        name = self.name.currentText()
-        bill_num = self.bill_num.text()
-        date = self.date.date()
-        types = self.type.currentText()
-        way = self.way.currentText()
-        cheq_num = self.nb_cheque.text()
-        price = self.price.value()
-        note = self.note.text()
-        code = self.code_input.value()
-        in_bank = self.bank_caisse.currentText()
         
+    def aquire_data(self, action):
+        dialog = create_popup_factory(
+            kind=PopupKind.EXPENSES, 
+            title="إضافة مصروف" if action == "add" else "تعديل مصروف", 
+            parent=self
+        )
+        def on_confirm():
+            data = dialog.content.get_data()
+            self.control(action, data)
+        dialog.confirmed.connect(on_confirm)
+        dialog.show()
+
+    def control(self, action, data):
         entity = SchemaFactory.OUT_MONEY(
-            name=name,
-            bill_num=bill_num,
-            date=date,
-            type=types,
-            way=way,
-            cheq_num=cheq_num,
-            price=price,
-            note=note,
-            code=code,
-            in_bank=in_bank,
+            name=data["name"],
+            bill_num=data["bill_num"],
+            date=data["date"],
+            type=data["type"],
+            way=data["way"],
+            cheq_num=data["cheq_num"],
+            price=data["price"],
+            note=data["note"],
+            code=data["code"],
+            in_bank=data["in_bank"],
             user=get_username()
         )
         
@@ -91,7 +88,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             return
         try:
             if action == "add":
-                if self.unique(bill_num, date.toPyDate()):
+                if self.unique(data["bill_num"], data["date"]):
                     error("هذا المصروف موجود")
                     return
                 else:
@@ -107,19 +104,6 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
     def delete(self):
         self.manager.delete(self.identifier)
-
-    def reset(self):
-        self.identifier = 0
-
-        self.name.setCurrentIndex(-1)
-        self.date.setDate(QDate.currentDate())
-        self.type.setCurrentIndex(-1)
-        self.way.setCurrentIndex(-1)
-        self.price.setValue(0)
-        self.note.setText("")
-        self.bill_num.setText("")
-        self.nb_cheque.setText("")
-        self.code_input.setValue(0)
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)
@@ -138,7 +122,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         to_date = self.to.date().toPyDate()
         price = None if self.price_search.value() == 0 else self.price_search.value()
         operator = None if self.operatore.currentText() == "" else self.operatore.currentText()
-        code = None if self.code_input.value() == 0 else self.code_input.value()
+        code = None if self.code.value() == 0 else self.code.value()
 
         filters = self.manager.get_filters(
             name=name,
