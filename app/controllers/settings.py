@@ -6,6 +6,7 @@ from ..repo.schemas import SchemaFactory
 from ..utils import get_username, error, get_combo_manager
 from ..models import get_model
 from abc import ABC, abstractmethod
+from ..ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
 class BaseSettings(QWidget, ABC):
     def __init__(self, parent=None):
@@ -49,10 +50,10 @@ class BaseSettings(QWidget, ABC):
     def show_data(self, name=None):
         raise NotImplementedError("This method should be implemented in subclasses.")
     
-class SettingsWithCode(BaseSettings):
+class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
     def __init__(self, is_income, parent=None):
         super().__init__(parent=parent)
-        ui_path = path.abspath("../ui/forms/setting_with_code_form.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "forms", "setting_with_code_form.ui"))
 
         loadUi(ui_path, self)
 
@@ -143,11 +144,11 @@ class ExpenseSettings(SettingsWithCode):
         filters = self.manager.get_filter(out_money=name)
         super().show_data(filters)
 
-class SettingsWithoutCode(BaseSettings):
+class SettingsWithoutCode(BaseSettings, SettingFormUI):
     def __init__(self, setting: str, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath("../ui/forms/setting_form.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "forms", "setting_form.ui"))
 
         loadUi(ui_path, self)
         
@@ -267,18 +268,18 @@ class FournisseurSettings(SettingsWithoutCode):
 
     def fournisseur_check_used(self, name):
         model = get_model("expenses")
-        filters = model.get_filter(name=name)
+        filters = model.get_filters(name=name)
         return model.exists(filters)
 
     def fournisseur_show(self, name=None):
         filters = self.manager.get_filter(fr=name)
         super().show_data(filters)
 
-class SettingsLogic(QWidget):
+class SettingsLogic(QWidget, SettingsUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath("../ui/others/settings.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "others", "settings.ui"))
 
         loadUi(ui_path, self)
 

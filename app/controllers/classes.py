@@ -13,11 +13,12 @@ from ..utils import (
     ReportType,
     get_combo_manager,
 )
+from ..ui.ui_forms import ClassesUI, ClasseleveUI
 
-class ClassesLogic(QWidget):
+class ClassesLogic(QWidget, ClassesUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ui_path = os.path.abspath("./ui/classes.ui")
+        ui_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ui", "classes", "classes.ui"))
 
         loadUi(ui_path, self)
 
@@ -168,11 +169,11 @@ class ClassesLogic(QWidget):
         
         self.manager.export_data(report_type=output_channel, parent=self)
 
-class ClasseleveLogic(QWidget):
+class ClasseleveLogic(QWidget, ClasseleveUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = os.path.abspath("./ui/classeleve.ui")
+        ui_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ui", "classes", "classeleve.ui"))
         loadUi(ui_path, self)
 
         self.model = None

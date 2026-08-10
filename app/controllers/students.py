@@ -13,13 +13,14 @@ from ..utils import (
     export_report,
     ReportType
 )
+from ..ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 
 
-class StudentsLogic(QWidget):
+class StudentsLogic(QWidget, StudentsUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        ui_path = path.abspath("./ui/students.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "students", "students.ui"))
         loadUi(ui_path, self)
 
         self.identifier = None
@@ -300,11 +301,11 @@ class StudentsLogic(QWidget):
             parent=self
         )
 
-class StudentsHistoryLogic(QWidget):
+class StudentsHistoryLogic(QWidget, StudentHistoryUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("./ui/student_history.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "students", "student_history.ui"))
         loadUi(ui_path, self)
 
         self.model = None
@@ -356,11 +357,11 @@ class StudentsHistoryLogic(QWidget):
             parent=self
         )
 
-class ClassesPerStudentLogic(QWidget):
+class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        ui_path = path.abspath("./ui/classes_per_student.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "classes", "classes_per_student.ui"))
         loadUi(ui_path, self)
 
         self.model = None

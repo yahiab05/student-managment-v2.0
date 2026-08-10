@@ -7,12 +7,13 @@ from ..view import TableType, create_table_model
 from ..models import get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import error, get_username, get_combo_manager, ReportType
+from ..ui.ui_forms import TeacherUI, TeacherHistoryUI
 
 
-class TeacherLogic(QWidget):
+class TeacherLogic(QWidget, TeacherUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ui_path = path.abspath("./ui/teacher.ui")  # Convert to absolute path
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "teacher", "teacher.ui"))
 
         loadUi(ui_path, self)
 
@@ -222,11 +223,11 @@ class TeacherLogic(QWidget):
             parent=self
             )
 
-class TeachersHistoryLogic(QWidget):
+class TeachersHistoryLogic(QWidget, TeacherHistoryUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("./ui/teacher_history.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "teacher", "teacher_history.ui"))
         loadUi(ui_path, self)
 
         self.model = None

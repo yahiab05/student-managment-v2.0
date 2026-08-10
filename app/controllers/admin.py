@@ -1,17 +1,20 @@
-from ..models import get_model
+from os import path
+from PyQt6.QtWidgets import QWidget
 from PyQt6.uic import loadUi
 from ..repo import create_db
+from ..models import get_model
 
 from .mainWindow import mainWindow
+from ..ui.ui_forms import LoginUI
 
-class Login:
+class Login(QWidget, LoginUI):
     def __init__(self):
-        
         create_db()  # Ensure the database is created before proceeding
 
-        path = path.abspath("../ui/login.ui")
+        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "login.ui"))
 
-        loadUi(path, self)
+        super().__init__()
+        loadUi(ui_path, self)
         
         self.manager = get_model("login")
 
