@@ -123,6 +123,13 @@ class ExpensesForm(QWidget, ExpensesFormUI):
         
         self.combo_manager = get_combo_manager()
         self.settings_manager = get_model(ModelName.SETTINGS)
+        
+        self.setup_connections()
+        
+    def setup_connections(self):
+        self.way.currentTextChanged.connect(self.cheq_num_on_off)
+        self.type.currentTextChanged.connect(self.get_code)
+        self.code_input.valueChanged.connect(self.get_type)
 
     def get_data(self):
         return {
@@ -181,7 +188,12 @@ class IncomeForm(QWidget, IncomeFormUI):
         _load_form_ui(self, "forms", "income_from.ui")
         
         self.combo_manager = get_combo_manager()
-        self.setting_manager
+        self.settings_manager = get_model(ModelName.SETTINGS)
+        
+    def setup_connections(self):
+        self.way.currentTextChanged.connect(self.cheq_num_on_off)
+        self.type.currentTextChanged.connect(self.get_code)
+        self.code_input.valueChanged.connect(self.get_type)
 
     def get_data(self):
         return {
@@ -191,7 +203,7 @@ class IncomeForm(QWidget, IncomeFormUI):
             "type": self.type.currentText(),
             "way": self.way.currentText(),
             "bill_number": self.bill_number.text(),
-            "nb_cheque": self.nb_cheque.text(),
+            "cheq_num": self.nb_cheque.text(),
             "bank_caisse": self.bank_caisse.currentText(),
             "price": self.price.value(),
             "note": self.note.text(),
@@ -209,10 +221,32 @@ class IncomeForm(QWidget, IncomeFormUI):
         self.price.setValue(data.get("price", 0.0))
         self.note.setText(data.get("note", ""))
         
+        self.bank_caisse.setEnabled(False)
+        
     def populate_combos(self) -> None:
         self.combo_manager.update_combo(self.type, ComboName.INCOME)
         self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
         
+    def cheq_num_on_off(self):
+        if self.way.currentText() == "صك":
+            self.nb_cheque.setEnabled(True)
+        else:
+            self.nb_cheque.setEnabled(False)
+            
+    def get_code(self):
+        expense_type = self.settings_manager.get_code(income=self.type.currentText(), expense=None)
+        if expense_type is None:
+            self.code_input.setValue(0)
+        else:
+            self.code_input.setValue(expense_type)
+            
+    def get_type(self):
+        code = self.settings_manager.get_type(income_code=self.code_input.value(), expense_code=None)
+        if code is None:
+            self.type.setCurrentIndex(-1)
+        else:
+            self.type.setCurrentText(code[0])
+
 class PaymentForm(QWidget, SettingFormUI):
     raise NotImplementedError("PaymentForm is not implemented yet.")
 

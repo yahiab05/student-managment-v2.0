@@ -24,23 +24,18 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.combo_manager = get_combo_manager()
         self.settings_manager = get_model(ModelName.SETTINGS)
 
-        self.reset()
         self.reset_filter()
         self.setup()
         self.populate_combo()
         self.setup_table()
 
     def setup(self):
-        self.new_btn.clicked.connect(self.reset)
         self.add_btn.clicked.connect(lambda: self.control("add"))
         self.update_btn.clicked.connect(lambda: self.control("update"))
         self.delete_btn.clicked.connect(self.delete)
         self.tbl.doubleClicked.connect(self.select_out)
         self.search_btn.clicked.connect(self.show_out)
         self.reset_btn.clicked.connect(self.reset_filter)
-        self.way.currentTextChanged.connect(self.cheq_num_on_off)
-        self.type.currentTextChanged.connect(self.get_code)
-        self.code_input.valueChanged.connect(self.get_type)
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
@@ -159,6 +154,9 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
         self.tbl.clearSelection()
+        self.aquire_data("update")
+        
+        
     def unique(self, bill_num, date):
         filters = self.manager.get_filters(bill_num=bill_num, from_date=date, to_date=date)
         return self.manager.exists(filters)
