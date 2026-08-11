@@ -10,7 +10,9 @@ from ..utils import (
     error, 
     get_username,
     get_combo_manager,
-    ReportType
+    ReportType,
+    ComboName,
+    WorkingMode
 )
 from ..ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 from .popup import create_popup_factory, PopupKind
@@ -27,6 +29,8 @@ class StudentsLogic(QWidget, StudentsUI):
         self.model = None
         
         self.manager = get_model(ModelName.STUDENT)
+        self.enrollment_manager = get_model(ModelName.ENROLLMENT)
+        self.history_manager = get_model(ModelName.STUDENT_HISTORY)
         self.combo_manager = get_combo_manager()
 
         self.to.setDate(QDate.currentDate())
@@ -44,8 +48,8 @@ class StudentsLogic(QWidget, StudentsUI):
 
     def setup(self):
         self.new_btn.clicked.connect(self.reset)
-        self.add_btn.clicked.connect(lambda: self.controls("add"))
-        self.update_btn.clicked.connect(lambda: self.controls("update"))
+        self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.security)
         self.minimize.clicked.connect(lambda: self.search_section("minimize"))
         self.maximize.clicked.connect(lambda: self.search_section("maximize"))
@@ -62,12 +66,19 @@ class StudentsLogic(QWidget, StudentsUI):
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
 
-    def aquire_data(self, action):
+    def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.STUDENT,
-            title="إضافة تلميذ" if action == "add" else "تعديل تلميذ",
+            title="إضافة تلميذ" if action == WorkingMode.ADD else "تعديل تلميذ",
             parent=self
         )
+        
+        if action == WorkingMode.UPDATE:
+            if self.identifier is None:
+                error("يرجى تحديد التلميذ")
+                return
+            data = self.manager.get_by_id(self.identifier)
+            dialog.content.repopulate_fields(data.__dict__)
         def on_confirmed():
             data = dialog.content.get_data()
             self.controls(action, data)
@@ -77,13 +88,9 @@ class StudentsLogic(QWidget, StudentsUI):
 
     def controls(self, action, data): 
         name, parent, _date = data["name"], data["parent"], data["date_inscrit"]
-        if action == "add":
+        if action == WorkingMode.ADD:
             if self.manager.exists(name, parent):
                 error("التلميذ موجود")
-                return
-        else:
-            if self.identifier is None:
-                error("يرجى تحديد التلميذ")
                 return
 
         entity = SchemaFactory.STUDENT(
@@ -108,7 +115,7 @@ class StudentsLogic(QWidget, StudentsUI):
             error(str(e))
             return
         
-        if action == "add":
+        if action == WorkingMode.ADD:
             try:
                 self.manager.create(entity)
                 student_id = self.manager.get_last_student().id
@@ -144,7 +151,7 @@ class StudentsLogic(QWidget, StudentsUI):
             return  
         
         try:
-            self.manager.enrollments.create(ensurance)
+            self.enrollments_manager.create(ensurance)
         except IntegrityError as e:
             self.manager.db.rollback()
             error(str(e))
@@ -160,25 +167,6 @@ class StudentsLogic(QWidget, StudentsUI):
         
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
         self.student_tab.clearSelection()
-        self.repopulate()
-
-    def repopulate(self):
-        student = self.manager.get_by_id(self.identifier)
-
-        if student is not None:	
-            self.name.setText(student.name)
-            self.birthday.setDate(student.get_birthday())
-            self.parent.setText(student.parent)
-            self.cin.setText(str(student.cin))
-            self.activity.setCurrentText(student.activity)
-            self.excused.setCurrentText(student.excused)
-            self.date_inscrit.setDate(student.get_date_inscrit())
-            self.gender.setCurrentText(student.gender)
-            self.note.setText(student.note)
-            nums = student.num_tel.split("/")
-            self.num_tel.setText(nums[0])
-            if len(nums) == 2:
-                self.num_tel_2.setText(nums[1])
 
     def security(self):
         msg = QMessageBox()
@@ -226,7 +214,7 @@ class StudentsLogic(QWidget, StudentsUI):
     def add_history(self, student_id, date): 
         entity = SchemaFactory.STUDENT_HISTORY(
             num_inscrit=student_id,
-            date_inscrit= self.manager.history.set_date(date),
+            date_inscrit= date,
             user=get_username()
         )
 
@@ -238,21 +226,10 @@ class StudentsLogic(QWidget, StudentsUI):
             error(str(e))
             return
         try:
-            self.manager.history.create(entity)
+            self.history_manager.create(entity)
         except IntegrityError as e:
             self.manager.db.rollback()
             error("لم تتم الاضافة")
-
-    def reset(self):
-        self.name.setText("")
-        self.birthday.setDate(QDate.fromString("2000-01-01", "yyyy-MM-dd"))
-        self.parent.setText("")
-        self.num_tel.setText("")
-        self.num_tel_2.setText("")
-        self.cin.setText("")
-        self.activity.setCurrentText("")
-        self.excused.setCurrentText("")
-        self.date_inscrit.setDate(QDate.currentDate())
 
     def reset_filters(self):
         self.search_by_name.setText("")

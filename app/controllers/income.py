@@ -1,10 +1,7 @@
 from PyQt6.uic import loadUi
-from PyQt6.QtWidgets import QWidget, QMessageBox
+from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
 from os import path
-
-from app.repo.database import SessionLocal
-from app.repo.models import Settings
 
 from ..repo.schemas import SchemaFactory
 
@@ -13,7 +10,8 @@ from ..utils import (
     get_username, 
     get_combo_manager, 
     ReportType, 
-    ComboName
+    ComboName,
+    WorkingMode
     )
 
 from ..view import TableType, create_table_model
@@ -40,8 +38,8 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         self.setup()
 
     def setup(self):
-        self.add_btn.clicked.connect(lambda: self.aquire_data("add"))
-        self.update_btn.clicked.connect(lambda: self.aquire_data("update"))
+        self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.reset_btn.clicked.connect(self.reset_filter)
         self.search_btn.clicked.connect(self.show_entery)
         self.tbl.doubleClicked.connect(self.select)
@@ -57,13 +55,13 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
 
         self.total.setText(str(self.model.total_price)) 
         
-    def aquire_data(self, action):
+    def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.INCOME,
-            title="إضافة دخل" if action == "add" else "تعديل دخل",
+            title="إضافة دخل" if action == WorkingMode.ADD else "تعديل دخل",
             parent=self
         )    
-        if action == "update":
+        if action == WorkingMode.UPDATE:
             data = self.manager.get_by_id(self.identifier)
             dialog.content.repopulate_fields(data.__dict__)
         
@@ -97,11 +95,10 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
             error(str(e))
             return
 
-        if action == "add":
+        if action == WorkingMode.ADD:
             self.manager.create(entity)
         else:
             self.manager.update(self.identifier, entity)
-        self.reset()
         self.show_entery()
 
     def select(self):

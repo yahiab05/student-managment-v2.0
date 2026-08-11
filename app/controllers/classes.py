@@ -14,6 +14,8 @@ from ..utils import (
     error,
     ReportType,
     get_combo_manager,
+    WorkingMode,
+    ComboName
 )
 from ..ui.ui_forms import ClassesUI, ClasseleveUI
 
@@ -42,9 +44,8 @@ class ClassesLogic(QWidget, ClassesUI):
 
 
     def setup(self):
-        self.new_btn.clicked.connect(self.reset)
-        self.add_btn.clicked.connect(lambda: self.control("add"))
-        self.update_btn.clicked.connect(lambda: self.control("update"))
+        self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete_class)
         self.class_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_class)
@@ -52,16 +53,27 @@ class ClassesLogic(QWidget, ClassesUI):
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
-    def aquire_data(self, action):
+    def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.CLASS_FORM, 
-            title="إضافة قسم" if action == "add" else "تعديل قسم", 
+            title="إضافة قسم" if action == WorkingMode.ADD else "تعديل قسم", 
             parent=self
         )
-        dialog.confirmed.connect(lambda: self.control(action, dialog.content.get_data()))
+        if action == WorkingMode.UPDATE:
+            if self.identifier is None:
+                error("يرجى تحديد قسم")
+                return
+            data = self.manager.get_by_id(self.identifier)
+            dialog.content.repopulate_fields(data.__dict__)
+            
+        def on_confirm():
+            data = dialog.content.get_data()
+            self.control(action, data)
+            
+        dialog.confirmed.connect(on_confirm)
         dialog.show()
 
-    def control(self, action, data):
+    def control(self, action: WorkingMode, data):
         entity = SchemaFactory.CLASSES(
             name=data["name"],
             way=data["way"],
@@ -78,14 +90,13 @@ class ClassesLogic(QWidget, ClassesUI):
             error(str(e))
             return
 
-        if action == "add":
+        if action == WorkingMode.ADD:
             self.manager.create(entity)
-        elif action == "update":
+        elif action == WorkingMode.UPDATE:
             self.manager.update(self.identifier, entity)
             
-        self.reset()
         self.show_class()
-        self.combo_manager.update_cache_from_db("classes")
+        self.combo_manager.update_cache_from_db(combo_name=ComboName.CLASS)
 
     def select_row(self):
         row = self.class_table.selectionModel().selectedRows()
@@ -96,24 +107,6 @@ class ClassesLogic(QWidget, ClassesUI):
         row_index = row[0].row()    
 
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
-
-        self.repopulate()
-
-    def repopulate(self):
-        if self.identifier is None:
-            error("يرجى تحديد قسم")
-            return
-        data = self.manager.get_by_id(self.identifier)
-
-        if data is not None:
-            self.name.setText(data.name)
-            self.way.setCurrentText(data.way)
-            self.teacher.setCurrentText(data.teacher)
-            self.note.setText(data.note)
-            self.price.setText(str(data.price))
-            self.in_exchange.setCurrentText(data.exchange)
-            self.teacher_price.setValue(data.teacher_part)
-            self.seance.setValue(data.seance)
 
     def delete_class(self):
         self.manager.sup_security(self.identifier)
@@ -137,19 +130,7 @@ class ClassesLogic(QWidget, ClassesUI):
         self.nb.setText(str(self.model.rowCount()))       
 
     def populate_combos(self):
-        teachers = self.combo_manager.get_cached_data("teachers")
-        ways = self.combo_manager.get_cached_data("way teaching")
-
-        for teacher in teachers:
-            self.teacher.addItem(teacher[0])
-            self.teacher_search.addItem(teacher[0])
-
-        for way in ways:
-            self.way.addItem(way[0])
-
-        self.teacher.setCurrentIndex(-1)
-        self.way.setCurrentIndex(-1)
-        self.teacher_search.setCurrentIndex(-1)
+        self.combo_manager.update_combo(self.teacher_search, ComboName.TEACHER)
 
     def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
@@ -295,7 +276,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.classes.setCurrentIndex(-1)
 
     def populate_combo(self):
-        classes = self.combo_manager.get_cached_data("classes")
+        classes = self.combo_manager.get_cached_data(data_name=ComboName.CLASS)
 
         for class_name in classes:
             self.classes.addItem(class_name[0])

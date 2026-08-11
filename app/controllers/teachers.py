@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from ..view import TableType, create_table_model
 from ..models import ModelName, get_model
 from ..repo.schemas import SchemaFactory
-from ..utils import error, get_username, get_combo_manager, ReportType
+from ..utils import error, get_username, get_combo_manager, ReportType, WorkingMode
 from ..ui.ui_forms import TeacherUI, TeacherHistoryUI
 from .popup import create_popup_factory, PopupKind
 
@@ -29,13 +29,10 @@ class TeacherLogic(QWidget, TeacherUI):
         self.setup()
         self.setup_table()
         self.show_teachers()
-        self.reset()
-
 
     def setup(self):
-        self.new_btn.clicked.connect(self.reset)
-        self.add_btn.clicked.connect(lambda: self.control("add"))
-        self.update_btn.clicked.connect(lambda: self.control("update"))
+        self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete)
         self.teachers_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_teachers)
@@ -49,16 +46,28 @@ class TeacherLogic(QWidget, TeacherUI):
         self.teachers_table.setModel(self.model)
         self.teachers_table.hideColumn(self.model.ID_COLUMN)
 
-    def aquire_data(self, action):
+    def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.TEACHER, 
-            title="إضافة معلم" if action == "add" else "تعديل معلم", 
+            title="إضافة معلم" if action == WorkingMode.ADD else "تعديل معلم", 
             parent=self
         )
-        dialog.confirmed.connect(lambda: self.controls(action, dialog.content.get_data()))
+        
+        if action == WorkingMode.UPDATE:
+            if self.identifier is None:
+                error("يرجى تحديد معلم")
+                return
+            data = self.manager.get_by_id(self.identifier)
+            dialog.content.repopulate_fields(data.__dict__)
+        
+        def on_confirm():
+            data = dialog.content.get_data()
+            self.control(action, data)
+            
+        dialog.confirmed.connect(on_confirm)
         dialog.show()
 
-    def control(self, action, data):
+    def control(self, action: WorkingMode, data: dict):
         phone1 = data["phone"]
         phone2 = data["phone_2"]
 
@@ -84,7 +93,7 @@ class TeacherLogic(QWidget, TeacherUI):
             error(str(e))
             return
     
-        if action == "add":
+        if action == WorkingMode.ADD:
             try: 
                 self.manager.create(entity)
                 self.add_history(self.manager.get_last_id(), 

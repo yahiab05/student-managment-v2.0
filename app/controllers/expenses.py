@@ -6,7 +6,7 @@ from os import path
 from ..view import TableType, create_table_model
 from ..models import ModelName, get_model
 from ..repo.schemas import SchemaFactory
-from ..utils import error, get_username, get_combo_manager, ReportType, ComboName
+from ..utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode
 from ..ui.ui_forms import OutMoneyUI
 from .popup import create_popup_factory, PopupKind
 
@@ -30,8 +30,8 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.setup_table()
 
     def setup(self):
-        self.add_btn.clicked.connect(lambda: self.control("add"))
-        self.update_btn.clicked.connect(lambda: self.control("update"))
+        self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete)
         self.tbl.doubleClicked.connect(self.select_out)
         self.search_btn.clicked.connect(self.show_out)
@@ -47,13 +47,13 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.total.setText(str(self.model.total_price))
         self.tbl.hideColumn(self.model.ID_COLUMN)
         
-    def aquire_data(self, action):
+    def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.EXPENSES, 
-            title="إضافة مصروف" if action == "add" else "تعديل مصروف", 
+            title="إضافة مصروف" if action == WorkingMode.ADD else "تعديل مصروف", 
             parent=self
         )
-        if action == "update":
+        if action == WorkingMode.UPDATE:
             data = self.manager.get_by_id(self.identifier)
             dialog.content.repopulate_fields(data.__dict__)
         
@@ -87,7 +87,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             error(str(e))
             return
         try:
-            if action == "add":
+            if action == WorkingMode.ADD:
                 if self.unique(data["bill_num"], data["date"]):
                     error("هذا المصروف موجود")
                     return

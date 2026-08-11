@@ -3,12 +3,12 @@ from PyQt6.QtWidgets import QWidget, QTableWidgetItem
 from sqlalchemy.exc import IntegrityError
 from os import path
 from ..repo.schemas import SchemaFactory
-from ..utils import get_username, error, get_combo_manager
+from ..utils import get_username, error, get_combo_manager, WorkingMode, ComboName
 from ..models import ModelName, get_model
 from abc import ABC, abstractmethod
 from ..ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
-class BaseSettings(QWidget, ABC):
+class BaseSettings(QWidget, ABC ,SettingFormUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
@@ -18,8 +18,8 @@ class BaseSettings(QWidget, ABC):
     """Out section"""
     def setup(self):
         self.reset_btn.clicked.connect(self.reset_enteries)
-        self.add_btn.clicked.connect(lambda: self.control("add"))
-        self.update_btn.clicked.connect(lambda: self.control("update"))
+        self.add_btn.clicked.connect(lambda: self.control(WorkingMode.ADD))
+        self.update_btn.clicked.connect(lambda: self.control(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete)
         self.list.itemDoubleClicked.connect(self.select_row)
         self.entery.textChanged.connect(lambda: self.show_data(self.entery.text()))
@@ -73,7 +73,7 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
         if not entity.validate():
             error("Verifier les données")
             return
-        if action == "add":
+        if action == WorkingMode.ADD:
             self.manager.create(entity)
         else:
             self.manager.update(self.identifier, entity)
@@ -81,7 +81,7 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
         self.reset_enteries()
         self.identifier = None
         self.show_data()
-        self.combo_manager.update_cache_from_db("entery" if self.income else "out_money")
+        self.combo_manager.update_cache_from_db(ComboName.INCOME if self.income else ComboName.EXPENSES)
         
     def delete(self):
         code = int(self.entery.text())
@@ -146,7 +146,7 @@ class ExpenseSettings(SettingsWithCode):
         super().show_data(filters)
 
 class SettingsWithoutCode(BaseSettings, SettingFormUI):
-    def __init__(self, setting: str, parent=None):
+    def __init__(self, setting: ComboName, parent=None):
         super().__init__(parent=parent)
 
         ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "forms", "setting_form.ui"))
@@ -161,11 +161,11 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         name = self.entery.text()
         username = get_username()
         
-        if self.setting == "way teaching":
+        if self.setting == ComboName.WAY_TEACHING:
             entity = SchemaFactory.SETTINGS(way_teaching=name, user=username)
-        elif self.setting == "way payment":
+        elif self.setting == ComboName.WAY_PAYMENT:
             entity = SchemaFactory.SETTINGS(way_payment=name, user=username)
-        elif self.setting == "fr":
+        elif self.setting == ComboName.FR:
             entity = SchemaFactory.SETTINGS(fr=name, user=username)
         else:
             error("Invalid setting type")
@@ -174,11 +174,11 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         if not entity.validate():
             error("Verifier les données")
             return
-        if action == "add":
+        if action == WorkingMode.ADD:
             self.manager.create(entity)
         else:
             filter = self.get_appropriate_filter(name)
-            self.manager.update_filter(filter, entity)
+            self.manager.update_by_filter(filter, entity)
             
         self.reset_enteries()
         self.identifier = None
@@ -200,12 +200,13 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
                 self.reset_enteries()
                 self.identifier = None
                 self.combo_manager.update_cache_from_db(self.setting)
+                
     def get_appropriate_filter(self, name):
-        if self.setting == "way teaching":
+        if self.setting == ComboName.WAY_TEACHING:
             return self.manager.get_filter(way_teaching=name)
-        elif self.setting == "way payment":
+        elif self.setting == ComboName.WAY_PAYMENT:
             return self.manager.get_filter(way_payment=name)
-        elif self.setting == "fr":
+        elif self.setting == ComboName.FR:
             return self.manager.get_filter(fr=name)
         else:
             raise ValueError("Invalid setting type")
@@ -220,11 +221,11 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         
         if len(data) > 0:
             for i, class_obj in enumerate(data):
-                if self.setting == "way teaching":
+                if self.setting == ComboName.WAY_TEACHING:
                     self.list.addItem(class_obj.way_teaching)
-                elif self.setting == "way payment":
+                elif self.setting == ComboName.WAY_PAYMENT:
                     self.list.addItem(class_obj.way_payment)
-                elif self.setting == "fr":
+                elif self.setting == ComboName.FR:
                     self.list.addItem(class_obj.fr)
                     
         self.nb.setText(str(len(data))) 

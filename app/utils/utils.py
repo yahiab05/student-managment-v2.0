@@ -44,6 +44,10 @@ class ReportType(StrEnum):
     PRINT = auto()
     EXCEL = auto()
     
+class WorkingMode(StrEnum):
+    ADD = auto()
+    UPDATE = auto()
+    
     
 def income_added(where, id, amount , date, note) -> None:
     session = SessionLocal()
