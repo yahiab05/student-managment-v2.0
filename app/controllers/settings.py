@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from os import path
 from ..repo.schemas import SchemaFactory
 from ..utils import get_username, error, get_combo_manager
-from ..models import get_model
+from ..models import ModelName, get_model
 from abc import ABC, abstractmethod
 from ..ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
@@ -12,7 +12,7 @@ class BaseSettings(QWidget, ABC):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
-        self.manager = get_model("settings")
+        self.manager = get_model(ModelName.SETTINGS)
         self.combo_manager = get_combo_manager()
 
     """Out section"""
@@ -125,7 +125,7 @@ class IncomeSettings(SettingsWithCode):
         self.setup()
         
     def check_used(self, code):
-        model = get_model("income")
+        model = get_model(ModelName.INCOME)
         return model.check_used(code)
     
     def show_data(self, name=None):
@@ -138,7 +138,7 @@ class ExpenseSettings(SettingsWithCode):
         
         self.setup()
     def check_used(self, code):
-        model = get_model("expense")
+        model = get_model(ModelName.EXPENSE)
         return model.check_used(code)
     
     def show_data(self, name=None):
@@ -235,7 +235,7 @@ class WaySettings(SettingsWithoutCode):
 
         self.setup()
     def check_used(self, way):
-        model = get_model("classes")
+        model = get_model(ModelName.CLASSES)
         filters = model.get_filters(way_teaching=way)
         return model.exists(filters)
 
@@ -250,10 +250,11 @@ class PaymentSettings(SettingsWithoutCode):
         self.setup()
 
     def check_used(self, name):
-        return self.used_per_model("income", name) \
-        or self.used_per_model("expense", name)
-        
-    def used_per_model(model: str, name: str):
+        return self.used_per_model(ModelName.INCOME, name) \
+        or self.used_per_model(ModelName.EXPENSE, name)
+
+    @staticmethod
+    def used_per_model(model: ModelName, name: str):
         model = get_model(model)
         filters = model.get_filter(way_payment=name)
         return model.exists(filters)
@@ -269,7 +270,7 @@ class FournisseurSettings(SettingsWithoutCode):
         self.setup()
 
     def fournisseur_check_used(self, name):
-        model = get_model("expenses")
+        model = get_model(ModelName.EXPENSES)
         filters = model.get_filters(name=name)
         return model.exists(filters)
 

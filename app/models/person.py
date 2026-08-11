@@ -1,4 +1,4 @@
-
+from .names import ModelName
 from .basic_operations import CRUD
 from .classes import Enrollment
 from ..utils.utils import error
@@ -6,7 +6,7 @@ from ..utils.utils import error
 class Student(CRUD):
     # Concrete child class for student records that uses the students table.
     def __init__(self, session):
-        super().__init__(session, "students")
+		super().__init__(session, ModelName.STUDENTS)
         self.enrollments = Enrollment(session)
         self.history = StudentHistory(session)
         
@@ -96,7 +96,7 @@ class Student(CRUD):
 class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
     def __init__(self, session):
-        super().__init__(session, "teachers")
+		super().__init__(session, ModelName.TEACHERS)
         
         self.set_static_metadata()
         
@@ -119,7 +119,7 @@ class Teacher(CRUD):
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.
     def __init__(self, session):
-        super().__init__(session, "students_history")
+		super().__init__(session, ModelName.STUDENTS_HISTORY)
 
     def set_date(self, date):
         return self.db.table.set_date_inscrit(date)
@@ -143,7 +143,7 @@ class StudentHistory(CRUD):
 class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.
     def __init__(self, session):
-        super().__init__(session, "teachers_history")
+		super().__init__(session, ModelName.TEACHERS_HISTORY)
 
     def search_by_id(self, teacher_id: int):
         """Search history records by teacher ID, joined with the teacher table."""

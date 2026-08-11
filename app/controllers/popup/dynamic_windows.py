@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget
 from os import path
 from typing import Protocol
 from app.utils import get_combo_manager, ComboName
+from models import get_model, ModelName
 
 from app.ui.ui_forms import (
     ClassesFormUI,
@@ -121,6 +122,7 @@ class ExpensesForm(QWidget, ExpensesFormUI):
         _load_form_ui(self, "forms", "expenses_form.ui")
         
         self.combo_manager = get_combo_manager()
+        self.settings_manager = get_model(ModelName.SETTINGS)
 
     def get_data(self):
         return {
@@ -152,6 +154,26 @@ class ExpensesForm(QWidget, ExpensesFormUI):
         self.combo_manager.update_combo(self.name, ComboName.FR)
         self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
         self.combo_manager.update_combo(self.type, ComboName.EXPENSES)  
+        
+    def cheq_num_on_off(self):
+        if self.way.currentText() == "صك":
+            self.nb_cheque.setEnabled(True)
+        else:    
+            self.nb_cheque.setEnabled(False)
+            
+    def get_code(self):
+        code = self.settings_manager.get_code(
+            income=None, 
+            expense=self.type.currentText()
+            )
+        self.code_input.setValue(code if code is not None else 0)
+
+    def get_type(self):
+        expense = self.settings_manager.get_type(
+            income_code=None,
+            expense_code=self.code_input.value()
+            )
+        self.type.setCurrentText(expense if expense is not None else "")
 
 class IncomeForm(QWidget, IncomeFormUI):
     def __init__(self, parent=None):
@@ -159,6 +181,7 @@ class IncomeForm(QWidget, IncomeFormUI):
         _load_form_ui(self, "forms", "income_from.ui")
         
         self.combo_manager = get_combo_manager()
+        self.setting_manager
 
     def get_data(self):
         return {

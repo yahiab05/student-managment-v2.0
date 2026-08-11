@@ -1,3 +1,4 @@
+from .names import ModelName
 from .basic_operations import CRUD
 from ..utils.utils import error
 
@@ -5,19 +6,19 @@ from ..utils.utils import error
 class Roles(CRUD):
     # Concrete child class for role records that uses the role table.
     def __init__(self, session):
-        super().__init__(session, "roles")
+		super().__init__(session, ModelName.ROLES)
 
 
 class Users(CRUD):
     # Concrete child class for user records that uses the users table.
     def __init__(self, session):
-        super().__init__(session, "users")
+		super().__init__(session, ModelName.USERS)
 
 
 class Login(CRUD):
     # Concrete child class for login records that uses the login table.
     def __init__(self, session):
-        super().__init__(session, "login")
+		super().__init__(session, ModelName.LOGIN)
         
     def check_login(self, username, password):
         filters = [

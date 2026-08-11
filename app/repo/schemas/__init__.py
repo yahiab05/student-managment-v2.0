@@ -2,7 +2,7 @@ from typing import Type
 
 from .classes_schema import ClassesSchema, EnrollmentSchema
 from .person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
-from .money_schema import EntrySchema, ExpensesSchema, StorageSchema
+from .money_schema import EntrySchema, ExpensesSchema
 from .others_schema import RoleSchema, SettingsSchema, UserSchema
 
 
@@ -17,8 +17,6 @@ class SchemaFactory:
         instance = Schema(**payload)
     """
 
-    ABSENT_S = AbsentSSchema
-    ABSENT_T = AbsentTSchema
     CLASSES = ClassesSchema
     ENROLLMENT = EnrollmentSchema
     STUDENT = StudentSchema
@@ -27,7 +25,6 @@ class SchemaFactory:
     TEACHER_HISTORY = TeacherHistorySchema
     INCOME = EntrySchema
     EXPENSES = ExpensesSchema
-    STORAGE = StorageSchema
     ROLE = RoleSchema
     SETTINGS = SettingsSchema
     USER = UserSchema

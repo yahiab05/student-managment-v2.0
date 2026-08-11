@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from .popup import create_popup_factory, PopupKind
 
 from ..view import TableType, create_table_model
-from ..models import get_model
+from ..models import ModelName, get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import (
     get_username,
@@ -28,7 +28,7 @@ class ClassesLogic(QWidget, ClassesUI):
 
         self.identifier = 0
         
-        self.manager = get_model("classes")
+        self.manager = get_model(ModelName.CLASSES)
         self.combo_manager = get_combo_manager()
         
         self.setup()
@@ -168,7 +168,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.model = None
         self.model_classeleve = None
         
-        self.manager = get_model("enrollment")
+        self.manager = get_model(ModelName.ENROLLMENT)
         self.combo_manager = get_combo_manager()
 
         self.set_table()

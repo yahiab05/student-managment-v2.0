@@ -4,7 +4,7 @@ from PyQt6.QtCore import QDate
 from os import path
 from sqlalchemy.exc import IntegrityError
 from ..view import TableType, create_table_model
-from ..models import get_model
+from ..models import ModelName, get_model
 from ..repo.schemas import SchemaFactory
 from ..utils import error, get_username, get_combo_manager, ReportType
 from ..ui.ui_forms import TeacherUI, TeacherHistoryUI
@@ -19,10 +19,10 @@ class TeacherLogic(QWidget, TeacherUI):
         loadUi(ui_path, self)
 
         self.model = None
-        self.manager = get_model("teachers")
+        self.manager = get_model(ModelName.TEACHERS)
         self.combo_manager = get_combo_manager()
-        self.classes_manager = get_model("classes")
-        self.history_manager = get_model("teachers_history")
+        self.classes_manager = get_model(ModelName.CLASSES)
+        self.history_manager = get_model(ModelName.TEACHERS_HISTORY)
 
         self.identifier = None
         
@@ -230,7 +230,7 @@ class TeachersHistoryLogic(QWidget, TeacherHistoryUI):
         loadUi(ui_path, self)
 
         self.model = None
-        self.manager = get_model("teachers_history")
+        self.manager = get_model(ModelName.TEACHERS_HISTORY)
         
         self.setup_table()
         self.setup()

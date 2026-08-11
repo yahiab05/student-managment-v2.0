@@ -4,9 +4,9 @@ from PyQt6.QtCore import QDate
 from os import path
 
 from ..view import TableType, create_table_model
-from ..models import get_model
+from ..models import ModelName, get_model
 from ..repo.schemas import SchemaFactory
-from ..utils import error, get_username, get_combo_manager, ReportType
+from ..utils import error, get_username, get_combo_manager, ReportType, ComboName
 from ..ui.ui_forms import OutMoneyUI
 from .popup import create_popup_factory, PopupKind
 
@@ -20,9 +20,9 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
         self.identifier = None
         self.model = None
-        self.manager = get_model("expenses")
+        self.manager = get_model(ModelName.EXPENSES)
         self.combo_manager = get_combo_manager()
-        self.settings_manager = get_model("settings")
+        self.settings_manager = get_model(ModelName.SETTINGS)
 
         self.reset()
         self.reset_filter()
@@ -58,14 +58,19 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             title="إضافة مصروف" if action == "add" else "تعديل مصروف", 
             parent=self
         )
+        if action == "update":
+            data = self.manager.get_by_id(self.identifier)
+            dialog.content.repopulate_fields(data.__dict__)
+        
         def on_confirm():
             data = dialog.content.get_data()
             self.control(action, data)
+            
         dialog.confirmed.connect(on_confirm)
         dialog.show()
-
+        
     def control(self, action, data):
-        entity = SchemaFactory.OUT_MONEY(
+        entity = SchemaFactory.EXPENSES(
             name=data["name"],
             bill_num=data["bill_num"],
             date=data["date"],
@@ -98,7 +103,6 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         except Exception as e:
             error("حدث خطأ")
         finally:
-            self.reset()
             self.reset_filter()
             self.show_out()
 
@@ -140,9 +144,9 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.total.setText(str(self.model.total_price))
 
     def populate_combo(self):
-        self.combo_manager.update_combo(self.name_search, "fr")
-        self.combo_manager.update_combo(self.type_search, "expenses")
-        self.combo_manager.update_combo(self.way_search, "way payment")
+        self.combo_manager.update_combo(self.name_search, ComboName.FR)
+        self.combo_manager.update_combo(self.type_search, ComboName.EXPENSES)
+        self.combo_manager.update_combo(self.way_search, ComboName.WAY_PAYMENT)
 
     def select_out(self):
         row = self.tbl.selectionModel().selectedRows()
@@ -155,45 +159,23 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
         self.tbl.clearSelection()
-        self.populate()
-
-    def populate(self):
-        out = self.manager.get_by_id(self.identifier)
-        if out is not None:
-            self.name.setCurrentText(out.name)
-            self.date.setDate(out.get_date())
-            self.type.setCurrentText(out.type)
-            self.way.setCurrentText(out.way)
-            self.price.setValue(out.price)
-            self.note.setText(out.note)
-            self.bill_num.setText(str(out.bill_num))
-            self.nb_cheque.setText(str(out.cheq_num))
-            self.code_input.setValue(out.code)
-            self.bank_caisse.setCurrentIndex(HelpLogic.bank_or_caisse("e", self.identifier))
-
     def unique(self, bill_num, date):
         filters = self.manager.get_filters(bill_num=bill_num, from_date=date, to_date=date)
         return self.manager.exists(filters)
-    
-    def cheq_num_on_off(self):
-        if self.way.currentText() == "صك":
-            self.nb_cheque.setEnabled(True)
-        else:    
-            self.nb_cheque.setEnabled(False)
 
     def get_code(self):
         code = self.settings_manager.get_code(
             income=None, 
-            expense=self.type.currentText()
+            expense=self.type_search.currentText()
             )
         self.code.setValue(code if code is not None else 0)
 
     def get_type(self):
         expense = self.settings_manager.get_type(
             income_code=None,
-            expense_code=self.code_input.value()
+            expense_code=self.code.value()
             )
-        self.type.setCurrentText(expense if expense is not None else "")
+        self.type_search.setCurrentText(expense if expense is not None else "")
 
     def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()

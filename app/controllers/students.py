@@ -1,7 +1,7 @@
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
-from ..models import get_model
+from ..models import ModelName, get_model
 from sqlalchemy.exc import IntegrityError
 from ..view import TableType, create_table_model
 from os import path
@@ -26,7 +26,7 @@ class StudentsLogic(QWidget, StudentsUI):
         self.identifier = None
         self.model = None
         
-        self.manager = get_model("student")
+        self.manager = get_model(ModelName.STUDENT)
         self.combo_manager = get_combo_manager()
 
         self.to.setDate(QDate.currentDate())
@@ -315,7 +315,7 @@ class StudentsHistoryLogic(QWidget, StudentHistoryUI):
 
         self.model = None
         
-        self.manager = get_model("student_history")
+        self.manager = get_model(ModelName.STUDENT_HISTORY)
 
         self.setup_table()
 
@@ -372,8 +372,8 @@ class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
         self.model = None
         self.name = ""
         
-        self.enrollment_manager = get_model("enrollment")
-        self.student_manager = get_model("student")
+        self.enrollment_manager = get_model(ModelName.ENROLLMENT)
+        self.student_manager = get_model(ModelName.STUDENT)
         
         self.setup_table()
         self.setup()

@@ -2,7 +2,7 @@ from os import path
 from PyQt6.QtWidgets import QWidget
 from PyQt6.uic import loadUi
 from ..repo import create_db
-from ..models import get_model
+from ..models import ModelName, get_model
 
 from .mainWindow import mainWindow
 from ..ui.ui_forms import LoginUI
@@ -16,7 +16,7 @@ class Login(QWidget, LoginUI):
         super().__init__()
         loadUi(ui_path, self)
         
-        self.manager = get_model("login")
+        self.manager = get_model(ModelName.LOGIN)
 
     def setup(self):
         self.submit.clicked.connect(self.check_login)
