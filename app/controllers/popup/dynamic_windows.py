@@ -2,6 +2,7 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from os import path
 from typing import Protocol
+from app.utils import get_combo_manager, ComboName
 
 from app.ui.ui_forms import (
     ClassesFormUI,
@@ -17,7 +18,11 @@ class FormProtocol(Protocol):
     def __init__(self, parent=None): ...
 
     def get_data(self) -> dict: ...
+        
+    def repopulate_fields(self, data: dict) -> None: ...
 
+class FormWithCombosToPopulateProtocol(FormProtocol, Protocol):
+    def populate_combos(self) -> None: ...
 
 def _load_form_ui(widget: QWidget, *ui_parts: str) -> None:
     ui_path = path.abspath(path.join(path.dirname(__file__), "..", "..", "ui", *ui_parts))
@@ -43,6 +48,19 @@ class StudentForm(QWidget, StudentFormUI):
             "note":self.note.text(),
             "gender": self.gender.currentText()
         }
+        
+    def repopulate_fields(self, data: dict) -> None:
+        self.name.setText(data.get("name", ""))
+        self.parent_ent.setText(data.get("parent", ""))
+        self.num_tel.setText(data.get("num_tel", ""))
+        self.num_tel_2.setText(data.get("num_tel_2", ""))
+        self.cin.setText(data.get("cin", ""))
+        self.birthday.setDate(data.get("birthday", self.birthday.date()))
+        self.activity.setCurrentText(data.get("activity", ""))
+        self.excused.setCurrentText(data.get("excused", ""))
+        self.date_inscrit.setDate(data.get("date_inscrit", self.date_inscrit.date()))
+        self.note.setText(data.get("note", ""))
+        self.gender.setCurrentText(data.get("gender", ""))
 
 
 class TeacherForm(QWidget, TeacherFormUI):
@@ -59,12 +77,22 @@ class TeacherForm(QWidget, TeacherFormUI):
             "phone_2": self.phone_2.text(),
             "note": self.note.text(),
         }
+        
+    def repopulate_fields(self, data: dict) -> None:
+        self.name.setText(data.get("name", ""))
+        self.date_inscrit.setDate(data.get("date_inscrit", self.date_inscrit.date()))
+        self.birthday.setDate(data.get("birthday", self.birthday.date()))
+        self.phone.setText(data.get("phone", ""))
+        self.phone_2.setText(data.get("phone_2", ""))
+        self.note.setText(data.get("note", ""))
 
 
 class ClassesForm(QWidget, ClassesFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         _load_form_ui(self, "forms", "classes_form.ui")
+        
+        self.combo_manager = get_combo_manager()
 
     def get_data(self):
         return {
@@ -74,12 +102,25 @@ class ClassesForm(QWidget, ClassesFormUI):
             "note": self.note.text(),
             "teacher": self.teacher.currentText(),
         }
+        
+    def repopulate_fields(self, data: dict) -> None:
+        self.name.setText(data.get("name", ""))
+        self.way.setCurrentText(data.get("way", ""))
+        self.price.setText(data.get("price", ""))
+        self.note.setText(data.get("note", ""))
+        self.teacher.setCurrentText(data.get("teacher", ""))
+        
+    def populate_combos(self) -> None:
+        self.combo_manager.update_combo(self.teacher, ComboName.TEACHER)
+        self.combo_manager.update_combo(self.way, ComboName.WAY_TEACHING)
 
 
 class ExpensesForm(QWidget, ExpensesFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         _load_form_ui(self, "forms", "expenses_form.ui")
+        
+        self.combo_manager = get_combo_manager()
 
     def get_data(self):
         return {
@@ -95,11 +136,29 @@ class ExpensesForm(QWidget, ExpensesFormUI):
             "price": self.price.value(),
         }
 
+    def repopulate_fields(self, data: dict) -> None:
+        self.name.setCurrentText(data.get("name", ""))
+        self.bill_num.setText(data.get("bill_num", ""))
+        self.way.setCurrentText(data.get("way", ""))
+        self.code_input.setValue(data.get("code_input", 0))
+        self.date.setDate(data.get("date", self.date.date()))
+        self.type.setCurrentText(data.get("type", ""))
+        self.bank_caisse.setCurrentText(data.get("bank_caisse", ""))
+        self.note.setText(data.get("note", ""))
+        self.nb_cheque.setText(data.get("nb_cheque", ""))
+        self.price.setValue(data.get("price", 0.0))
+        
+    def populate_combos(self) -> None:
+        self.combo_manager.update_combo(self.name, ComboName.FR)
+        self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
+        self.combo_manager.update_combo(self.type, ComboName.EXPENSES)  
 
 class IncomeForm(QWidget, IncomeFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         _load_form_ui(self, "forms", "income_from.ui")
+        
+        self.combo_manager = get_combo_manager()
 
     def get_data(self):
         return {
@@ -114,28 +173,23 @@ class IncomeForm(QWidget, IncomeFormUI):
             "price": self.price.value(),
             "note": self.note.text(),
         }
-
-
-class SettingForm(QWidget, SettingFormUI):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        _load_form_ui(self, "forms", "setting_form.ui")
-
-    def get_data(self):
-        return {
-            "entery": self.entery.text(),
-        }
-
-
-class SettingWithCodeForm(QWidget, SettingWithCodeFormUI):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        _load_form_ui(self, "forms", "setting_with_code_form.ui")
-
-    def get_data(self):
-        return {
-            "entery": self.entery.text(),
-            "code": self.code.value(),
-        }
         
+    def repopulate_fields(self, data: dict) -> None:
+        self.name.setText(data.get("name", ""))
+        self.date.setDate(data.get("date", self.date.date()))
+        self.code_input.setValue(data.get("code_input", 0))
+        self.type.setCurrentText(data.get("type", ""))
+        self.way.setCurrentText(data.get("way", ""))
+        self.bill_number.setText(data.get("bill_number", ""))
+        self.nb_cheque.setText(data.get("nb_cheque", ""))
+        self.bank_caisse.setCurrentText(data.get("bank_caisse", ""))
+        self.price.setValue(data.get("price", 0.0))
+        self.note.setText(data.get("note", ""))
+        
+    def populate_combos(self) -> None:
+        self.combo_manager.update_combo(self.type, ComboName.INCOME)
+        self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
+        
+class PaymentForm(QWidget, SettingFormUI):
+    raise NotImplementedError("PaymentForm is not implemented yet.")
 

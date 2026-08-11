@@ -1,5 +1,5 @@
 from .export_strategy import ReportContext, ReportStrategyFactory
-from .combo_manager import ComboManager
+from .combo_manager import ComboManager, ComboName
 from .utils import ( 
     get_username,
     get_student_list,
