@@ -2,7 +2,7 @@ from typing import Type
 
 from app.repo.schemas.classes_schema import ClassesSchema, EnrollmentSchema
 from app.repo.schemas.person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
-from app.repo.schemas.money_schema import EntrySchema, ExpensesSchema
+from app.repo.schemas.money_schema import EntrySchema, ExpensesSchema, TransferSchema
 from app.repo.schemas.others_schema import RoleSchema, SettingsSchema, UserSchema
 
 
@@ -25,6 +25,7 @@ class SchemaFactory:
     TEACHER_HISTORY = TeacherHistorySchema
     INCOME = EntrySchema
     EXPENSES = ExpensesSchema
+    TRANSFER = TransferSchema
     ROLE = RoleSchema
     SETTINGS = SettingsSchema
     USER = UserSchema

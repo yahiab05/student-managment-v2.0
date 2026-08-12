@@ -79,27 +79,17 @@ class Expense(CRUD):
 class Transfer(CRUD):
     # Concrete child class for transfer records that uses the transfer table.
     def __init__(self, session):
-        super().__init__(session, "transfer")
+        super().__init__(session, ModelName.TRANSFER)
+        self.set_static_metadata()
         
     def get_filter(self,
-            name=None,
-            name_like=None,
-            way=None,
-            type=None,
             from_date=None,
             to_date=None,
             price=None,
             operator=None,
-            code=None):
+            ):
         filters = []
-        if name:
-            filters.append(self.db.table.name == name)
-        if name_like:
-            filters.append(self.db.table.name.like(f"%{name_like}%"))
-        if way:
-            filters.append(self.db.table.way == way)
-        if type:
-            filters.append(self.db.table.type == type)
+
         if from_date and to_date:
             filters.append(self.db.table.date.between(from_date, to_date))
         if price and operator:
@@ -109,9 +99,16 @@ class Transfer(CRUD):
                 filters.append(self.db.table.price < price)
             elif operator == "equal":
                 filters.append(self.db.table.price == price)
-        if code:
-            filters.append(self.db.table.code == code)
+
         return filters
+    
+    def set_static_metadata(self):
+        self.title = "التحويلات"
+        self.headers = ["المبلغ", "الوجهة", "الأصل", "التاريخ"]
+        
+    def set_dynamic_metadata(self, total_price, data_to_export):
+        self.foot = f"""مجموع التحويلات: {total_price}"""
+        self.data_to_export = data_to_export
     
 class Balance(CRUD):
     # Concrete child class for balance records that uses the balance table.

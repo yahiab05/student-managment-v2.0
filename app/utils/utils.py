@@ -40,6 +40,13 @@ class Account(StrEnum):
     BANK = auto()
     CAISSE = auto()
     
+    @property
+    def opposite(self):
+        if self == Account.BANK:
+            return Account.CAISSE
+        elif self == Account.CAISSE:
+            return Account.BANK
+    
 class ReportType(StrEnum):
     PRINT = auto()
     EXCEL = auto()
