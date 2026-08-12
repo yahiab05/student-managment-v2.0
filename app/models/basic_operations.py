@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from PyQt6.QtWidgets import QMessageBox
-from app.repo import Repository
 from app.repo.schemas.base_schema import BaseDataClass
-from app.utils import export_report, ReportType
+from app.utils import export_report, ReportType, ReportContext
 from app.repo import Repositories
 
 
@@ -14,7 +13,7 @@ class CRUD(ABC):
     title: str = None
     
 
-    def __init__(self, session, table):        
+    def __init__(self, session, table=None):        
         self.repo = Repositories(session)
         self.db = self.repo.get_repo(table)
         self.report_context = ReportContext()
@@ -102,6 +101,10 @@ class CRUD(ABC):
             print(e)
         finally:
             self.data_to_export = None
+            
+    def get_total(self, filters: list = None):
+        """Calculate the total price of records matching the provided filters."""
+        return self.db.get_total(filters)
 
     @abstractmethod
     def set_metadata(self):

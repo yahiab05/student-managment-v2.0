@@ -1,7 +1,8 @@
+from sqlalchemy import func, select, union_all
 from sqlalchemy.orm import joinedload
-
+from sqlalchemy.orm import sessionmaker, Session
 class DBFacade:
-    def __init__(self, table, session):
+    def __init__(self, table, session:sessionmaker[Session]):
         self.table = table
         self.session = session
         
@@ -67,8 +68,69 @@ class DBFacade:
             joinedload(getattr(self.table, relationship_name))
         ).filter(*filters).all()
         
+    def get_total(self, filters: list = None) -> float:
+        """Calculate the total price of records matching the provided filters."""
+        try:
+            filters = filters or []
+            total = self.session.query(self.table).filter(*filters).with_entities(
+                func.sum(self.table.price)
+            ).scalar()
+            return total or 0
+        except Exception as e:
+            print(f"Error calculating total: {e}")
+            return 0
+        
     def rollback(self):
         self.session.rollback()
         
     def commit(self):
         self.session.commit()
+        
+from app.repo.models import Entery, OutMoney
+class BalanceFacade():
+    """Specialized DBFacade for financial entities with additional methods."""
+    def __init__(self, session:sessionmaker[Session]):
+        self.session = session
+        
+    def get_filters(self, way_payment=None, from_date=None, to_date=None, price=None, operator=None):
+        income_filters = []
+        expense_filters = []
+        
+        if way_payment:
+            income_filters.append(Entery.way == way_payment)
+            expense_filters.append(OutMoney.way == way_payment)
+        if from_date and to_date:
+            income_filters.append(Entery.addition_date.between(from_date, to_date))
+            expense_filters.append(OutMoney.date.between(from_date, to_date))
+        if price and operator:
+            if operator == ">":
+                income_filters.append(Entery.price > price)
+                expense_filters.append(OutMoney.price > price)
+            elif operator == "<":
+                income_filters.append(Entery.price < price)
+                expense_filters.append(OutMoney.price < price)
+            elif operator == "=":
+                income_filters.append(Entery.price == price)
+                expense_filters.append(OutMoney.price == price)
+        
+        return income_filters, expense_filters
+    
+    def get_balance(self, income_filters= [], expense_filters= []):
+        income = self.session.query(
+            Entery.name.label("name"),
+            Entery.price.label("income"),
+            func.coalesce(0, '').label("expenses"),
+            Entery.way.label("way"),
+            Entery.addition_date.label("date")
+        ).filter(*income_filters)
+
+        expenses = self.session.query(
+            OutMoney.name.label("name"),
+            func.coalesce(0, '').label("income"),
+            OutMoney.price.label("expenses"),
+            OutMoney.way.label("way"),
+            OutMoney.date.label("date")
+        ).filter(*expense_filters)
+        
+        combined_query = union_all(income, expenses)
+        return self.session.query(combined_query).order_by(combined_query.c.date.desc()).all()

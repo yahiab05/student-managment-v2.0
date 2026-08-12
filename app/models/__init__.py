@@ -4,7 +4,7 @@ from app.repo.database import SessionLocal
 
 from app.models.admin import Roles, Users, Login
 from app.models.classes import Classes, Enrollment
-from app.models.finance import Expense, Income
+from app.models.finance import Expense, Income, Balance, Transfer
 from app.models.person import Student, StudentHistory, Teacher, TeacherHistory
 from app.models.settings import Settings
 from app.models.names import ModelName
@@ -16,6 +16,8 @@ MODEL_REGISTRY = {
 	ModelName.EXPENSE: Expense,
 	ModelName.EXPENSES: Expense,
 	ModelName.INCOME: Income,
+	ModelName.BALANCE: Balance,
+	ModelName.TRANSFER: Transfer,
 	ModelName.ROLE: Roles,
 	ModelName.ROLES: Roles,
 	ModelName.SETTINGS: Settings,
@@ -83,6 +85,18 @@ def get_model(
 			model_name: Literal[
 				ModelName.INCOME]
 			) -> Income: ...
+
+@overload
+def get_model(
+			model_name: Literal[
+				ModelName.BALANCE]
+			) -> Balance: ...
+
+@overload
+def get_model(
+			model_name: Literal[
+				ModelName.TRANSFER]
+			) -> Transfer: ...
 
 @overload
 def get_model(

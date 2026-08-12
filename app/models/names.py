@@ -1,24 +1,26 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 
 
 class ModelName(StrEnum):
-	CLASSES = "classes"
-	ENROLLMENT = "enrollment"
-	ENROLLMENTS = "enrollments"
-	EXPENSE = "expense"
-	EXPENSES = "expenses"
-	INCOME = "income"
-	LOGIN = "login"
-	ROLE = "role"
-	ROLES = "roles"
-	SETTINGS = "settings"
-	STUDENT = "student"
-	STUDENTS = "students"
-	STUDENT_HISTORY = "student_history"
-	STUDENTS_HISTORY = "students_history"
-	TEACHER = "teacher"
-	TEACHERS = "teachers"
-	TEACHER_HISTORY = "teacher_history"
-	TEACHERS_HISTORY = "teachers_history"
-	USER = "user"
-	USERS = "users"
+	CLASSES = auto()
+	ENROLLMENT = auto()
+	ENROLLMENTS = auto()
+	EXPENSE = auto()
+	EXPENSES = auto()
+	INCOME = auto()
+	LOGIN = auto()
+	ROLE = auto()
+	ROLES = auto()
+	SETTINGS = auto()
+	STUDENT = auto()
+	STUDENTS = auto()
+	STUDENT_HISTORY = auto()
+	STUDENTS_HISTORY = auto()
+	TEACHER = auto()
+	TEACHERS = auto()
+	TEACHER_HISTORY = auto()
+	TEACHERS_HISTORY = auto()
+	USER = auto()
+	USERS = auto()
+	BALANCE = auto()
+	TRANSFER = auto()

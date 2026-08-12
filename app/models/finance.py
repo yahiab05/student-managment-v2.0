@@ -112,4 +112,37 @@ class Transfer(CRUD):
         if code:
             filters.append(self.db.table.code == code)
         return filters
+    
+class Balance(CRUD):
+    # Concrete child class for balance records that uses the balance table.
+    def __init__(self, session):
+        super().__init__(session)
+        self.db = self.repo.get_balance_repo()  # Use the specialized balance repository
+        
+    def get_balance(self,
+            price=None,
+            operator=None,
+            way=None,
+            from_date=None,
+            to_date=None):
+        income_filters, expense_filters = self.db.get_filters(
+            way_payment=way, 
+            from_date=from_date, 
+            to_date=to_date,
+            price=price,
+            operator=operator
+        )
+        return self.db.get_balance(income_filters, expense_filters)
 
+    def get_balance(self, income, expense):
+        return income - expense
+    
+    def set_static_metadata(self):
+        self.title = "الحاصل"
+        self.headers = ["المبلغ المقبول" ,"المبلغ المصروف", "وسيلة الدخل/المصروف", "التاريخ", "الاسم"]
+
+    def set_dynamic_metadata(self, total_income, total_expenses, balance, data_to_export):
+        self.foot = f"""مجموع المداخيل: {total_income} \n 
+        مجموع المصاريف: {total_expenses} \n
+        الحاصل: {balance}"""
+        self.data_to_export = data_to_export

@@ -1,7 +1,5 @@
-from app.repo.facade import DBFacade
+from app.repo.facade import DBFacade, BalanceFacade
 from app.repo.models import *
-from app.repo.database import create_db
-
 
 class Repositories:
     """Repository container that requires a SQLAlchemy `session` at creation.
@@ -31,6 +29,7 @@ class Repositories:
         # Financial entities
         self.income = DBFacade(Entery, session)
         self.expenses = DBFacade(OutMoney, session)
+        self.balance = BalanceFacade(session)  # Specialized facade for combined financial queries
 
         # Settings and other
         self.settings = DBFacade(Settings, session)
@@ -48,8 +47,7 @@ class Repositories:
             "income": self.income,
             "expenses": self.expenses,
             "settings": self.settings,
-            "teachers_absent": self.teachers_absent,
-            "students_absent": self.students_absent,
+            "balance": self.balance
         }
 
     def get_repo(self, name: str) -> DBFacade:
@@ -59,8 +57,12 @@ class Repositories:
         so lookups are constant time and do not allocate additional collections.
         """
         try:
-            return self._map[name]
+            return self._map[name] if name in self._map and name != "balance" else None
         except KeyError:
             raise KeyError(f"Unknown repository name: {name}")
+        
+    def get_balance_repo(self) -> BalanceFacade:
+        """Return the specialized balance repository for combined financial queries."""
+        return self.balance
 
     

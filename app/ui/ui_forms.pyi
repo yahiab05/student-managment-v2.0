@@ -165,7 +165,7 @@ class OutMoneyUI:
     search_btn: QPushButton
 
 
-class SoldeFormUI:
+class BalanceUI:
     soldeform: QWidget
     tbl: QTableView
     solde: QLabel

@@ -38,7 +38,7 @@ class OutMoneyUI:
     pass
 
 
-class SoldeFormUI:
+class BalanceUI:
     pass
 
 

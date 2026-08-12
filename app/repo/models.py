@@ -52,7 +52,7 @@ class Students(Base):
     birthday: Mapped[DateType] = mapped_column(nullable=False)
     date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
     parent: Mapped[str] = mapped_column(String(255), nullable=False)
-    cin: Mapped[int] = mapped_column(Integer, nullable=False)
+    cin: Mapped[int] = mapped_column(nullable=False)
     activity: Mapped[str] = mapped_column(String(255), nullable=False)
     num_tel: Mapped[str] = mapped_column(String(255), nullable=False)
     excused: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -204,7 +204,7 @@ class OutMoney(Base):
 
     def get_date(self):
         return QDate.fromString(self.date.strftime("%Y-%m-%d"), "yyyy-MM-dd")
-
+    
 class Entery(Base):
     __tablename__ = "entery"
     __table_args__ = {"extend_existing": True}
