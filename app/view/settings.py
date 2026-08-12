@@ -1,4 +1,4 @@
-from .base_table import BaseTable
+from app.view.base_table import BaseTable
 from PyQt6.QtCore import Qt
 
 class IncomeTypeTableModel(BaseTable):

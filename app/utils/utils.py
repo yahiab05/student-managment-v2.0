@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtCore import QDate
 from sqlalchemy import text
 
-from ..repo.models import SessionLocal, Students
+from app.repo.models import SessionLocal, Students
 from PyQt6.QtCore import QSettings
 
 from enum import StrEnum, auto

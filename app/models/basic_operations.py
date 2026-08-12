@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from PyQt6.QtWidgets import QMessageBox
-from ..repo import Repository
-from ..repo.schemas.base_schema import BaseDataClass
-from ..utils import export_report, ReportType
-from ..repo import Repositories
+from app.repo import Repository
+from app.repo.schemas.base_schema import BaseDataClass
+from app.utils import export_report, ReportType
+from app.repo import Repositories
 
 
 class CRUD(ABC):

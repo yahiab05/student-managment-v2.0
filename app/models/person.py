@@ -1,7 +1,7 @@
-from .names import ModelName
-from .basic_operations import CRUD
-from .classes import Enrollment
-from ..utils.utils import error
+from app.models.names import ModelName
+from app.models.basic_operations import CRUD
+from app.models.classes import Enrollment
+from app.utils.utils import error
 
 class Student(CRUD):
     # Concrete child class for student records that uses the students table.

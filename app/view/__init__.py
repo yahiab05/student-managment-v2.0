@@ -1,21 +1,21 @@
 from enum import Enum
 
-from .base_table import BaseTable
-from .classes_tables import ClassesTableModel, ClasseleveTableModel
-from .finance_tables import (
+from app.view.base_table import BaseTable
+from app.view.classes_tables import ClassesTableModel, ClasseleveTableModel
+from app.view.finance_tables import (
 	BalanceTableModel,
 	EnteryTableModel,
 	OutMoneyTableModel,
 	PaymentTableModel,
 	TransferTableModel,
 )
-from .settings import ExpenseTypeTableModel, IncomeTypeTableModel
-from .students_tables import (
+from app.view.settings import ExpenseTypeTableModel, IncomeTypeTableModel
+from app.view.students_tables import (
 	StudentsHistoryTableModel,
 	StudentsSearchTableModel,
 	StudentsTableModel,
 )
-from .teachers_tables import TeachersHistoryTableModel, TeachersTableModel, TeacherSearchTableModel
+from app.view.teachers_tables import TeachersHistoryTableModel, TeachersTableModel, TeacherSearchTableModel
 
 
 class TableType(str, Enum):

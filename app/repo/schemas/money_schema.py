@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 from datetime import datetime
 from abc import ABC
 from app.utils.utils import Account

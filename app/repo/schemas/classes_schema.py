@@ -1,4 +1,4 @@
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 from dataclasses import dataclass
 
 @dataclass

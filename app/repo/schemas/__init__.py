@@ -1,9 +1,9 @@
 from typing import Type
 
-from .classes_schema import ClassesSchema, EnrollmentSchema
-from .person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
-from .money_schema import EntrySchema, ExpensesSchema
-from .others_schema import RoleSchema, SettingsSchema, UserSchema
+from app.repo.schemas.classes_schema import ClassesSchema, EnrollmentSchema
+from app.repo.schemas.person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
+from app.repo.schemas.money_schema import EntrySchema, ExpensesSchema
+from app.repo.schemas.others_schema import RoleSchema, SettingsSchema, UserSchema
 
 
 class SchemaFactory:

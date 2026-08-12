@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 
 @dataclass
 class CommonSchema(BaseDataClass, ABC):

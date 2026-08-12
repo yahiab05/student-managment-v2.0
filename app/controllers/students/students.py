@@ -1,12 +1,12 @@
 from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
-from ..models import ModelName, get_model
+from app.models import ModelName, get_model
 from sqlalchemy.exc import IntegrityError
-from ..view import TableType, create_table_model
+from app.view import TableType, create_table_model
 from os import path
-from ..repo.schemas import SchemaFactory
-from ..utils import (
+from app.repo.schemas import SchemaFactory
+from app.utils import (
     error, 
     get_username,
     get_combo_manager,
@@ -14,8 +14,8 @@ from ..utils import (
     ComboName,
     WorkingMode
 )
-from ..ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
-from .popup import create_popup_factory, PopupKind
+from app.ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
+from app.controllers.popup import create_popup_factory, PopupKind
 
 
 class StudentsLogic(QWidget, StudentsUI):

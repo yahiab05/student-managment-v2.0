@@ -1,4 +1,4 @@
-from .basic_operations import CRUD
+from app.models.basic_operations import CRUD
 
 
 class Settings(CRUD):

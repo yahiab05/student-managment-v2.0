@@ -4,8 +4,8 @@ from typing import Optional
 from sqlalchemy import ForeignKey, String, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from PyQt6.QtCore import QDate
-from .database import Base
-from ..utils.utils import Account
+from app.repo.database import Base
+from app.utils.utils import Account
 
 class Role(Base):
     __tablename__ = "role"

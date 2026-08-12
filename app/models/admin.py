@@ -1,6 +1,6 @@
-from .names import ModelName
-from .basic_operations import CRUD
-from ..utils.utils import error
+from app.models.names import ModelName
+from app.models.basic_operations import CRUD
+from app.utils.utils import error
 
 
 class Roles(CRUD):

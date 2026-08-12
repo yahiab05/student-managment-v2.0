@@ -3,12 +3,12 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
 from sqlalchemy.exc import IntegrityError
 
-from .popup import create_popup_factory, PopupKind
+from app.controllers.popup import create_popup_factory, PopupKind
 
-from ..view import TableType, create_table_model
-from ..models import ModelName, get_model
-from ..repo.schemas import SchemaFactory
-from ..utils import (
+from app.view import TableType, create_table_model
+from app.models import ModelName, get_model
+from app.repo.schemas import SchemaFactory
+from app.utils import (
     get_username,
     get_student_list,
     error,
@@ -17,7 +17,7 @@ from ..utils import (
     WorkingMode,
     ComboName
 )
-from ..ui.ui_forms import ClassesUI, ClasseleveUI
+from app.ui.ui_forms import ClassesUI, ClasseleveUI
 
 class ClassesLogic(QWidget, ClassesUI):
     def __init__(self, parent=None):

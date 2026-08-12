@@ -2,12 +2,12 @@ from typing import Literal, overload
 
 from app.repo.database import SessionLocal
 
-from .admin import Roles, Users, Login
-from .classes import Classes, Enrollment
-from .finance import Expense, Income
-from .person import Student, StudentHistory, Teacher, TeacherHistory
-from .settings import Settings
-from .names import ModelName
+from app.models.admin import Roles, Users, Login
+from app.models.classes import Classes, Enrollment
+from app.models.finance import Expense, Income
+from app.models.person import Student, StudentHistory, Teacher, TeacherHistory
+from app.models.settings import Settings
+from app.models.names import ModelName
 
 MODEL_REGISTRY = {
 	ModelName.CLASSES: Classes,

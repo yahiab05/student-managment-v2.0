@@ -1,6 +1,6 @@
-from .facade import DBFacade
-from .models import *
-from .database import create_db
+from app.repo.facade import DBFacade
+from app.repo.models import *
+from app.repo.database import create_db
 
 
 class Repositories:

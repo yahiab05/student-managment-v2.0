@@ -1,5 +1,5 @@
-from .base_window import BaseWindow
-from .factory import (
+from app.controllers.popup.base_window import BaseWindow
+from app.controllers.popup.factory import (
     PopupFactory, 
     PopupKind
 )

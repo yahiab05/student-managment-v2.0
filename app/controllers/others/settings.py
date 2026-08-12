@@ -2,11 +2,11 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem
 from sqlalchemy.exc import IntegrityError
 from os import path
-from ..repo.schemas import SchemaFactory
-from ..utils import get_username, error, get_combo_manager, WorkingMode, ComboName
-from ..models import ModelName, get_model
+from app.repo.schemas import SchemaFactory
+from app.utils import get_username, error, get_combo_manager, WorkingMode, ComboName
+from app.models import ModelName, get_model
 from abc import ABC, abstractmethod
-from ..ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
+from app.ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
 class BaseSettings(QWidget, ABC ,SettingFormUI):
     def __init__(self, parent=None):

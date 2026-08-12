@@ -5,8 +5,8 @@ from typing import Protocol, runtime_checkable
 
 from PyQt6.QtWidgets import QWidget
 
-from .base_window import BaseWindow
-from .dynamic_windows import (
+from app.controllers.popup.base_window import BaseWindow
+from app.controllers.popup.dynamic_windows import (
     ClassesForm,
     ExpensesForm,
     IncomeForm,

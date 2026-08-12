@@ -4,7 +4,7 @@ from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from app.ui.ui_forms import PopupFormUI
 from PyQt6.QtCore import pyqtSignal
-from .dynamic_windows import FormProtocol
+from app.controllers.popup.dynamic_windows import FormProtocol
 
 class BaseWindow(QWidget, PopupFormUI):
     confirmed = pyqtSignal()

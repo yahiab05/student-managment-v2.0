@@ -1,4 +1,4 @@
-from ..repo.models import (
+from app.repo.models import (
     Classes as ClassesCombo,
     Settings as SettingsCombo,
     Teachers as TeachersCombo,

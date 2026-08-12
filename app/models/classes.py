@@ -1,5 +1,5 @@
-from .names import ModelName
-from .basic_operations import CRUD
+from app.models.names import ModelName
+from app.models.basic_operations import CRUD
 
 
 class Classes(CRUD):

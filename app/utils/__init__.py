@@ -1,13 +1,13 @@
-from .export_strategy import ReportContext, ReportStrategyFactory
-from .combo_manager import ComboManager, ComboName
-from .utils import ( 
+from app.utils.export_strategy import ReportContext, ReportStrategyFactory
+from app.utils.combo_manager import ComboManager, ComboName
+from app.utils.utils import ( 
     get_username,
     get_student_list,
     error,
     ReportType,
     WorkingMode
 )
-from ..repo.database import SessionLocal
+from app.repo.database import SessionLocal
 
 def get_combo_manager():
     session = SessionLocal()

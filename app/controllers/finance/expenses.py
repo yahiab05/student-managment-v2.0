@@ -3,12 +3,12 @@ from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
 from os import path
 
-from ..view import TableType, create_table_model
-from ..models import ModelName, get_model
-from ..repo.schemas import SchemaFactory
-from ..utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode
-from ..ui.ui_forms import OutMoneyUI
-from .popup import create_popup_factory, PopupKind
+from app.view import TableType, create_table_model
+from app.models import ModelName, get_model
+from app.repo.schemas import SchemaFactory
+from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode
+from app.ui.ui_forms import OutMoneyUI
+from app.controllers.popup import create_popup_factory, PopupKind
 
 
 class OutMoneyLogic(QWidget, OutMoneyUI):

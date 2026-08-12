@@ -1,11 +1,11 @@
 from os import path
 from PyQt6.QtWidgets import QWidget
 from PyQt6.uic import loadUi
-from ..repo import create_db
-from ..models import ModelName, get_model
+from app.repo import create_db
+from app.models import ModelName, get_model
 
-from .mainWindow import mainWindow
-from ..ui.ui_forms import LoginUI
+from app.controllers.mainWindow import mainWindow
+from app.ui.ui_forms import LoginUI
 
 class Login(QWidget, LoginUI):
     def __init__(self):

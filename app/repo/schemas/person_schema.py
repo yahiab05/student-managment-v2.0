@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 from datetime import datetime
 
 @dataclass(kw_only=True)

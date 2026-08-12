@@ -1,7 +1,7 @@
 from typing import Protocol, Optional
-from .report_generator import Printing, ExcelGenerator
+from app.utils.report_generator import Printing, ExcelGenerator
 from PyQt6.QtWidgets import QFileDialog
-from .utils import ReportType
+from app.utils.utils import ReportType
 
 class Strategy(Protocol):
     headers: str

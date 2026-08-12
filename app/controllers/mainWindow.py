@@ -1,7 +1,7 @@
 from os import path
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.uic import loadUi
-from ..ui.ui_forms import MainUI
+from app.ui.ui_forms import MainUI
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
