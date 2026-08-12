@@ -19,10 +19,13 @@ class TransferLogic(QWidget, TransferUI):
         self.model = None
         self.combo_manager = get_combo_manager()
         self.manager = get_model(ModelName.TRANSFER)
+        self.income_manager = get_model(ModelName.INCOME)
+        self.expenses_manager = get_model(ModelName.EXPENSES)
 
         self.setup_table()
         self.reset()
         self.setup()
+        self.show_table()
 
     def setup(self):
         self.to_bank_btn.clicked.connect(lambda: self.transfer_security(Account.BANK))
@@ -79,16 +82,23 @@ class TransferLogic(QWidget, TransferUI):
         op = self.operatore.currentText() if self.operatore.currentText() else None
         from_date = self.du.date().toPyDate()
         to_date = self.to.date().toPyDate()
+        price = self.price.value() if self.price.value() > 0 else None
         
         filters = self.manager.get_filter(
             from_date=from_date,
             to_date=to_date,
-            price=self.price.value() if self.price.value() > 0 else None,
-            operator=op if op else None
+            price=price,
+            operator=op
         )
 
         data = self.manager.get_by_filter(filters)
         self.model.refresh(data)
+        self.set_totals(
+            price=price,
+            operator=op,
+            from_date=from_date,
+            to_date=to_date
+        )
         
     def reset(self):
         self.date.setDate(QDate.currentDate())
@@ -105,3 +115,69 @@ class TransferLogic(QWidget, TransferUI):
         self.manager.set_dynamic_metadata(total_price, data_to_export)
         
         self.manager.export_data(report_type=report_type, parent=self)
+        
+    def totals_to_bank(self, price=None, operator=None, from_date=None, to_date=None):
+        filters_to_bank = self.manager.get_filter(
+            from_date=from_date,
+            to_date=to_date,
+            price=price if price else None,
+            operator=operator if operator else None,
+            destination=Account.BANK.value
+        )
+        total = self.manager.get_total(filters_to_bank)
+        return total
+    
+    def totals_to_caisse(self, price=None, operator=None, from_date=None, to_date=None):
+        filters_to_caisse = self.manager.get_filter(
+            from_date=from_date,
+            to_date=to_date,
+            price=price if price else None,
+            operator=operator if operator else None,
+            destination=Account.CAISSE.value
+        )
+        total = self.manager.get_total(filters_to_caisse)
+        return total
+    
+    def expense_income_totals(self, price=None, operator=None, from_date=None, to_date=None, is_bank=True):
+        income_filters = self.income_manager.get_filter(
+            from_date=from_date,
+            to_date=to_date,
+            price=price if price else None,
+            operator=operator if operator else None,
+            is_bank=is_bank  # Assuming you want to filter income that is in the bank
+        )
+        income_total = self.income_manager.get_total(income_filters)
+
+        expense_filters = self.expenses_manager.get_filter(
+            from_date=from_date,
+            to_date=to_date,
+            price=price if price else None,
+            operator=operator if operator else None,
+            is_bank=is_bank  # Assuming you want to filter expenses that are in the bank
+        )
+        expense_total = self.expenses_manager.get_total(expense_filters)
+        return income_total, expense_total
+    
+    def totals_summary(self, price=None, operator=None, from_date=None, to_date=None):
+        total_to_bank = self.totals_to_bank(price, operator, from_date, to_date)
+        total_to_caisse = self.totals_to_caisse(price, operator, from_date, to_date)
+        income_bank_total, expense_bank_total = self.expense_income_totals(price, operator, from_date, to_date)
+        income_caisse_total, expense_caisse_total = self.expense_income_totals(price, operator, from_date, to_date, is_bank=False)
+        
+        summary = {
+            "total_to_bank": total_to_bank,
+            "total_to_caisse": total_to_caisse,
+            "income_bank_total": income_bank_total,
+            "expense_bank_total": expense_bank_total,
+            "income_caisse_total": income_caisse_total,
+            "expense_caisse_total": expense_caisse_total
+        }
+        return summary
+    
+    def set_totals(self, price=None, operator=None, from_date=None, to_date=None):
+        summary = self.totals_summary(price, operator, from_date, to_date)
+        total_transfered = summary["total_to_bank"] - summary["total_to_caisse"]
+        total_in_bank = summary["income_bank_total"] - summary["expense_bank_total"] + total_transfered
+        total_in_caisse = summary["income_caisse_total"] - summary["expense_caisse_total"] - total_transfered
+        self.total_bank.setText(str(total_in_bank))
+        self.total_caisse.setText(str(total_in_caisse))
