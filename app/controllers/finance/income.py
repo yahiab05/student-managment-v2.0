@@ -145,7 +145,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         operator = None if self.operatore.currentText() == "" else self.operatore.currentText()
         code = None if self.code.value() == 0 else self.code.value()
 
-        filters = self.manager.get_filters(
+        filters = self.manager.get_filter(
             name=name,
             way=way,
             type=type,

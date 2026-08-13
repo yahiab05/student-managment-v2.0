@@ -1,6 +1,7 @@
 from sqlalchemy import func, select, union_all
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.exc import NoSuchColumnError
 class DBFacade:
     def __init__(self, table, session:sessionmaker[Session]):
         self.table = table
@@ -76,7 +77,7 @@ class DBFacade:
                 func.sum(self.table.price)
             ).scalar()
             return total or 0
-        except Exception as e:
+        except NoSuchColumnError as e:
             print(f"Error calculating total: {e}")
             return 0
         
@@ -86,6 +87,17 @@ class DBFacade:
     def commit(self):
         self.session.commit()
         
+    def update_price(self, id, new_price):
+        obj = self.session.query(self.table).filter(self.table.id == id).first()
+        try:
+            if not obj:
+                raise ModuleNotFoundError("Object not found")
+            obj.price = new_price
+            return obj
+        except NoSuchColumnError as e:
+            print(f"Error updating price: {e}")
+            raise
+
 from app.repo.models import Entery, OutMoney
 class BalanceFacade():
     """Specialized DBFacade for financial entities with additional methods."""

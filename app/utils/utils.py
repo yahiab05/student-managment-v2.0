@@ -21,7 +21,7 @@ def error(message: str) -> None:
     msg.exec()
     msg.show()
     
-def get_student_list(search_text: str):
+def get_student_list(search_text: str) -> list[Students]:
     session = SessionLocal()
 
     try:

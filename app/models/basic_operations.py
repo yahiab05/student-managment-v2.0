@@ -105,6 +105,13 @@ class CRUD(ABC):
     def get_total(self, filters: list = None):
         """Calculate the total price of records matching the provided filters."""
         return self.db.get_total(filters)
+    
+    def update_price(self, id, new_price):
+        """Update the price of a record identified by `id`."""
+        try:
+            self.db.update_price(id, new_price)
+        except ModuleNotFoundError:
+            return
 
     @abstractmethod
     def set_metadata(self):

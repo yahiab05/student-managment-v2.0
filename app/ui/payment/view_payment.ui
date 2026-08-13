@@ -937,7 +937,7 @@ border-top: none
              <second>0</second>
              <year>1899</year>
              <month>12</month>
-             <day>20</day>
+             <day>19</day>
             </datetime>
            </property>
            <property name="displayFormat">
@@ -1020,12 +1020,12 @@ border-top: none
          <item>
           <spacer name="horizontalSpacer_19">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>318</width>
-             <height>20</height>
+             <width>20</width>
+             <height>318</height>
             </size>
            </property>
           </spacer>
@@ -1082,12 +1082,12 @@ border-top: none
          <item>
           <spacer name="horizontalSpacer_20">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>317</width>
-             <height>20</height>
+             <width>20</width>
+             <height>317</height>
             </size>
            </property>
           </spacer>
