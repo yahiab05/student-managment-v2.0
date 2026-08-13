@@ -4,7 +4,7 @@ from app.repo.database import SessionLocal
 
 from app.models.admin import Roles, Users, Login
 from app.models.classes import Classes, Enrollment
-from app.models.finance import Expense, Income, Balance, Transfer
+from app.models.finance import Expense, Income, Balance, Transfer, Payment
 from app.models.person import Student, StudentHistory, Teacher, TeacherHistory
 from app.models.settings import Settings
 from app.models.names import ModelName
@@ -97,6 +97,12 @@ def get_model(
 			model_name: Literal[
 				ModelName.TRANSFER]
 			) -> Transfer: ...
+
+@overload
+def get_model(
+    model_name: Literal[
+		ModelName.PAYMENTS]
+	) -> Payment: ...	
 
 @overload
 def get_model(

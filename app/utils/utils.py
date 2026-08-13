@@ -21,6 +21,13 @@ def error(message: str) -> None:
     msg.exec()
     msg.show()
     
+def info(message: str) -> None:
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Icon.Information)
+    msg.setText(message)
+    msg.exec()
+    msg.show()
+    
 def get_student_list(search_text: str) -> list[Students]:
     session = SessionLocal()
 

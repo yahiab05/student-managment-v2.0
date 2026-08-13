@@ -1,6 +1,8 @@
 from app.models.names import ModelName
 from app.models.basic_operations import CRUD
 
+from sqlalchemy import extract
+
 
 class Income(CRUD):
     # Concrete child class for income records that uses the entery table.
@@ -49,7 +51,8 @@ class Payment(CRUD):
         super().__init__(session, ModelName.INCOME)
         self.set_static_metadata()
         
-    def get_filter(self, name=None, way=None, payment_from_date=None, payment_to_date=None, num_inscrit=None, classroom=None):
+    def get_filter(self, name=None, way=None, payment_from_date=None, payment_to_date=None, 
+                num_inscrit=None, classroom=None, exact_date=None, year=None, month=None):
         filters = []
         if name:
             filters.append(self.db.table.name == name)
@@ -61,6 +64,12 @@ class Payment(CRUD):
             filters.append(self.db.table.num_inscrit == num_inscrit)
         if classroom:
             filters.append(self.db.table.classroom == classroom)
+        if exact_date:
+            filters.append(self.db.table.payment_date == exact_date)
+        if year:
+            filters.append(extract('year', self.db.table.payment_date) == year)
+        if month:
+            filters.append(extract('month', self.db.table.payment_date) == month)
         return filters
     
     def set_static_metadata(self):

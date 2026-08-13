@@ -24,3 +24,4 @@ class ModelName(StrEnum):
 	USERS = auto()
 	BALANCE = auto()
 	TRANSFER = auto()
+	PAYMENTS = auto()

@@ -2,7 +2,8 @@ from app.repo.models import (
     Classes as ClassesCombo,
     Settings as SettingsCombo,
     Teachers as TeachersCombo,
-    Role as RolesCombo
+    Role as RolesCombo, 
+    ClassEleve as Enrollments
     )
 from PyQt6.QtWidgets import QComboBox
 from enum import StrEnum
@@ -16,6 +17,7 @@ class ComboName(StrEnum):
     EXPENSES = "expenses"
     FR = "fr"
     WAY_PAYMENT = "way payment"
+    ENROLLMENTS = "enrollments"
 
 
 class ComboManager:
@@ -35,6 +37,7 @@ class ComboManager:
             ComboName.WAY_PAYMENT: [],
             ComboName.TEACHER: [],
             ComboName.ROLE: [],
+            ComboName.ENROLLMENTS: [],
         }
 
         self._cache_sources = {
@@ -46,6 +49,7 @@ class ComboManager:
             ComboName.EXPENSES: (SettingsCombo, "out_money"),
             ComboName.FR: (SettingsCombo, "fr"),
             ComboName.WAY_PAYMENT: (SettingsCombo, "way_payment"),
+            ComboName.ENROLLMENTS: (Enrollments, "class_name"),
         }
 
     def update_cache_from_db(self, data_name: ComboName):
@@ -78,7 +82,11 @@ class ComboManager:
             data = self.get_cached_data(data_name)
         except KeyError as error:
             raise KeyError(f"Unknown cached data name: {data_name}") from error
-
+        
+        self.update_with_data(combo_widget, data)   # Reset selection to no selection
+        
+    def update_with_data(self, combo_widget: QComboBox, data: list):
+        """Update a combo box widget with a specific list of class names."""
         combo_widget.clear()
         combo_widget.addItems(data)
         combo_widget.setCurrentIndex(-1)  # Reset selection to no selection

@@ -1,18 +1,21 @@
 from PyQt6.uic import loadUi
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QMessageBox, QTableWidgetItem, QWidget
+from PyQt6.QtCore import QDate
 from os import path
 from typing import Protocol
-from app.utils import get_combo_manager, ComboName
-from models import get_model, ModelName
+
+from app.repo.schemas import SchemaFactory, EntrySchema
+from app.utils import get_combo_manager, ComboName, get_student_list, get_username, error, info
+from app.view import create_table_model, TableType
+from app.models import get_model, ModelName
 
 from app.ui.ui_forms import (
     ClassesFormUI,
     ExpensesFormUI,
     IncomeFormUI,
-    SettingFormUI,
-    SettingWithCodeFormUI,
     StudentFormUI,
     TeacherFormUI,
+    AddPaymentUI
 )
 
 class FormProtocol(Protocol):
@@ -247,6 +250,228 @@ class IncomeForm(QWidget, IncomeFormUI):
         else:
             self.type.setCurrentText(code[0])
 
-class PaymentForm(QWidget, SettingFormUI):
-    raise NotImplementedError("PaymentForm is not implemented yet.")
+class PaymentForm(QWidget, AddPaymentUI):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        ui_path = path.abspath("../../ui/add_payment.ui")  # Convert to absolute path
+        loadUi(ui_path, self)
+
+        self.model = None
+        self.identifier = 0
+        self.momentane: list[EntrySchema] = []
+        
+        self.student_manager = get_model(ModelName.STUDENT)
+        self.manager = get_model(ModelName.PAYMENTS)
+        self.combo_manager = get_combo_manager()
+        self.enrollment_manager = get_model(ModelName.ENROLLMENT)
+        self.classes_manager = get_model(ModelName.CLASSES)
+
+        self.date.setDate(QDate.currentDate())
+        self.addition_date.setDate(QDate.currentDate())
+
+        self.setup_student_search()
+        self.cheq_num_on_off()
+        self.populate_combo()
+        self.setup()
+        self.show_bill()
+
+    def setup(self):
+        self.add_btn.clicked.connect(self.control)
+        self.reset_btn.clicked.connect(self.reset)
+        self.confirm_btn.clicked.connect(self.confirm_bill)
+        self.bill_tbl.doubleClicked.connect(self.delete_from_bill)
+        self.student_list.doubleClicked.connect(self.select_student)
+        self.search_student.textChanged.connect(self.search_student_func)
+        self.way.currentTextChanged.connect(self.cheq_num_on_off)
+        self.classroom.currentTextChanged.connect(lambda: self.set_price(self.classroom.currentText()))
+
+    def setup_student_search(self):
+        self.model = create_table_model(TableType.STUDENT_SEARCH)
+
+        self.student_list.setModel(self.model)
+        self.student_list.hideColumn(self.model.ID_COLUMN)
+
+    def search_student_func(self, name = None):
+        name = None if name == "" else name
+        
+        students = get_student_list(name)
+
+        self.model.refresh(students)
+
+        self.student_list.repaint()
+        
+    def select_student(self, index):
+        row = index.row()
+        print(row)
+        if not row:
+            error("يرجى تحديد التلميذ")
+            return
+        
+        self.identifier = self.model.data(self.model.index(row, 0), role=0)
+        name = self.model.data(self.model.index(row, 1), role=0)  
+
+        self.student_list.clearSelection()
+
+        self.name.setText(str(name))
+        self.populate_classes(self.identifier)
+        self.note_payment()
+
+    def note_payment(self):
+        student = self.student_manager.get_by_id(self.identifier)
+        note = student.note
+        if note: 
+            info(note)
+
+    def control(self):
+        name = self.name.text()
+        classroom = self.classroom.currentText()
+        price = self.price.text()
+        date = self.date.date()
+        way = self.way.currentText()
+        cheq_num = self.cheq_num.text()
+        bill_number = self.bill_number.text()
+        addition_date = self.addition_date.date()
+
+        entity = SchemaFactory.INCOME(
+            num_inscrit=self.identifier,
+            name=name,
+            classroom=classroom,
+            price=price,
+            payment_date=date.toPyDate(),
+            way=way,
+            cheq_num=cheq_num,
+            bill_number=bill_number,
+            addition_date=addition_date.toPyDate(),
+            type="تسجيل",
+            code=13,
+            note="",
+            user=get_username(),
+            in_bank=False
+        )
+
+        try:
+            if not entity.validate():
+                error("الرجاء ملء جميع الحقول")
+                return
+        except ValueError as e:
+            error(str(e))
+            return
+        
+        if self.is_unique(self.identifier, classroom, date):
+            error("تم تسجيل هذا الدفع مسبقا")
+            return
+        self.add(entity)
+
+    def add(self, data):
+        self.momentane.append(data)
+
+        self.show_bill()
+
+    def delete_from_bill(self, row):
+        self.momentane.pop(row.row())
+
+        self.show_bill()
+
+    def show_bill(self):
+        self.bill_tbl.setRowCount(len(self.momentane))
+
+        for i in range(len(self.momentane)):
+            row = self.momentane[i]
+            self.bill_tbl.setItem(i, 0, QTableWidgetItem(str(row.num_inscrit)))
+            self.bill_tbl.setItem(i, 1, QTableWidgetItem(str(row.name)))
+            self.bill_tbl.setItem(i, 2, QTableWidgetItem(str(row.classroom)))
+            self.bill_tbl.setItem(i, 3, QTableWidgetItem(str(row.price)))
+            self.bill_tbl.setItem(i, 4, QTableWidgetItem(str(row.payment_date.strftime("%Y-%m"))))
+            self.bill_tbl.setItem(i, 5, QTableWidgetItem(str(row.way)))
+            self.bill_tbl.setItem(i, 6, QTableWidgetItem(str(row.addition_date.strftime("%Y-%m-%d"))))
+
+    def confirm_bill_security(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Warning)
+        msg.setText("هل تريد تاكيد الفاتورة؟")
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+        if msg.exec() == QMessageBox.StandardButton.Yes:
+            self.confirm_bill()
+
+    def confirm_bill(self):
+
+        try:
+            for row in self.momentane:
+                self.manager.create(row)
+
+            info("تمت إضافة الفاتورة بنجاح")
+        except Exception as e:
+            print(e)
+            self.manager.rollback()
+        finally:
+            self.momentane = []
+            self.reset()
+            self.show_bill()
+
+
+    def populate_combo(self):
+        self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
+
+    def populate_classes(self, identifier): 
+        filters = self.enrollment_manager.get_filters(student_id=identifier)
+        enrollments = self.enrollment_manager.get_by_filter(filters)
+        class_names = [enrollment.class_name for enrollment in enrollments]
+
+        self.combo_manager.update_with_data(self.classroom, class_names)  
+    
+    def reset(self):
+        self.name.setText("")
+        self.classroom.setCurrentIndex(-1)
+        self.way.setCurrentIndex(-1)
+        self.price.setValue(0)
+        self.cheq_num.setText("")
+        self.date.setDate(QDate.currentDate())
+        self.identifier = 0
+
+    def set_price(self, classroom):
+        if classroom != "":
+            filter = self.classes_manager.get_filters(name=classroom)
+            class_ = self.classes_manager.get_by_filter(filter)
+            price = class_[0].price if class_ else 0
+            self.price.setValue(price)
+
+    def is_unique(self, identifier, classroom, date):
+
+        # Checking for payment with the same identifier, classroom, and matching year and month
+        if classroom == "تأمين":
+            filters = self.manager.get_filter(
+                num_inscrit=identifier,
+                classroom=classroom,
+                year=date.year()  # Use exact date for "تأمين" payments
+            )
+            
+            # If payment exists and classroom is "تأمين", check if the year is different
+            return self.manager.exists(filters)  # It's not unique if same identifier, classroom, and year
+        else:
+            filters = self.manager.get_filter(
+                num_inscrit=identifier,
+                classroom=classroom,
+                year=date.year(),
+                month=date.month()
+            )
+
+        # Check in momentane for non-database temporary data
+        if len(self.momentane) > 0:
+            for i in self.momentane:
+                if i.classroom == "تأمين" and classroom == "تأمين":
+                    if i.payment_date.year == date.year():
+                        return True
+                else:
+                    if i.num_inscrit == identifier and i.classroom == classroom and i.payment_date.year == date.year() and i.payment_date.month == date.month():
+                        return True
+
+        return False  # If no match, it's unique
+    
+    def cheq_num_on_off(self):
+        if self.way.currentText() == "صك":
+            self.cheq_num.setEnabled(True)
+        else:
+            self.cheq_num.setEnabled(False)
 

@@ -6,7 +6,7 @@ from app.utils.utils import (
     error,
     ReportType,
     WorkingMode, 
-    Account
+    Account, info
 )
 from app.repo.database import SessionLocal
 
