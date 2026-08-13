@@ -36,8 +36,8 @@ class ViewPayment(QWidget, V):
         self.reg_tbl.clicked.connect(self.select_row)
         self.update_btn.clicked.connect(self.edit_price) 
         self.cancel_btn.clicked.connect(self.cancel)
-        self.printing_btn.clicked.connect(self.printing_preview)
-        self.export_btn.clicked.connect(self.excel)
+        self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
+        self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def setup_table(self):
         self.model = create_table_model(TableType.PAYMENT)
