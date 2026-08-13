@@ -65,6 +65,8 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         dialog.show()
         
     def control(self, action, data):
+        in_bank = True if data["in_bank"] == "البنك" else False
+
         entity = SchemaFactory.EXPENSES(
             name=data["name"],
             bill_num=data["bill_num"],
@@ -75,7 +77,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             price=data["price"],
             note=data["note"],
             code=data["code"],
-            in_bank=data["in_bank"],
+            in_bank=in_bank,
             user=get_username()
         )
         

@@ -73,6 +73,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         dialog.show()
     
     def control(self, action, data):
+        in_bank = True if data["in_bank"] == "البنك" else False
         entity = SchemaFactory.INCOME(  
                 name=data["name"],
                 date=data["date"],
@@ -83,7 +84,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
                 num_bill=data["bill_number"],
                 cheq_num=data["cheq_num"],
                 code=data["code_input"],
-                going_to=data["bank_caisse"],
+                in_bank=in_bank,
                 user=get_username()
             )
         
