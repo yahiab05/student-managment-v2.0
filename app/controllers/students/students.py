@@ -34,7 +34,7 @@ class StudentsLogic(QWidget, StudentsUI):
         self.combo_manager = get_combo_manager()
 
         self.to.setDate(QDate.currentDate())
-        self.date_inscrit.setDate(QDate.currentDate())
+        self.du.setDate(QDate.currentDate())
         self.gender_search.setCurrentIndex(-1)
 
         self.animation = QPropertyAnimation(self.search_frame, b"maximumWidth")

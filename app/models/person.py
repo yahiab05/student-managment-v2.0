@@ -6,7 +6,7 @@ from app.utils.utils import error
 class Student(CRUD):
     # Concrete child class for student records that uses the students table.
     def __init__(self, session):
-		super().__init__(session, ModelName.STUDENTS)
+        super().__init__(session, ModelName.STUDENTS)
         self.enrollments = Enrollment(session)
         self.history = StudentHistory(session)
         
@@ -54,7 +54,7 @@ class Student(CRUD):
         return self.session.query(self.db.table).order_by(self.db.table.num_inscrit.desc()).first()
 
     def get_filters(self, name=None, gender=None, _from=None, _to=None, 
-                    excused=None, activity=None):
+                    excused=None, activity=None, not_included: list=None):
         # Return a list of filters based on the provided name and gender.
         filters = []
         self.intro = ""
@@ -75,6 +75,8 @@ class Student(CRUD):
         if gender:
             filters.append(self.db.table.gender == gender)
             self.intro += "جنس: " + gender
+        if not_included:
+            filters.append(self.db.table.num_inscrit.not_in(not_included))
         return filters
     
     def set_static_metadata(self):
@@ -96,7 +98,7 @@ class Student(CRUD):
 class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
     def __init__(self, session):
-		super().__init__(session, ModelName.TEACHERS)
+        super().__init__(session, ModelName.TEACHERS)
         
         self.set_static_metadata()
         
@@ -119,7 +121,7 @@ class Teacher(CRUD):
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.
     def __init__(self, session):
-		super().__init__(session, ModelName.STUDENTS_HISTORY)
+        super().__init__(session, ModelName.STUDENTS_HISTORY)
 
     def set_date(self, date):
         return self.db.table.set_date_inscrit(date)
@@ -143,7 +145,7 @@ class StudentHistory(CRUD):
 class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.
     def __init__(self, session):
-		super().__init__(session, ModelName.TEACHERS_HISTORY)
+        super().__init__(session, ModelName.TEACHERS_HISTORY)
 
     def search_by_id(self, teacher_id: int):
         """Search history records by teacher ID, joined with the teacher table."""
