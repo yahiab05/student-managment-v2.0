@@ -136,8 +136,7 @@ class EnteryMoneyUI:
 
 class MoneyUI:
     money: QWidget
-    bank: QPushButton
-    caisse: QPushButton
+    transfer: QPushButton
     solde: QPushButton
     out_money: QPushButton
     add_money: QPushButton

@@ -23,19 +23,13 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <spacer name="horizontalSpacer_6">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
@@ -58,7 +52,7 @@
            </font>
           </property>
           <property name="layoutDirection">
-           <enum>Qt::LayoutDirection::RightToLeft</enum>
+           <enum>Qt::LeftToRight</enum>
           </property>
          </widget>
         </item>
@@ -88,11 +82,8 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_8">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Policy::Fixed</enum>
+           <enum>QSizePolicy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -144,11 +135,8 @@ border-top: none
         </item>
         <item>
          <spacer name="horizontalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Policy::Fixed</enum>
+           <enum>QSizePolicy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -194,9 +182,6 @@ border-top: none
         </item>
         <item>
          <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
@@ -210,10 +195,7 @@ border-top: none
       <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
@@ -233,9 +215,6 @@ border-top: none
          </property>
          <item>
           <spacer name="horizontalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>274</width>
@@ -264,13 +243,10 @@ border-top: none
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Shadow::Plain</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            <set>QAbstractItemView::NoEditTriggers</set>
            </property>
            <property name="showDropIndicator" stdset="0">
             <bool>false</bool>
@@ -282,16 +258,16 @@ border-top: none
             <bool>true</bool>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+            <enum>QAbstractItemView::NoSelection</enum>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            <enum>QAbstractItemView::SelectItems</enum>
            </property>
            <property name="verticalScrollMode">
-            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollPerItem</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollPerItem</enum>
            </property>
            <property name="showGrid">
             <bool>false</bool>
@@ -302,6 +278,11 @@ border-top: none
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
+           <column>
+            <property name="text">
+             <string>id</string>
+            </property>
+           </column>
            <column>
             <property name="text">
              <string>المستعمل</string>
@@ -317,18 +298,10 @@ border-top: none
              <string>الدور</string>
             </property>
            </column>
-           <column>
-            <property name="text">
-             <string>id</string>
-            </property>
-           </column>
           </widget>
          </item>
          <item>
           <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
@@ -345,10 +318,7 @@ border-top: none
         <item>
          <widget class="QFrame" name="frame_3">
           <property name="frameShape">
-           <enum>QFrame::Shape::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Shadow::Raised</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <property name="spacing">
@@ -368,9 +338,6 @@ border-top: none
            </property>
            <item>
             <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>
@@ -408,11 +375,8 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Policy::Fixed</enum>
+              <enum>QSizePolicy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -455,10 +419,7 @@ border-top: none
         <item>
          <widget class="QFrame" name="frame_5">
           <property name="frameShape">
-           <enum>QFrame::Shape::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Shadow::Raised</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
@@ -505,11 +466,8 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Policy::Fixed</enum>
+              <enum>QSizePolicy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -548,9 +506,6 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>40</width>

@@ -3,12 +3,10 @@ from PyQt6.QtCore import QDate
 from PyQt6.uic import loadUi
 from os import path
 
-from app.controllers import payment
 from app.ui.ui_forms import ViewPaymentUI as V
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
 from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType
-from app.repo.schemas import SchemaFactory
 
 class ViewPayment(QWidget, V):
     def __init__(self):

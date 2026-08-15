@@ -38,10 +38,7 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -62,14 +59,11 @@
       <item>
        <widget class="QFrame" name="frame_4">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QPushButton" name="bank">
+          <widget class="QPushButton" name="transfer">
            <property name="minimumSize">
             <size>
              <width>150</width>
@@ -85,28 +79,7 @@
             <string notr="true">border: 2px solid black</string>
            </property>
            <property name="text">
-            <string>البنك</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="caisse">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>15</pointsize>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border: 2px solid black</string>
-           </property>
-           <property name="text">
-            <string>الخزينة</string>
+            <string>التحويلات </string>
            </property>
           </widget>
          </item>
@@ -132,17 +105,14 @@
          <string>الحسابات</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QFrame" name="frame_2">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
