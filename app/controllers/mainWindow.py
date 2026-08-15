@@ -1,12 +1,13 @@
 import gc
 from os import environ, getenv, path
 from pathlib import Path
-from subprocess import run
+from subprocess import PIPE, run
 from datetime import datetime
 from PyQt6.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from PyQt6.uic import loadUi
 from app.ui.ui_forms import MainUI
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
+from app.models import get_model, ModelName
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
@@ -27,6 +28,8 @@ class mainWindow(QMainWindow, MainUI):
         
         self.factory = ControllerFactory()
         self.factory.setup_sections(self.stackedWidget, buttons)
+        
+        self.access_manager = get_model(ModelName.ACCESS)
         
     def closeEvent(self, event):
         ret = QMessageBox.question(self, 'حفظ', "متأكد من حفظ المعطيات؟", 
@@ -81,7 +84,7 @@ class mainWindow(QMainWindow, MainUI):
         ]
 
         with out_file.open("wb") as f:
-            result = run(cmd, stdout=f, stderr=subprocess.PIPE, env=env)
+            result = run(cmd, stdout=f, stderr=PIPE, env=env)
 
         if result.returncode != 0:
             # Clean partial dump if failed
@@ -92,3 +95,12 @@ class mainWindow(QMainWindow, MainUI):
             raise RuntimeError(f"mysqldump failed: {result.stderr.decode('utf-8', errors='replace')}")
 
         return str(out_file)
+    
+    def access_control(self):
+        self.students.setEnabled(self.access_manager.get_access("students"))
+        self.classes.setEnabled(self.access_manager.get_access("classes"))
+        self.teachers.setEnabled(self.access_manager.get_access("teachers"))
+        self.payment.setEnabled(self.access_manager.get_access("payment"))
+        self.money.setEnabled(self.access_manager.get_access("money"))
+        self.settings.setEnabled(self.access_manager.get_access("settings"))
+        self.user.setEnabled(self.access_manager.get_access("user"))

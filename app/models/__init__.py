@@ -7,6 +7,7 @@ from app.models.classes import Classes, Enrollment
 from app.models.finance import Expense, Income, Balance, Transfer, Payment
 from app.models.person import Student, StudentHistory, Teacher, TeacherHistory
 from app.models.settings import Settings
+from app.models.access_manager import AccessManager
 from app.models.names import ModelName
 
 MODEL_REGISTRY = {
@@ -32,6 +33,7 @@ MODEL_REGISTRY = {
 	ModelName.USER: Users,
 	ModelName.USERS: Users,
 	ModelName.LOGIN: Login,
+	ModelName.ACCESS: AccessManager,
 }
 
 
@@ -110,6 +112,13 @@ def get_model(
 				ModelName.ROLE,
 				ModelName.ROLES]
 			) -> Roles: ...
+
+@overload
+def get_model(
+			model_name: Literal[
+				ModelName.ACCESS]
+			) -> AccessManager: ...
+
 
 @overload
 def get_model(

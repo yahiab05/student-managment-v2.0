@@ -6,6 +6,7 @@ from app.models import ModelName, get_model
 
 from app.controllers.mainWindow import mainWindow
 from app.ui.ui_forms import LoginUI
+from app.utils import set_username
 
 class Login(QWidget, LoginUI):
     def __init__(self):
@@ -17,6 +18,7 @@ class Login(QWidget, LoginUI):
         loadUi(ui_path, self)
         
         self.manager = get_model(ModelName.LOGIN)
+        self.access_manager = get_model(ModelName.ACCESS)
 
     def setup(self):
         self.submit.clicked.connect(self.check_login)
@@ -30,8 +32,14 @@ class Login(QWidget, LoginUI):
             self.open_app(username)
             
     def open_app(self, user):
-        main_window = mainWindow(user)
+        set_username(user)
+        self.set_access(user)
+        main_window = mainWindow()
         main_window.show()
         
         self.close()  # Close the login window after opening the main application window
+        
+    def set_access(self, user):
+        self.access_manager.set_user(user)
+        self.access_manager.set_access()
         

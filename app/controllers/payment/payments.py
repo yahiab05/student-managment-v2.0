@@ -115,18 +115,8 @@ class ViewPayment(QWidget, V):
         self.previous_price.setText(str(old_payment.price))  
 
     def has_access(self):
-        username = HelpLogic.get_username()
-        session = SessionLocal()
-
-        user = session.query(Users).filter(Users.username == username).first()
-
-        if user.role.payment_editting:
-            session.close()
-
-            return True
-        session.close()
-
-        return False
+        access_manager = get_model(ModelName.ACCESS)
+        return access_manager.get_access("payment_edit")
 
 
     def edit_price(self):
