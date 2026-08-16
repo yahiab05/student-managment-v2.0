@@ -10,13 +10,18 @@ class DBFacade:
     def get_all(self):
         return self.session.query(self.table).all()
     
-    def get_by_id(self, id) -> list:
-        return self.session.query(self.table).filter(self.table.id == id).all()
-    
+    def get_by_id(self, id, multiple=False):
+        if multiple:
+            return self.session.query(self.table).filter(self.table.id == id).all()
+        return self.session.query(self.table).filter(self.table.id == id).first()
+        
     def add(self, data):
         obj = self.table(**data)
         self.session.add(obj)
         return obj
+    
+    def get_biggest_id(self):
+        return self.session.query(func.max(self.table.id)).scalar()
 
     def update(self, id, data):
         obj = self.session.query(self.table).filter(self.table.id == id).first()

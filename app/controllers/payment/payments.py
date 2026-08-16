@@ -39,7 +39,7 @@ class ViewPayment(QWidget, V):
 
         self.reg_tbl.setModel(self.model)
 
-        self.total.setText(str(self.model.total_price))
+        self.total.setText(str(self.manager.get_total()))
         self.nb.setText(str(self.model.rowCount()))
 
     def search(self):

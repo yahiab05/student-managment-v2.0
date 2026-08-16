@@ -109,14 +109,13 @@ class TeacherLogic(QWidget, TeacherUI):
             except IntegrityError as e:
                 error("حدث خطأ أثناء تحديث المعلم.")
                 return
-        self.reset()
         self.show_teachers()
         self.combo_manager.update_cache_from_db("teachers")
 
     def delete(self):
         if self.identifier is not None and not self.has_classes():
             line = self.manager.get_by_id(self.identifier)
-            name = line[0].name
+            name = line.name
             try:
                 if not self.has_classes():
                     self.manager.delete(self.identifier)
@@ -144,22 +143,6 @@ class TeacherLogic(QWidget, TeacherUI):
         row_index = row[0].row()
         
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
-        self.repopulate()
-
-    def repopulate(self):
-        data = self.manager.get_by_id(self.identifier)
-        if data is not None:
-            self.name.setText(data.name)
-            self.date_inscrit.setDate(data.get_date_inscrit())
-            self.birthday.setDate(data.get_birthday())
-            if len(data.phone) > 8:
-                phones = data.phone.split("/")
-                self.phone.setText(phones[0])
-                self.phone_2.setText(phones[1])
-            else:
-                self.phone.setText(data.phone)
-            self.note.setText(data.note)
-            self.money.setCurrentText(data.payed)
 
     def show_teachers(self):
         name = self.search.text() 
@@ -188,7 +171,7 @@ class TeacherLogic(QWidget, TeacherUI):
         teacher = self.manager.get_by_id(teacher_id)
         if teacher is not None:
             try:
-                teacher[0].date_inscrit = teacher.set_date_iscrit(QDate.currentDate())
+                teacher.date_inscrit = QDate.currentDate().toPyDate()
                 self.manager.commit()
             except IntegrityError:
                 error("هذا المعلم موجود.")

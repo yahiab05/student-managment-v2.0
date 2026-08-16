@@ -51,7 +51,7 @@ class Student(CRUD):
         return False
                 
     def get_last_student(self):
-        return self.session.query(self.db.table).order_by(self.db.table.num_inscrit.desc()).first()
+        return self.db.get_biggest_id()
 
     def get_filters(self, name=None, gender=None, _from=None, _to=None, 
                     excused=None, activity=None, not_included: list=None):
@@ -117,6 +117,9 @@ class Teacher(CRUD):
     def set_dynamic_metadata(self, data_to_export, row_count):
         self.foot = "المجموع: " + str(row_count)
         self.data_to_export = data_to_export
+        
+    def get_last_id(self):
+        return self.db.get_biggest_id() 
 
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.
