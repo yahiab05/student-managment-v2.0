@@ -197,9 +197,10 @@ class StudentsLogic(QWidget, StudentsUI):
         student = self.manager.get_by_id(self.identifier)
         if student is not None:
             try:
+                old_date = student.date_inscrit
                 student.date_inscrit = QDate.currentDate().toPyDate()
                 self.manager.db.commit()
-                self.add_history(self.identifier, QDate.currentDate())
+                self.add_history(self.identifier, old_date)
             except Exception:
                 self.manager.db.rollback()
                 error("هذا التلميذ موجود.")

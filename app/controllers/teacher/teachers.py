@@ -162,7 +162,10 @@ class TeacherLogic(QWidget, TeacherUI):
             ret = msg.question(None, 'تسجيل', "هل تريد تسجيل هذا المعلم؟", msg.StandardButton.Yes | msg.StandardButton.No)
 
             if ret == msg.StandardButton.Yes:
-                self.add_history(self.identifier, self.date_inscrit.date(), self.money.currentText())
+                teacher = self.manager.get_by_id(self.identifier)
+                if teacher is not None:
+                    date = teacher.date_inscrit
+                self.add_history(self.identifier, date)
                 self.new_year(self.identifier)
         self.reset()
         self.show_teachers()
@@ -180,11 +183,10 @@ class TeacherLogic(QWidget, TeacherUI):
         else:
             error("هذا المعلم غير موجود.")
 
-    def add_history(self, teacher_id, date, payed):
+    def add_history(self, teacher_id, date):
         entity = SchemaFactory.TEACHER_HISTORY(
             teacher_id=teacher_id,
             date_inscrit=date.toPyDate(),
-            payed=payed,
             user=get_username()
         )
         
