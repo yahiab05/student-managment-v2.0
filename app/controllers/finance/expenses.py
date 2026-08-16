@@ -44,7 +44,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
         self.tbl.setModel(self.model)
 
-        self.total.setText(str(self.model.total_price))
+        self.total.setText(str(self.manager.get_total()))
         self.tbl.hideColumn(self.model.ID_COLUMN)
         
     def aquire_data(self, action: WorkingMode):
@@ -138,7 +138,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         data = self.manager.get_by_filter(filters)
         self.model.refresh(data)
 
-        self.total.setText(str(self.model.total_price))
+        self.total.setText(str(self.manager.get_total(filters)))
 
     def populate_combo(self):
         self.combo_manager.update_combo(self.name_search, ComboName.FR)
@@ -179,10 +179,16 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
     def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
-        total = ...
+        total = self.get_total(data_to_export)
         self.manager.set_dynamic_metadata(
             total_price=total, 
             data_to_export=data_to_export
             )
         
         self.manager.export_data(report_type=output_channel, parent=self)
+        
+    def get_total(self, data):
+        total = 0
+        for item in data:
+            total += item.price
+        return total

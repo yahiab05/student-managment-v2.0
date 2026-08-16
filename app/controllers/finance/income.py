@@ -160,7 +160,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         self.model.refresh(operator,price, from_date, to_date, way, type, name, code)
         self.tbl.repaint()
 
-        self.total.setText(str(self.model.total_price))
+        self.total.setText(str(self.manager.get_total(filters)))
 
     def populate_combo(self):
         self.combo_manager.update_combo(self.type_search, ComboName.INCOME)
@@ -182,10 +182,15 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
 
     def export(self, output_channel: ReportType):
         data_to_export = self.model.get_current_data()
-        total_price = self.model.total_price
+        total_price = self.get_total(data_to_export)
         self.manager.set_dynamic_metadata(total_price, data_to_export)
 
         self.manager.export_data(
             report_type=output_channel, 
             parent=self)
-
+        
+    def get_total(self, data):
+        total = 0
+        for item in data:
+            total += item.price
+        return total
