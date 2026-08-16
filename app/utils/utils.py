@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtCore import QDate
-from sqlalchemy import text
+from PyQt6.uic import loadUi
+from os import path
 
 from app.repo.models import SessionLocal, Students
 from PyQt6.QtCore import QSettings
@@ -61,3 +61,21 @@ class ReportType(StrEnum):
 class WorkingMode(StrEnum):
     ADD = auto()
     UPDATE = auto()
+    
+class UiPath(StrEnum):
+    STUDENTS = "../../ui/students/"
+    CLASSES = "../../ui/classes/"
+    TEACHERS = "../../ui/teachers/"
+    PAYMENTS = "../../ui/payments/"
+    OTHERS = "../../ui/others/"
+    FINANCE = "../../ui/finance/"
+    FORMS= "../../ui/forms/"
+    LOGIN = MAIN = "../ui/"
+    
+def load_gui(prefix: UiPath="", ui_file: str="", widget=None) -> None:
+    if widget is None:
+        raise ValueError("Widget must be provided to load the UI.")
+    if not ui_file:
+        raise ValueError("UI file name must be provided.")
+    ui_file_path = path.abspath(path.join(path.dirname(__file__), prefix, ui_file))
+    loadUi(ui_file_path, widget)

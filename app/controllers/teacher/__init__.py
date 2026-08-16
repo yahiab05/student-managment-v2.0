@@ -1,16 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QPushButton
-from PyQt6.uic import loadUi
-from os import path
 
 from app.controllers.teacher.teachers import TeacherLogic, TeachersHistoryLogic
 from app.ui.ui_forms import TeacherPartUI
+from app.utils import load_gui, UiPath
 
 class TeachersPart(QWidget, TeacherPartUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/teacher_part.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.TEACHERS, "teacher_part.ui", self)
 
         self.t = TeacherLogic(self)
         self.th = TeachersHistoryLogic(self)

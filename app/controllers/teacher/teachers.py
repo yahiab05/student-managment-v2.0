@@ -1,12 +1,11 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox
 from PyQt6.QtCore import QDate
-from os import path
 from sqlalchemy.exc import IntegrityError
+
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, WorkingMode
+from app.utils import error, get_username, get_combo_manager, ReportType, WorkingMode, load_gui, UiPath
 from app.ui.ui_forms import TeacherUI, TeacherHistoryUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -14,9 +13,7 @@ from app.controllers.popup import create_popup_factory, PopupKind
 class TeacherLogic(QWidget, TeacherUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "teacher", "teacher.ui"))
-
-        loadUi(ui_path, self)
+        load_gui(UiPath.TEACHERS, "teacher.ui", self)
 
         self.model = None
         self.manager = get_model(ModelName.TEACHERS)
@@ -235,8 +232,7 @@ class TeachersHistoryLogic(QWidget, TeacherHistoryUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "teacher", "teacher_history.ui"))
-        loadUi(ui_path, self)
+        load_gui(UiPath.TEACHERS, "teacher_history.ui", self)
 
         self.model = None
         self.manager = get_model(ModelName.TEACHERS_HISTORY)

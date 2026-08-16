@@ -1,19 +1,16 @@
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from PyQt6.uic import loadUi
-from os import path
 
 from app.ui.ui_forms import ViewPaymentUI as V
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
-from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType
+from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType, load_gui, UiPath
 
 class ViewPayment(QWidget, V):
     def __init__(self):
         super().__init__()
 
-        ui_path = path.abspath("../../ui/payment/view_payment.ui")  # Convert to absolute path
-        loadUi(ui_path, self)
+        load_gui(UiPath.PAYMENTS, "view_payment.ui", self)  
 
         self.to.setDate(QDate.currentDate())
         self.du.setDate(QDate(2000, 1, 1))

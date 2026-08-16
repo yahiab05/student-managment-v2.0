@@ -1,9 +1,7 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem
 from sqlalchemy.exc import IntegrityError
-from os import path
 from app.repo.schemas import SchemaFactory
-from app.utils import get_username, error, get_combo_manager, WorkingMode, ComboName
+from app.utils import get_username, error, get_combo_manager, WorkingMode, ComboName, load_gui, UiPath
 from app.models import ModelName, get_model
 from abc import ABC, abstractmethod
 from app.ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
@@ -53,10 +51,9 @@ class BaseSettings(QWidget, ABC ,SettingFormUI):
 class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
     def __init__(self, is_income, parent=None):
         super().__init__(parent=parent)
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "forms", "setting_with_code_form.ui"))
-
-        loadUi(ui_path, self)
-
+        
+        load_gui(UiPath.FORMS, "setting_with_code_form.ui", self)
+        
         self.identifier = None
         self.income = is_income
 
@@ -149,9 +146,7 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
     def __init__(self, setting: ComboName, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "forms", "setting_form.ui"))
-
-        loadUi(ui_path, self)
+        load_gui(UiPath.FORMS, "setting_form.ui", self)
         
         self.setting = setting
 

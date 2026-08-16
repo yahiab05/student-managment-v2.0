@@ -1,16 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QPushButton
-from PyQt6.uic import loadUi
-from os import path
 
 from app.controllers.classes.classes import ClassesLogic, ClasseleveLogic
 from app.ui.ui_forms import ClassPartUI
+from app.utils import load_gui, UiPath
 
 class ClassPart(QWidget, ClassPartUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/class_part.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.CLASSES, "class_part.ui", self)
 
         self.c = ClassesLogic(self)
         self.ce = ClasseleveLogic(self)

@@ -1,20 +1,17 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QMessageBox, QWidget
 from PyQt6.QtCore import QDate
-from os import path
 
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, Account
+from app.utils import error, get_username, get_combo_manager, ReportType, Account, load_gui, UiPath
 from app.ui.ui_forms import TransferUI
 
 class TransferLogic(QWidget, TransferUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/finance/transfer.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.FINANCE, "transfer.ui", self)
 
         self.model = None
         self.combo_manager = get_combo_manager()

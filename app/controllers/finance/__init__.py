@@ -1,6 +1,4 @@
 from PyQt6.QtWidgets import QWidget, QPushButton
-from PyQt6.uic import loadUi
-from os import path
 
 from app.controllers.finance.income import EnteryLogic
 from app.controllers.finance.expenses import OutMoneyLogic
@@ -8,13 +6,13 @@ from app.controllers.finance.balance import BalanceLogic
 from app.controllers.finance.transfer import TransferLogic
 
 from app.ui.ui_forms import MoneyUI
+from app.utils import load_gui, UiPath
 
 class MoneyPart(QWidget, MoneyUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath("../../ui/money.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.FINANCE, "money_part.ui", self)
 
         self.e = EnteryLogic(self)
         self.o = OutMoneyLogic(self)

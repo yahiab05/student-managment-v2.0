@@ -1,18 +1,15 @@
 from PyQt6.QtWidgets import QWidget, QPushButton
-from PyQt6.uic import loadUi
-from os import path
 
 from app.controllers.payment.payments import ViewPayment
 from app.controllers.payment.not_payed_view import ViewNotPayedLogic
 
 from app.ui.ui_forms import PaymentPartUI
+from app.utils import load_gui, UiPath
 
 class PaymentPart(QWidget, PaymentPartUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        ui_path = path.abspath("./ui/payment_part.ui")  # Convert to absolute path
-
-        loadUi(ui_path, self)
+        load_gui(UiPath.PAYMENTS, "payment_part.ui", self)
 
         self.vp = ViewPayment()
         self.vnp = ViewNotPayedLogic()

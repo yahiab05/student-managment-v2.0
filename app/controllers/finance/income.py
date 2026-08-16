@@ -1,7 +1,5 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from os import path
 
 from app.repo.schemas import SchemaFactory
 
@@ -11,7 +9,9 @@ from app.utils import (
     get_combo_manager, 
     ReportType, 
     ComboName,
-    WorkingMode
+    WorkingMode,
+    load_gui,
+    UiPath
     )
 
 from app.view import TableType, create_table_model
@@ -23,8 +23,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("./ui/entery.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.FINANCE, "entery.ui", self)
 
         self.identifier = None
         self.model = None

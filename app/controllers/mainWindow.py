@@ -1,20 +1,19 @@
 import gc
-from os import environ, getenv, path
+from os import environ, getenv
 from pathlib import Path
 from subprocess import PIPE, run
 from datetime import datetime
 from PyQt6.QtWidgets import QFileDialog, QMainWindow, QMessageBox
-from PyQt6.uic import loadUi
 from app.ui.ui_forms import MainUI
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
 from app.models import get_model, ModelName
+from app.utils import load_gui, UiPath
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "main.ui"))
-        loadUi(ui_path, self)
+        load_gui(UiPath.MAIN, "main.ui", self)
         
         buttons = {
             ControllerSection.ADMIN: self.user,

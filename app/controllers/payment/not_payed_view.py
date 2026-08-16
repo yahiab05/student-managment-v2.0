@@ -1,18 +1,16 @@
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from PyQt6.uic import loadUi
-from os import path
 
 from app.ui.ui_forms import ViewNotPayedUI as V
-from app.utils import error, get_combo_manager
+from app.utils import error, get_combo_manager, load_gui, UiPath
 from app.models import get_model, ModelName
+
 
 class ViewNotPayedLogic(QWidget, V):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/view_not_payed.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.PAYMENTS, "not_payed.ui", self)
 
         self.manager = get_model(ModelName.PAYMENTS)
         self.enrollment_manager = get_model(ModelName.ENROLLMENT)

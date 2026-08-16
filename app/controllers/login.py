@@ -6,17 +6,14 @@ from app.models import ModelName, get_model
 
 from app.controllers.mainWindow import mainWindow
 from app.ui.ui_forms import LoginUI
-from app.utils import set_username
+from app.utils import set_username, load_gui, UiPath
 
 class Login(QWidget, LoginUI):
     def __init__(self):
         create_db()  # Ensure the database is created before proceeding
-
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "login.ui"))
-
         super().__init__()
-        loadUi(ui_path, self)
-        
+        load_gui(UiPath.LOGIN, "login.ui", self)
+
         self.manager = get_model(ModelName.LOGIN)
         self.access_manager = get_model(ModelName.ACCESS)
 

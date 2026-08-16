@@ -1,10 +1,8 @@
-from os import path
-
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from app.ui.ui_forms import PopupFormUI
 from PyQt6.QtCore import pyqtSignal
 from app.controllers.popup.dynamic_windows import FormProtocol
+from app.utils import load_gui, UiPath
 
 class BaseWindow(QWidget, PopupFormUI):
     confirmed = pyqtSignal()
@@ -17,8 +15,7 @@ class BaseWindow(QWidget, PopupFormUI):
 
     def setup_ui(self):
         # Load the UI file for the base window
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "..", "ui", "forms", "popup_form.ui"))
-        loadUi(ui_path, self)
+        load_gui(UiPath.FORMS, "popup_form.ui", self)
         
         self.title.setText(self.title_content)
         self.widget.layout().addWidget(self.content)

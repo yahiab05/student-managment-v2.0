@@ -3,15 +3,11 @@ from __future__ import annotations
 from enum import Enum
 from typing import Protocol, runtime_checkable
 
-from PyQt6.QtWidgets import QWidget
-
 from app.controllers.popup.base_window import BaseWindow
 from app.controllers.popup.dynamic_windows import (
     ClassesForm,
     ExpensesForm,
     IncomeForm,
-    SettingForm,
-    SettingWithCodeForm,
     StudentForm,
     TeacherForm,
 )
@@ -23,8 +19,6 @@ class PopupKind(Enum):
     CLASSES = "classes"
     EXPENSES = "expenses"
     INCOME = "income"
-    SETTING = "setting"
-    SETTING_WITH_CODE = "setting_with_code"
 
 
 @runtime_checkable
@@ -46,8 +40,6 @@ class PopupFactory(PopupFactoryProtocol):
         PopupKind.CLASSES: ClassesForm,
         PopupKind.EXPENSES: ExpensesForm,
         PopupKind.INCOME: IncomeForm,
-        PopupKind.SETTING: SettingForm,
-        PopupKind.SETTING_WITH_CODE: SettingWithCodeForm,
     }
 
     def _create_content(self, kind: PopupKind, parent=None) -> PopupContentProtocol:

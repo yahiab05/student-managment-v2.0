@@ -1,10 +1,7 @@
 from PyQt6.QtWidgets import QTableWidgetItem, QWidget
-from PyQt6.uic import loadUi
-from os import path
 
-from app.repo.database import SessionLocal
 from app.ui.ui_forms import RoleUI, UserUI
-from app.utils import error, get_combo_manager, WorkingMode, get_username, ComboName
+from app.utils import error, get_combo_manager, WorkingMode, ComboName, load_gui, UiPath
 from app.repo.schemas import SchemaFactory
 from app.models import get_model, ModelName
 
@@ -12,9 +9,8 @@ class RoleLogic(QWidget, RoleUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/role.ui")  # Convert to absolute path
-        loadUi(ui_path, self)
-        
+        load_gui(UiPath.OTHERS, "role.ui", self)
+
         self.manager = get_model(ModelName.ROLES)
         self.combo_manager = get_combo_manager()
 
@@ -136,8 +132,7 @@ class UserLogic(QWidget, UserUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/user.ui")  # Convert to absolute path
-        loadUi(ui_path, self)
+        load_gui(UiPath.OTHERS, "user.ui", self)
         
         self.manager = get_model(ModelName.USERS)
         self.combo_manager = get_combo_manager()

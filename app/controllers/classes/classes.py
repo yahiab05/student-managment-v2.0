@@ -1,5 +1,3 @@
-import os
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
 from sqlalchemy.exc import IntegrityError
 
@@ -15,16 +13,17 @@ from app.utils import (
     ReportType,
     get_combo_manager,
     WorkingMode,
-    ComboName
+    ComboName,
+    load_gui,
+    UiPath
 )
 from app.ui.ui_forms import ClassesUI, ClasseleveUI
 
 class ClassesLogic(QWidget, ClassesUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ui_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ui", "classes", "classes.ui"))
-
-        loadUi(ui_path, self)
+        
+        load_gui(UiPath.CLASSES, "classes.ui", self)
 
         self.model = None
 
@@ -143,8 +142,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ui", "classes", "classeleve.ui"))
-        loadUi(ui_path, self)
+        load_gui(UiPath.CLASSES, "classeleve.ui", self)
 
         self.model = None
         self.model_classeleve = None

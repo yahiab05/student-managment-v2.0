@@ -1,11 +1,9 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QMessageBox, QTableWidgetItem, QWidget
 from PyQt6.QtCore import QDate
-from os import path
 from typing import Protocol
 
 from app.repo.schemas import SchemaFactory, EntrySchema
-from app.utils import get_combo_manager, ComboName, get_student_list, get_username, error, info
+from app.utils import get_combo_manager, ComboName, get_student_list, get_username, error, info, load_gui, UiPath
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
 
@@ -28,15 +26,10 @@ class FormProtocol(Protocol):
 class FormWithCombosToPopulateProtocol(FormProtocol, Protocol):
     def populate_combos(self) -> None: ...
 
-def _load_form_ui(widget: QWidget, *ui_parts: str) -> None:
-    ui_path = path.abspath(path.join(path.dirname(__file__), "..", "..", "ui", *ui_parts))
-    loadUi(ui_path, widget)
-    
-
 class StudentForm(QWidget, StudentFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        _load_form_ui(self, "forms", "student_form.ui")
+        load_gui(UiPath.FORMS, "student_form.ui", self)
         
     def get_data(self):
         return {
@@ -70,7 +63,7 @@ class StudentForm(QWidget, StudentFormUI):
 class TeacherForm(QWidget, TeacherFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        _load_form_ui(self, "forms", "teacher_form.ui")
+        load_gui(UiPath.FORMS, "teacher_form.ui", self)
 
     def get_data(self):
         return {
@@ -94,8 +87,8 @@ class TeacherForm(QWidget, TeacherFormUI):
 class ClassesForm(QWidget, ClassesFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        _load_form_ui(self, "forms", "classes_form.ui")
-        
+        load_gui(UiPath.FORMS, "classes_form.ui", self)
+
         self.combo_manager = get_combo_manager()
 
     def get_data(self):
@@ -122,8 +115,8 @@ class ClassesForm(QWidget, ClassesFormUI):
 class ExpensesForm(QWidget, ExpensesFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        _load_form_ui(self, "forms", "expenses_form.ui")
-        
+        load_gui(UiPath.FORMS, "expenses_form.ui", self)
+
         self.combo_manager = get_combo_manager()
         self.settings_manager = get_model(ModelName.SETTINGS)
         
@@ -188,8 +181,8 @@ class ExpensesForm(QWidget, ExpensesFormUI):
 class IncomeForm(QWidget, IncomeFormUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        _load_form_ui(self, "forms", "income_from.ui")
-        
+        load_gui(UiPath.FORMS, "income_from.ui", self)
+
         self.combo_manager = get_combo_manager()
         self.settings_manager = get_model(ModelName.SETTINGS)
         
@@ -254,8 +247,7 @@ class PaymentForm(QWidget, AddPaymentUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/add_payment.ui")  # Convert to absolute path
-        loadUi(ui_path, self)
+        load_gui(UiPath.PAYMENTS, "add_payment.ui", self)
 
         self.model = None
         self.identifier = 0

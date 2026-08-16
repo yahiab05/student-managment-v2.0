@@ -1,17 +1,13 @@
 from PyQt6.QtWidgets import QWidget, QPushButton
-from PyQt6.uic import loadUi
-from os import path
 
 from app.ui.ui_forms import StudentPartUI
 from .students import StudentsLogic, StudentsHistoryLogic, ClassesPerStudentLogic
-
+from app.utils import load_gui, UiPath
 
 class StudentsPart(QWidget, StudentPartUI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ui_path = path.abspath("../../ui/studentpart.ui")  # Convert to absolute path
-
-        loadUi(ui_path, self)
+        load_gui(UiPath.STUDENTS, "studentpart.ui", self)
 
         self.s = StudentsLogic(self)
         self.sh = StudentsHistoryLogic(self)

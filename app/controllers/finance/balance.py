@@ -1,11 +1,9 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from os import path
 
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
-from app.utils import get_combo_manager, ReportType, ComboName
+from app.utils import get_combo_manager, ReportType, ComboName, load_gui, UiPath
 from app.ui.ui_forms import BalanceUI
 
 
@@ -13,8 +11,7 @@ class BalanceLogic(QWidget, BalanceUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath("../../ui/finance/solde.ui")
-        loadUi(ui_path, self)
+        load_gui(UiPath.FINANCE, "solde.ui", self)
 
         self.model = None
         self.combo_manager = get_combo_manager()

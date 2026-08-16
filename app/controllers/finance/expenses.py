@@ -1,12 +1,10 @@
-from PyQt6.uic import loadUi
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
-from os import path
 
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode
+from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode, load_gui, UiPath
 from app.ui.ui_forms import OutMoneyUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -15,8 +13,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "finance", "out.ui"))
-        loadUi(ui_path, self)
+        load_gui(UiPath.FINANCE, "out.ui", self)
 
         self.identifier = None
         self.model = None

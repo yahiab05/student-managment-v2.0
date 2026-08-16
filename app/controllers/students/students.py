@@ -11,19 +11,19 @@ from app.utils import (
     get_username,
     get_combo_manager,
     ReportType,
-    ComboName,
+    load_gui,
     WorkingMode
 )
 from app.ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
+PREFIX = "../../ui/students/"
 
 class StudentsLogic(QWidget, StudentsUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "students", "students.ui"))
-        loadUi(ui_path, self)
+        load_gui(PREFIX, "students.ui", self)
 
         self.identifier = None
         self.model = None
@@ -47,7 +47,6 @@ class StudentsLogic(QWidget, StudentsUI):
         self.setup()
 
     def setup(self):
-        self.new_btn.clicked.connect(self.reset)
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
         self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.security)
@@ -287,8 +286,7 @@ class StudentsHistoryLogic(QWidget, StudentHistoryUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "students", "student_history.ui"))
-        loadUi(ui_path, self)
+        load_gui(PREFIX, "students_history.ui", self)
 
         self.model = None
         
@@ -343,8 +341,7 @@ class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "classes", "classes_per_student.ui"))
-        loadUi(ui_path, self)
+        load_gui(PREFIX, "classes_per_student.ui", self)
 
         self.model = None
         self.name = ""
