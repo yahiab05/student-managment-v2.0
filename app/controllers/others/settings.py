@@ -3,10 +3,9 @@ from sqlalchemy.exc import IntegrityError
 from app.repo.schemas import SchemaFactory
 from app.utils import get_username, error, get_combo_manager, WorkingMode, ComboName, load_gui, UiPath
 from app.models import ModelName, get_model
-from abc import ABC, abstractmethod
 from app.ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
-class BaseSettings(QWidget, ABC ,SettingFormUI):
+class BaseSettings(QWidget, SettingFormUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
@@ -22,15 +21,12 @@ class BaseSettings(QWidget, ABC ,SettingFormUI):
         self.list.itemDoubleClicked.connect(self.select_row)
         self.entery.textChanged.connect(lambda: self.show_data(self.entery.text()))
 
-    @abstractmethod
     def control(self, action):
         raise NotImplementedError("This method should be implemented in subclasses.")
 
-    @abstractmethod
     def delete(self):
         raise NotImplementedError("This method should be implemented in subclasses.")
 
-    @abstractmethod
     def check_used(self, code):
         raise NotImplementedError("This method should be implemented in subclasses.")
 
@@ -40,11 +36,9 @@ class BaseSettings(QWidget, ABC ,SettingFormUI):
 
         self.show_data()
 
-    @abstractmethod
     def select_row(self):
         raise NotImplementedError("This method should be implemented in subclasses.")
 
-    @abstractmethod
     def show_data(self, name=None):
         raise NotImplementedError("This method should be implemented in subclasses.")
     
@@ -278,9 +272,7 @@ class SettingsLogic(QWidget, SettingsUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        ui_path = path.abspath(path.join(path.dirname(__file__), "..", "ui", "others", "settings.ui"))
-
-        loadUi(ui_path, self)
+        load_gui(UiPath.OTHERS, "settings.ui", self)
 
         self.setup()
 

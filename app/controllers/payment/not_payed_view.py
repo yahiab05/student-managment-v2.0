@@ -35,7 +35,7 @@ class ViewNotPayedLogic(QWidget, V):
             filters = self.manager.get_filter(classroom=class_, year=year)
             data = self.manager.get_by_filter(filters)
             
-            query = [student.num_inscrit for student in data]
+            query = [student.id for student in data]
 
             filters = self.enrollment_manager.get_filters(not_included=query, activity="فاعل")
             students = self.enrollment_manager.get_by_filter(filters)
@@ -52,10 +52,10 @@ class ViewNotPayedLogic(QWidget, V):
             filters = self.manager.get_filter(classroom=class_, year=year, month=month)
             data = self.manager.get_by_filter(filters)
 
-            query = [student.num_inscrit for student in query]
+            query = [student.id for student in data]
 
             filters = self.enrollment_manager.get_filters(
-                not_included=query, classroom=class_, not_included=query
+                not_included=query, classroom=class_
                 )
             
             students = self.enrollment_manager.get_by_filter(filters)

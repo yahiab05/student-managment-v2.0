@@ -1,5 +1,5 @@
-from admin import UserLogic, RoleLogic
-from settings import SettingsLogic
+from .admin import UserLogic, RoleLogic
+from .settings import SettingsLogic
 
 from PyQt6.QtWidgets import QWidget, QPushButton
 

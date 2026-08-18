@@ -1,7 +1,6 @@
 from PyQt6.QtCore import Qt, QAbstractTableModel
-from abc import ABC, abstractmethod
 
-class BaseTable(QAbstractTableModel, ABC):
+class BaseTable(QAbstractTableModel):
     ID_COLUMN = 0
     
     def __init__(self):
@@ -30,5 +29,5 @@ class BaseTable(QAbstractTableModel, ABC):
     def get_current_data(self):
         return self.rows
         
-    @abstractmethod
-    def data(self, index, role): pass
+    def data(self, index, role): 
+        raise NotImplementedError("The data method must be implemented in the subclass.")
