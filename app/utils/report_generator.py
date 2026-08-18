@@ -1,6 +1,5 @@
-from typing import Literal
-from xlswriter import Workbook, exceptions
-from PyQt6.QWidgets import QDialog, QApplication
+from xlsxwriter import Workbook, exceptions
+from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.QtCore import Qt
 from PyQt6.uic import loadUi
 from os import path

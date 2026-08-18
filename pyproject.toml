@@ -8,6 +8,9 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "jinja2>=3.1.6",
+    "pymysql>=1.2.0",
     "pyqt6>=6.11.0",
     "sqlalchemy>=2.0.51",
+    "xlsxwriter>=3.2.9",
 ]

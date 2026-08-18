@@ -1,11 +1,10 @@
 from datetime import date as DateType
 from typing import Optional
 
-from sqlalchemy import ForeignKey, String, Enum
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from PyQt6.QtCore import QDate
 from app.repo.database import Base
-from app.utils.utils import Account
 
 class Role(Base):
     __tablename__ = "role"
@@ -247,8 +246,8 @@ class Transfer(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     price: Mapped[float] = mapped_column(nullable=False)
-    origin: Mapped[Account] = mapped_column(Enum(Account), nullable=False)
-    destination: Mapped[Account] = mapped_column(Enum(Account), nullable=False)
+    origin: Mapped[str] = mapped_column(String(255), nullable=False)
+    destination: Mapped[str] = mapped_column(String(255), nullable=False)
     date: Mapped[DateType] = mapped_column(nullable=False)
     note: Mapped[str] = mapped_column(String(255))
     user: Mapped[str] = mapped_column(String(255), nullable=False)

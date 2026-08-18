@@ -1,56 +1,17 @@
-from app.repo.models import (
-    Classes as ClassesCombo,
-    Settings as SettingsCombo,
-    Teachers as TeachersCombo,
-    Role as RolesCombo, 
-    ClassEleve as Enrollments
-    )
-from PyQt6.QtWidgets import QComboBox
-from enum import StrEnum
 
-class ComboName(StrEnum):
-    CLASS = "classes"
-    TEACHER = "teachers"
-    ROLE = "roles"
-    WAY_TEACHING = "way teaching"
-    INCOME = "income"
-    EXPENSES = "expenses"
-    FR = "fr"
-    WAY_PAYMENT = "way payment"
-    ENROLLMENTS = "enrollments"
+from PyQt6.QtWidgets import QComboBox
+from .combo_names import ComboName, ComboSource
 
 
 class ComboManager:
     def __init__(self, session):
         self.session = session
-        self.class_combo = ClassesCombo()
-        self.settings_combo = SettingsCombo()
-        self.teachers_combo = TeachersCombo()
-        self.roles_combo = RolesCombo()
         
-        self.cached = {
-            ComboName.CLASS: [],
-            ComboName.WAY_TEACHING: [],
-            ComboName.INCOME: [],
-            ComboName.EXPENSES: [],
-            ComboName.FR: [],
-            ComboName.WAY_PAYMENT: [],
-            ComboName.TEACHER: [],
-            ComboName.ROLE: [],
-            ComboName.ENROLLMENTS: [],
-        }
-
-        self._cache_sources = {
-            ComboName.CLASS: (ClassesCombo, "name"),
-            ComboName.TEACHER: (TeachersCombo, "name"),
-            ComboName.ROLE: (RolesCombo, "name"),
-            ComboName.WAY_TEACHING: (SettingsCombo, "way_teaching"),
-            ComboName.INCOME: (SettingsCombo, "entery"),
-            ComboName.EXPENSES: (SettingsCombo, "out_money"),
-            ComboName.FR: (SettingsCombo, "fr"),
-            ComboName.WAY_PAYMENT: (SettingsCombo, "way_payment"),
-            ComboName.ENROLLMENTS: (Enrollments, "class_name"),
-        }
+        self.source = ComboSource(session)
+        self.update_all_cache()
+        
+        self._cache_sources = self.source.get_cached_source()
+        self.cached = self.source.get_cached_data()
 
     def update_cache_from_db(self, data_name: ComboName):
         """Refresh one cached list from the database."""

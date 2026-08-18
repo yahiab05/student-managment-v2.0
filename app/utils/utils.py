@@ -2,10 +2,10 @@ from PyQt6.QtWidgets import QMessageBox
 from PyQt6.uic import loadUi
 from os import path
 
-from app.repo.models import SessionLocal, Students
 from PyQt6.QtCore import QSettings
 
 from enum import StrEnum, auto
+
 def set_username(username: str) -> None:
     settings = QSettings("Dar Coran", "Gestion")
     settings.setValue("username", username)
@@ -28,16 +28,18 @@ def info(message: str) -> None:
     msg.exec()
     msg.show()
     
-def get_student_list(search_text: str) -> list[Students]:
+def get_student_list(search_text: str) -> list:
+    from app.repo import SessionLocal, Students
+
     session = SessionLocal()
 
     try:
         pattern = f"%{search_text.strip()}%"
 
         return (
-            session.query(Students.num_inscrit, Students.name)
+            session.query(Students.id, Students.name)
             .filter(Students.name.ilike(pattern))
-            .order_by(Students.name.asc(), Students.num_inscrit.asc())
+            .order_by(Students.name.asc(), Students.id.asc())
             .all()
         )
     finally:
