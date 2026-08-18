@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from app.repo.schemas.base_schema import BaseDataClass
 from datetime import datetime
 
 @dataclass(kw_only=True)
-class PersonSchema(ABC, BaseDataClass):
+class PersonSchema(BaseDataClass):
     name: str
     birthday: datetime
     date_inscrit: datetime
@@ -24,14 +23,15 @@ class PersonSchema(ABC, BaseDataClass):
     
 @dataclass
 class StudentSchema(PersonSchema):
-    id: int = None
     gender: str
     parent: str
     cin: int
     activity: str
     num_tel: str
     excused: str
-    
+
+    id: int = None
+
     def validate(self):
         if not super().validate():
             return False
@@ -61,8 +61,8 @@ class TeacherSchema(PersonSchema):
             raise ValueError("الدفع مطلوب")
         return True
     
-@dataclass
-class HistorySchema(ABC, BaseDataClass):
+@dataclass(kw_only=True)
+class HistorySchema(BaseDataClass):
     date_inscrit: datetime
     
     def validate(self):

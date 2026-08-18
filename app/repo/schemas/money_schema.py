@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 from app.repo.schemas.base_schema import BaseDataClass
 from datetime import datetime
-from abc import ABC
 from app.utils import Account
 
-@dataclass
-class FinanceSchema(ABC, BaseDataClass):
+@dataclass(kw_only=True)
+class FinanceSchema(BaseDataClass):
     name: str
     price: float
     code: int
@@ -53,7 +52,7 @@ class ExpensesSchema(FinanceSchema):
     def validate(self):
         if not super().validate():
             return False
-        if self.bill_num is None or self.bill_num == "":
+        if self.bill_number is None or self.bill_number == "":
             raise ValueError("رقم الفاتورة مطلوب")
         if self.date is None:
             raise ValueError("تاريخ الفاتورة مطلوب")

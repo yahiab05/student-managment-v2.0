@@ -1,15 +1,14 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
 from app.repo.schemas.base_schema import BaseDataClass
+from typing import Protocol
 
 @dataclass
-class CommonSchema(BaseDataClass, ABC):
-    @abstractmethod
+class CommonSchema(Protocol):
     def validate(self):
         pass
 
 @dataclass
-class RoleSchema(CommonSchema):
+class RoleSchema(BaseDataClass):
     name:str
     classes:bool
     students:bool
@@ -42,7 +41,7 @@ class RoleSchema(CommonSchema):
         return True
     
 @dataclass
-class SettingsSchema(CommonSchema):
+class SettingsSchema(BaseDataClass):
     way_teaching:str=None
     entery:str=None
     entery_code:int=None
