@@ -113,10 +113,6 @@ class CRUD(ABC):
         except ModuleNotFoundError:
             return
 
-    @abstractmethod
-    def set_metadata(self):
-        pass
-    
     def rollback(self):
         self.db.rollback()
         

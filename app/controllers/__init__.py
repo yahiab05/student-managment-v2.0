@@ -1,6 +1,9 @@
 from app.controllers.login import Login
+from PyQt6.QtWidgets import QApplication
 
 
 def main():
-    login_controller = Login()
-    login_controller.show()
+    app = QApplication([])
+    window = Login()
+    window.show()
+    app.exec()
