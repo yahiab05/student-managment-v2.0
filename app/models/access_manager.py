@@ -1,14 +1,13 @@
 
 
-from app.models import get_model
-from app.models.names import ModelName
+from app.models.admin import Users, Roles
 
 
 class AccessManager:
     def __init__(self, session):
         self.user = None
-        self.manager = get_model(ModelName.USERS)
-        self.role_manager = get_model(ModelName.ROLES)
+        self.manager = Users(session)
+        self.role_manager = Roles(session)
         self._access = None
         
     def set_user(self, username):
