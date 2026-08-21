@@ -113,6 +113,8 @@ class IncomeSettings(SettingsWithCode):
     def __init__(self, parent=None):
         super().__init__(is_income=True, parent=parent)
         
+        self.title.setText("Type de revenu")
+        
         self.setup()
         
     def check_used(self, code):
@@ -126,6 +128,8 @@ class IncomeSettings(SettingsWithCode):
 class ExpenseSettings(SettingsWithCode):
     def __init__(self, parent=None):
         super().__init__(is_income=False, parent=parent)
+        
+        self.title.setText("Type de dépense")
         
         self.setup()
     def check_used(self, code):
@@ -222,6 +226,8 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
 class WaySettings(SettingsWithoutCode):
     def __init__(self, parent=None):
         super().__init__(setting="way teaching", parent=parent)
+        
+        self.title.setText("Méthode d'enseignement")
 
         self.setup()
     def check_used(self, way):
@@ -236,6 +242,8 @@ class WaySettings(SettingsWithoutCode):
 class PaymentSettings(SettingsWithoutCode):
     def __init__(self, parent=None):
         super().__init__(setting="way payment", parent=parent)
+        
+        self.title.setText("Méthode de paiement")
 
         self.setup()
 
@@ -244,8 +252,8 @@ class PaymentSettings(SettingsWithoutCode):
         or self.used_per_model(ModelName.EXPENSE, name)
 
     @staticmethod
-    def used_per_model(model: ModelName, name: str):
-        model = get_model(model)
+    def used_per_model(model_name: ModelName, name: str):
+        model = get_model(model_name)
         filters = model.get_filter(way_payment=name)
         return model.exists(filters)
 
@@ -258,6 +266,7 @@ class FournisseurSettings(SettingsWithoutCode):
         super().__init__(setting="fr", parent=parent)
 
         self.setup()
+        self.title.setText("Fournisseur")
 
     def fournisseur_check_used(self, name):
         model = get_model(ModelName.EXPENSES)
@@ -293,4 +302,7 @@ class SettingsLogic(QWidget, SettingsUI):
         ]
         for i in range(len(settings)):
             self.plane.addWidget(settings[i])
-            buttons[i].clicked.connect(lambda: self.plane.setCurrentIndex(i))
+            buttons[i].clicked.connect(
+                lambda checked=False, i=i: self.plane.setCurrentWidget(settings[i])
+                )
+        self.plane.setCurrentWidget(settings[0])
