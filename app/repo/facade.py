@@ -57,8 +57,8 @@ class DBFacade:
         filters = filters or []
         return self.session.query(self.table).filter(*filters).all()
     
-    def exists(self, **filters):
-        return self.session.query(self.table).filter_by(*filters).first() is not None
+    def exists(self, filters):
+        return self.session.query(self.table).filter(*filters).first() is not None
     
     def get_with_joined_load(self, relationship_name: str, filters: list = None):
         """Generic joined-load query.

@@ -8,7 +8,6 @@ class ComboManager:
         self.session = session
         
         self.source = ComboSource(session)
-        self.update_all_cache()
         
         self._cache_sources = self.source.get_cached_source()
         self.cached = self.source.get_cached_data()

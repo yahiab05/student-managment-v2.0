@@ -272,8 +272,8 @@ class SettingWithCodeFormUI:
     list: QTableWidget
     add_btn: QPushButton
     reset_btn: QPushButton
-    entery_update_btn: QPushButton
-    entery_delete_btn: QPushButton
+    update_btn: QPushButton
+    delete_btn: QPushButton
 
 
 class StudentFormUI:

@@ -11,7 +11,7 @@ class Income(CRUD):
         self.set_static_metadata()
         
     def get_filter(self, code=None, name=None, way=None, type=None, addition_from_date=None, 
-                addition_to_date=None, price=None, operator=None):
+                addition_to_date=None, price=None, operator=None, in_bank=None):
         filters = []
         if code:
             filters.append(self.db.table.code == code)
@@ -30,6 +30,8 @@ class Income(CRUD):
                 filters.append(self.db.table.price < price)
             elif operator == "equal":
                 filters.append(self.db.table.price == price)
+        if in_bank is not None:
+            filters.append(self.db.table.in_bank == in_bank)
         return filters
     
     def check_used(self, code):
@@ -141,6 +143,8 @@ class Transfer(CRUD):
             to_date=None,
             price=None,
             operator=None,
+            destination=None,
+            origin=None
             ):
         filters = []
 
@@ -153,6 +157,10 @@ class Transfer(CRUD):
                 filters.append(self.db.table.price < price)
             elif operator == "equal":
                 filters.append(self.db.table.price == price)
+        if destination:
+            filters.append(self.db.table.destination == destination)
+        if origin:
+            filters.append(self.db.table.origin == origin)
 
         return filters
     

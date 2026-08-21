@@ -10,7 +10,7 @@ class ViewNotPayedLogic(QWidget, V):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        load_gui(UiPath.PAYMENTS, "not_payed.ui", self)
+        load_gui(UiPath.PAYMENTS, "view_not_payed.ui", self)
 
         self.manager = get_model(ModelName.PAYMENTS)
         self.enrollment_manager = get_model(ModelName.ENROLLMENT)

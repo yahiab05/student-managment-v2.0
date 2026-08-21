@@ -22,10 +22,6 @@ class ComboName(StrEnum):
 class ComboSource:
     def __init__(self, session):
         self.session = session
-        self.class_combo = ClassesCombo()
-        self.settings_combo = SettingsCombo()
-        self.teachers_combo = TeachersCombo()
-        self.roles_combo = RolesCombo()
         
         self._cache_sources = {
             ComboName.CLASS: (ClassesCombo, "name"),

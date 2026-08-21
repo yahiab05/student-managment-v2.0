@@ -283,43 +283,6 @@ border-radius: 15px</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="absents">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>15</pointsize>
-             </font>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>الغيابات</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>../../../../Users/User/Desktop/icons/us-dollar-xl.png</normaloff>../../../../Users/User/Desktop/icons/us-dollar-xl.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>35</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="money">
             <property name="minimumSize">
              <size>

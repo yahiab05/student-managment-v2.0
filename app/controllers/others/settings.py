@@ -293,4 +293,4 @@ class SettingsLogic(QWidget, SettingsUI):
         ]
         for i in range(len(settings)):
             self.plane.addWidget(settings[i])
-            buttons[i].clicked.connect(self.plane.setCurrentIndex(i))
+            buttons[i].clicked.connect(lambda: self.plane.setCurrentIndex(i))

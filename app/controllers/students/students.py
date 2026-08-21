@@ -12,18 +12,17 @@ from app.utils import (
     get_combo_manager,
     ReportType,
     load_gui,
-    WorkingMode
+    WorkingMode,
+    UiPath
 )
 from app.ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 from app.controllers.popup import create_popup_factory, PopupKind
-
-PREFIX = "../../ui/students/"
 
 class StudentsLogic(QWidget, StudentsUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        load_gui(PREFIX, "students.ui", self)
+        load_gui(UiPath.STUDENTS, "students.ui", self)
 
         self.identifier = None
         self.model = None
@@ -287,7 +286,7 @@ class StudentsHistoryLogic(QWidget, StudentHistoryUI):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        load_gui(PREFIX, "students_history.ui", self)
+        load_gui(UiPath.STUDENTS, "students_history.ui", self)
 
         self.model = None
         
@@ -342,7 +341,7 @@ class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        load_gui(PREFIX, "classes_per_student.ui", self)
+        load_gui(UiPath.CLASSES, "classes_per_student.ui", self)
 
         self.model = None
         self.name = ""

@@ -3,26 +3,16 @@ from enum import StrEnum, auto
 
 class ModelName(StrEnum):
 	CLASSES = auto()
-	ENROLLMENT = auto()
-	ENROLLMENTS = auto()
-	EXPENSE = auto()
-	EXPENSES = auto()
-	INCOME = auto()
-	LOGIN = auto()
-	ROLE = auto()
-	ROLES = auto()
+	ENROLLMENT = ENROLLMENTS = "enrollments"
+	EXPENSE = EXPENSES = "expenses"
+	PAYMENTS = INCOME = "income"
+	ROLE = ROLES = "roles"
 	SETTINGS = auto()
-	STUDENT = auto()
-	STUDENTS = auto()
-	STUDENT_HISTORY = auto()
-	STUDENTS_HISTORY = auto()
-	TEACHER = auto()
-	TEACHERS = auto()
-	TEACHER_HISTORY = auto()
-	TEACHERS_HISTORY = auto()
-	USER = auto()
-	USERS = auto()
+	STUDENT = STUDENTS = "students"
+	STUDENT_HISTORY = STUDENTS_HISTORY = "student_history"
+	TEACHER = TEACHERS = "teachers"
+	TEACHER_HISTORY = TEACHERS_HISTORY = "teacher_history"
+	LOGIN = USER = USERS = "users"
 	BALANCE = auto()
 	TRANSFER = auto()
-	PAYMENTS = auto()
 	ACCESS = auto()

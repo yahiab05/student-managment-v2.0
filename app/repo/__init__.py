@@ -31,6 +31,7 @@ class Repositories:
         self.income = DBFacade(Entery, session)
         self.expenses = DBFacade(OutMoney, session)
         self.balance = BalanceFacade(session)  # Specialized facade for combined financial queries
+        self.transfer = DBFacade(Transfer, session)
 
         # Settings and other
         self.settings = DBFacade(Settings, session)
@@ -48,7 +49,8 @@ class Repositories:
             "income": self.income,
             "expenses": self.expenses,
             "settings": self.settings,
-            "balance": self.balance
+            "balance": self.balance,
+            "transfer": self.transfer
         }
 
     def get_repo(self, name: str) -> DBFacade:

@@ -148,6 +148,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.model_classeleve = None
         
         self.manager = get_model(ModelName.ENROLLMENT)
+        self.classes_manager = get_model(ModelName.CLASSES)
         self.combo_manager = get_combo_manager()
 
         self.set_table()
@@ -285,10 +286,14 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         data_to_export = self.model_classeleve.get_current_data()
         row_count = self.model_classeleve.rowCount()
         class_name = self.classes.currentText()
+        filters = self.classes_manager.get_filters(name=class_name)
+        teacher = self.classes_manager.get_by_filter(filters)[0].teacher
+        
         self.manager.set_dynamic_metadata(
             data_to_export=data_to_export, 
             row_count=row_count, 
-            class_name=class_name
+            class_name=class_name,
+            teacher=teacher
             )
         
         self.manager.export_data(

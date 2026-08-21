@@ -24,7 +24,6 @@ class BaseTable(QAbstractTableModel):
         self.beginResetModel()
         self.rows = new_data
         self.endResetModel()
-        self.layoutChanged().emit()
         
     def get_current_data(self):
         return self.rows

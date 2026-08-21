@@ -65,13 +65,13 @@ class WorkingMode(StrEnum):
     UPDATE = auto()
     
 class UiPath(StrEnum):
-    STUDENTS = "../../ui/students/"
-    CLASSES = "../../ui/classes/"
-    TEACHERS = "../../ui/teachers/"
-    PAYMENTS = "../../ui/payments/"
-    OTHERS = "../../ui/others/"
-    FINANCE = "../../ui/finance/"
-    FORMS= "../../ui/forms/"
+    STUDENTS = "../ui/students/"
+    CLASSES = "../ui/classes/"
+    TEACHERS = "../ui/teacher/"
+    PAYMENTS = "../ui/payment/"
+    OTHERS = "../ui/others/"
+    FINANCE = "../ui/finance/"
+    FORMS= "../ui/forms/"
     LOGIN = MAIN = "../ui/"
     
 def load_gui(prefix: UiPath="", ui_file: str="", widget=None) -> None:

@@ -61,8 +61,8 @@ class BalanceLogic(QWidget, BalanceUI):
         self.tbl.repaint()
 
     def set_totals(self):
-        total_expenses, total_income, balance = self.expenses_manager.get_total(),
-        self.income_manager.get_total(), self.manager.get_balance()
+        total_expenses, total_income = self.expenses_manager.get_total(), self.income_manager.get_total(), 
+        balance = self.manager.get_balance(total_income, total_expenses)
         
         self.total_out.setText(str(total_expenses))
         self.total_in.setText(str(total_income))

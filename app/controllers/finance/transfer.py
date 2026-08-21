@@ -135,22 +135,22 @@ class TransferLogic(QWidget, TransferUI):
         total = self.manager.get_total(filters_to_caisse)
         return total
     
-    def expense_income_totals(self, price=None, operator=None, from_date=None, to_date=None, is_bank=True):
+    def expense_income_totals(self, price=None, operator=None, from_date=None, to_date=None, in_bank=True):
         income_filters = self.income_manager.get_filter(
-            from_date=from_date,
-            to_date=to_date,
+            addition_from_date=from_date,
+            addition_to_date=to_date,
             price=price if price else None,
             operator=operator if operator else None,
-            is_bank=is_bank  # Assuming you want to filter income that is in the bank
+            in_bank=in_bank  # Assuming you want to filter income that is in the bank
         )
         income_total = self.income_manager.get_total(income_filters)
 
-        expense_filters = self.expenses_manager.get_filter(
+        expense_filters = self.expenses_manager.get_filters(
             from_date=from_date,
             to_date=to_date,
             price=price if price else None,
             operator=operator if operator else None,
-            is_bank=is_bank  # Assuming you want to filter expenses that are in the bank
+            in_bank=in_bank  # Assuming you want to filter expenses that are in the bank
         )
         expense_total = self.expenses_manager.get_total(expense_filters)
         return income_total, expense_total
@@ -159,7 +159,7 @@ class TransferLogic(QWidget, TransferUI):
         total_to_bank = self.totals_to_bank(price, operator, from_date, to_date)
         total_to_caisse = self.totals_to_caisse(price, operator, from_date, to_date)
         income_bank_total, expense_bank_total = self.expense_income_totals(price, operator, from_date, to_date)
-        income_caisse_total, expense_caisse_total = self.expense_income_totals(price, operator, from_date, to_date, is_bank=False)
+        income_caisse_total, expense_caisse_total = self.expense_income_totals(price, operator, from_date, to_date, in_bank=False)
         
         summary = {
             "total_to_bank": total_to_bank,

@@ -31,7 +31,7 @@ class Users(CRUD):
 class Login(CRUD):
     # Concrete child class for login records that uses the login table.
     def __init__(self, session):
-        super().__init__(session, ModelName.LOGIN)
+        super().__init__(session=session, table=ModelName.LOGIN)
         
     def check_login(self, username, password):
         filters = [

@@ -58,6 +58,7 @@ class RoleLogic(QWidget, RoleUI):
                 error("الرجاء التحقق من صحة البيانات")
                 return
         except ValueError as e:
+            print(f"Validation error: {e}")
             error(str(e))
             return
 
@@ -86,7 +87,6 @@ class RoleLogic(QWidget, RoleUI):
                 self.teachers.setChecked(role.teachers)
                 self.classes.setChecked(role.classes)
                 self.payment.setChecked(role.payment)
-                self.absents.setChecked(role.absent)
                 self.money.setChecked(role.money)
                 self.settings.setChecked(role.settings)
                 self.user.setChecked(role.user)
@@ -172,6 +172,7 @@ class UserLogic(QWidget, UserUI):
                 return
         except ValueError as e:
             error(str(e))
+            print(f"Validation error: {e}")
             return
         
         if action == WorkingMode.ADD:

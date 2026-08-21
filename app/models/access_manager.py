@@ -20,7 +20,7 @@ class AccessManager:
         if not user:
             return False
         
-        filters = self.role_manager.get_filter(role_name=user[0].role)
+        filters = self.role_manager.get_filter(role_name=user[0].role_name)
         role = self.role_manager.get_by_filter(filters)
         if not role:
             return False

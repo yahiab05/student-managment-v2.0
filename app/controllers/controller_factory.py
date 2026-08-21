@@ -1,11 +1,12 @@
 from enum import StrEnum, auto
 from app.controllers.classes import ClassPart
+from app.controllers.finance import MoneyPart
 from app.controllers.students import StudentsPart
 from app.controllers.teacher import TeachersPart
 from app.controllers.payment import PaymentPart
 from app.controllers.others import SettingsLogic, UserPart
 
-from PyQt6.QtWidgets import QStackedWidget, QPushButton
+from PyQt6.QtWidgets import QStackedWidget, QPushButton, QWidget
 
 
 class ControllerSection(StrEnum):
@@ -25,13 +26,14 @@ class ControllerFactory:
             ControllerSection.TEACHERS: TeachersPart,
             ControllerSection.CLASSES: ClassPart,
             ControllerSection.PAYMENTS: PaymentPart,
-            ControllerSection.FINANCE: PaymentPart,
+            ControllerSection.FINANCE: MoneyPart,
             ControllerSection.ADMIN: UserPart,
             ControllerSection.SETTINGS: SettingsLogic
         }
         
-    def create_controller(self, section: ControllerSection):
+    def create_controller(self, section: ControllerSection) -> QWidget:
         controller_class = self.controller.get(section)
+        print(f"Creating controller for section: {section}")
         if controller_class:
             return controller_class()
         else:
@@ -42,8 +44,8 @@ class ControllerFactory:
             controller_instance = self.create_controller(section)
             stacked_widget.addWidget(controller_instance)
             buttons[section].clicked.connect(
-                lambda instance=controller_instance: self.switch_section(stacked_widget, instance)
+                lambda checked= False, instance=controller_instance: self.switch_section(stacked_widget, instance)
                 )
             
-    def switch_section(self, stacked_widget:QStackedWidget, section):
+    def switch_section(self, stacked_widget:QStackedWidget, section:QWidget):
         stacked_widget.setCurrentWidget(section)

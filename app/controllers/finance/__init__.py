@@ -12,7 +12,7 @@ class MoneyPart(QWidget, MoneyUI):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        load_gui(UiPath.FINANCE, "money_part.ui", self)
+        load_gui(UiPath.FINANCE, "money.ui", self)
 
         self.e = EnteryLogic(self)
         self.o = OutMoneyLogic(self)
