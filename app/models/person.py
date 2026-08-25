@@ -5,10 +5,10 @@ from app.utils.utils import error
 
 class Student(CRUD):
     # Concrete child class for student records that uses the students table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.STUDENTS)
-        self.enrollments = Enrollment(session)
-        self.history = StudentHistory(session)
+    def __init__(self):
+        super().__init__(ModelName.STUDENTS)
+        self.enrollments = Enrollment()
+        self.history = StudentHistory()
         
         self.set_static_metadata()
         
@@ -17,7 +17,7 @@ class Student(CRUD):
             self.db.table.name == name,
             self.db.table.parent == parent
         ]
-        verdict = self.exists(filters)
+        verdict = self.db.exists(filters)
 
         return verdict
     
@@ -97,8 +97,8 @@ class Student(CRUD):
             self.data_to_export.append(row)
 class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.TEACHERS)
+    def __init__(self):
+        super().__init__(ModelName.TEACHERS)
         
         self.set_static_metadata()
         
@@ -123,11 +123,8 @@ class Teacher(CRUD):
 
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.STUDENTS_HISTORY)
-
-    def set_date(self, date):
-        return self.db.table.set_date_inscrit(date)
+    def __init__(self):
+        super().__init__(ModelName.STUDENTS_HISTORY)
 
     def search_by_num_inscrit(self, num_inscrit: int):
         """Search history records by student number, joined with the student table."""
@@ -147,8 +144,8 @@ class StudentHistory(CRUD):
 
 class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.TEACHERS_HISTORY)
+    def __init__(self):
+        super().__init__(ModelName.TEACHERS_HISTORY)
 
     def search_by_id(self, teacher_id: int):
         """Search history records by teacher ID, joined with the teacher table."""

@@ -101,7 +101,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             self.show_out()
 
     def delete(self):
-        self.manager.delete(self.identifier)
+        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا المصروف ؟")
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)

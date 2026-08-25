@@ -30,10 +30,13 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>20</width>
+            <height>40</height>
            </size>
           </property>
          </spacer>
@@ -82,6 +85,9 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
           <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
@@ -135,6 +141,9 @@ border-top: none
         </item>
         <item>
          <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
           <property name="sizeType">
            <enum>QSizePolicy::Fixed</enum>
           </property>
@@ -182,10 +191,13 @@ border-top: none
         </item>
         <item>
          <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>20</width>
+            <height>40</height>
            </size>
           </property>
          </spacer>
@@ -215,10 +227,13 @@ border-top: none
          </property>
          <item>
           <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>274</width>
-             <height>20</height>
+             <width>20</width>
+             <height>274</height>
             </size>
            </property>
           </spacer>
@@ -302,10 +317,13 @@ border-top: none
          </item>
          <item>
           <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -338,10 +356,13 @@ border-top: none
            </property>
            <item>
             <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
             </spacer>
@@ -375,6 +396,9 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
              <property name="sizeType">
               <enum>QSizePolicy::Fixed</enum>
              </property>
@@ -466,6 +490,9 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
              <property name="sizeType">
               <enum>QSizePolicy::Fixed</enum>
              </property>
@@ -506,10 +533,13 @@ border-top: none
            </item>
            <item>
             <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
             </spacer>

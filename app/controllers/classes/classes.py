@@ -108,7 +108,7 @@ class ClassesLogic(QWidget, ClassesUI):
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
     def delete_class(self):
-        self.manager.sup_security(self.identifier)
+        self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا القسم ؟")
         self.combo_manager.update_cache_from_db("classes")
 
     def show_class(self):
@@ -121,7 +121,7 @@ class ClassesLogic(QWidget, ClassesUI):
         if teacher == "":
             teacher = None
 
-        filters = self.manager.get_data_using_filters(name=name, teacher=teacher)
+        filters = self.manager.get_filters(name=name, teacher=teacher)
 
         data = self.manager.get_by_filter(filters)
         self.model.refresh(data)
@@ -158,7 +158,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
 
     def setup(self):
         self.student_search_list.doubleClicked.connect(self.add)
-        self.students.doubleClicked.connect(self.sup_security)
+        self.students.doubleClicked.connect(self.delete)
         self.student_search.textChanged.connect(self.show_students_list)
         self.search_btn.clicked.connect(self.show_classeleve)
         self.reset_btn.clicked.connect(self.reset)
@@ -224,18 +224,14 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         finally:
             pass # Replace it with refreshing the table
 
-    def sup_security(self):
-        msg = QMessageBox()
-        ret = msg.question(self, 'حذف', "متأكد من حذف هذا التلميذ ؟", msg.StandardButton.Yes | msg.StandardButton.No)
-
-        if ret == msg.StandardButton.Yes:
-            line = self.line_to_delete()
-            try:
-                self.manager.delete(line)
-                self.show_classeleve()
-            except ValueError as e:
-                error(str(e))
-                return
+    def delete(self):
+        line = self.line_to_delete()
+        try:
+            self.manager.sup_security(widget=self, id=line, text="متأكد من حذف هذا التلميذ من الصف ؟")
+            self.show_classeleve()
+        except ValueError as e:
+            error(str(e))
+            return
 
     def line_to_delete(self):
         row = self.students.selectionModel().selectedRows()

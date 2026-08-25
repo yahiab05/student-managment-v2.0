@@ -4,8 +4,8 @@ from app.models.basic_operations import CRUD
 
 class Classes(CRUD):
     # Concrete child class for class records that uses the classes table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.CLASSES)
+    def __init__(self):
+        super().__init__(ModelName.CLASSES)
         self.set_static_metadata()
         
     def get_filters(self, name=None, teacher=None, way_teaching= None, exact_teacher=None):
@@ -40,8 +40,8 @@ class Classes(CRUD):
 
 class Enrollment(CRUD):
     # Concrete child class for enrollment records that uses the classeleve table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.ENROLLMENTS)
+    def __init__(self):
+        super().__init__(ModelName.ENROLLMENTS)
         self.set_static_metadata()
         
     def check(self, student_id, class_name):        

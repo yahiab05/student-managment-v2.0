@@ -8,33 +8,31 @@ class Repositories:
     Use `get_repo(name)` to fetch a repository in O(1) time and minimal extra memory.
     """
 
-    def __init__(self, session):
-        self.session = session
-
+    def __init__(self):
         # Core entities
-        self.roles = DBFacade(Role, session)
-        self.users = DBFacade(Users, session)
+        self.roles = DBFacade(Role)
+        self.users = DBFacade(Users)
 
         # Student related
-        self.students = DBFacade(Students, session)
-        self.students_history = DBFacade(StudentsHistory, session)
+        self.students = DBFacade(Students)
+        self.students_history = DBFacade(StudentsHistory)
 
         # Teacher related
-        self.teachers = DBFacade(Teachers, session)
-        self.teachers_history = DBFacade(TeachersHistory, session)
+        self.teachers = DBFacade(Teachers)
+        self.teachers_history = DBFacade(TeachersHistory)
 
         # Class related
-        self.classes = DBFacade(Classes, session)
-        self.classeleve = DBFacade(ClassEleve, session)
+        self.classes = DBFacade(Classes)
+        self.classeleve = DBFacade(ClassEleve)
 
         # Financial entities
-        self.income = DBFacade(Entery, session)
-        self.expenses = DBFacade(OutMoney, session)
-        self.balance = BalanceFacade(session)  # Specialized facade for combined financial queries
-        self.transfer = DBFacade(Transfer, session)
+        self.income = DBFacade(Entery)
+        self.expenses = DBFacade(OutMoney)
+        self.balance = BalanceFacade()  # Specialized facade for combined financial queries
+        self.transfer = DBFacade(Transfer)
 
         # Settings and other
-        self.settings = DBFacade(Settings, session)
+        self.settings = DBFacade(Settings)
 
         # Lightweight name -> repo mapping for O(1) access without copying data
         self._map = {

@@ -20,6 +20,7 @@ class Login(QWidget, LoginUI):
 
         self.manager = get_model(ModelName.LOGIN)
         self.access_manager = get_model(ModelName.ACCESS)
+        self.main_window = None  # Initialize main_window attribute
         
         self.setup()
 
@@ -37,11 +38,9 @@ class Login(QWidget, LoginUI):
     def open_app(self, user):
         set_username(user)
         self.set_access(user)
-        app = QApplication.instance()  # Get the existing QApplication instance
-        if app is None:
-            app = QApplication([])  # Create a new QApplication if it doesn't exist
-        app.main_window = mainWindow()
-        app.main_window.show()
+        self.main_window = mainWindow()
+
+        self.main_window.show()
         
         self.close()  # Close the login window after opening the main application window
         

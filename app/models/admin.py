@@ -5,8 +5,8 @@ from app.utils.utils import error
 
 class Roles(CRUD):
     # Concrete child class for role records that uses the role table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.ROLES)
+    def __init__(self):
+        super().__init__(ModelName.ROLES)
         
     def get_filter(self, role_name=None):
         filters = []
@@ -16,8 +16,8 @@ class Roles(CRUD):
 
 class Users(CRUD):
     # Concrete child class for user records that uses the users table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.USERS)
+    def __init__(self):
+        super().__init__(ModelName.USERS)
         
     def get_filter(self, username=None, role=None):
         filters = []
@@ -30,8 +30,8 @@ class Users(CRUD):
 
 class Login(CRUD):
     # Concrete child class for login records that uses the login table.
-    def __init__(self, session):
-        super().__init__(session=session, table=ModelName.LOGIN)
+    def __init__(self):
+        super().__init__(table=ModelName.LOGIN)
         
     def check_login(self, username, password):
         filters = [

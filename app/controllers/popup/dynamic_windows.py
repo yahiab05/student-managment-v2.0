@@ -388,15 +388,10 @@ class PaymentForm(QWidget, AddPaymentUI):
             self.confirm_bill()
 
     def confirm_bill(self):
-
         try:
-            for row in self.momentane:
-                self.manager.create(row)
-
-            info("تمت إضافة الفاتورة بنجاح")
+            self.manager.bulk_create(self.momentane)
         except Exception as e:
             print(e)
-            self.manager.rollback()
         finally:
             self.momentane = []
             self.reset()

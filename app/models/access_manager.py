@@ -4,10 +4,10 @@ from app.models.admin import Users, Roles
 
 
 class AccessManager:
-    def __init__(self, session):
+    def __init__(self):
         self.user = None
-        self.manager = Users(session)
-        self.role_manager = Roles(session)
+        self.manager = Users()
+        self.role_manager = Roles()
         self._access = None
         
     def set_user(self, username):

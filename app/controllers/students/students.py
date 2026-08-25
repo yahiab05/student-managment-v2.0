@@ -48,7 +48,7 @@ class StudentsLogic(QWidget, StudentsUI):
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
         self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
-        self.delete_btn.clicked.connect(self.security)
+        self.delete_btn.clicked.connect(self.delete)
         self.minimize.clicked.connect(lambda: self.search_section("minimize"))
         self.maximize.clicked.connect(lambda: self.search_section("maximize"))
         self.reset_btn.clicked.connect(self.reset_filters)
@@ -115,13 +115,13 @@ class StudentsLogic(QWidget, StudentsUI):
         
         if action == WorkingMode.ADD:
             try:
-                self.manager.create(entity)
-                student_id = self.manager.get_last_student().id
-                self.add_ensurance(student_id, "تأمين")
-                self.add_history(student_id, _date)
+                with self.manager.transaction():
+                    self.manager.create(entity)
+                    student_id = self.manager.get_last_student().id
+                    self.add_ensurance(student_id, "تأمين")
+                    self.add_history(student_id, _date)
             except Exception as e:
                 error(str(e))
-                self.manager.db.rollback()
                 return
         else:
             try:
@@ -129,10 +129,8 @@ class StudentsLogic(QWidget, StudentsUI):
                 self.identifier = None
             except Exception as e:
                 error(str(e))
-                self.manager.db.rollback()
                 return
 
-        self.reset()
         self.show_table()
     
     def add_ensurance(self, student_id, class_name):
@@ -149,9 +147,8 @@ class StudentsLogic(QWidget, StudentsUI):
             return  
         
         try:
-            self.enrollments_manager.create(ensurance)
+            self.enrollment_manager.create(ensurance)
         except IntegrityError as e:
-            self.manager.db.rollback()
             error(str(e))
             return
         
@@ -166,17 +163,8 @@ class StudentsLogic(QWidget, StudentsUI):
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
         self.student_tab.clearSelection()
 
-    def security(self):
-        msg = QMessageBox()
-        text = "متأكد من حذف هذا التلميذ ؟"
-        btn = 'حذف'
-
-        ret = msg.question(self, btn, text, msg.StandardButton.Yes | msg.StandardButton.No)
-
-        if ret == msg.StandardButton.Yes:
-            self.manager.delete(self.identifier)
-
-        self.reset()
+    def delete(self):
+        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا التلميذ ؟")
         self.identifier = None
         self.show_table()
 
@@ -196,12 +184,11 @@ class StudentsLogic(QWidget, StudentsUI):
         student = self.manager.get_by_id(self.identifier)
         if student is not None:
             try:
-                old_date = student.date_inscrit
-                student.date_inscrit = QDate.currentDate().toPyDate()
-                self.manager.db.commit()
-                self.add_history(self.identifier, old_date)
+                with self.manager.transaction():
+                    old_date = student.date_inscrit
+                    student.date_inscrit = QDate.currentDate().toPyDate()
+                    self.add_history(self.identifier, old_date)
             except Exception:
-                self.manager.db.rollback()
                 error("هذا التلميذ موجود.")
 
         else:	
@@ -227,7 +214,6 @@ class StudentsLogic(QWidget, StudentsUI):
         try:
             self.history_manager.create(entity)
         except IntegrityError as e:
-            self.manager.db.rollback()
             error("لم تتم الاضافة")
 
     def reset_filters(self):

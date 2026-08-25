@@ -52,7 +52,7 @@ def _coerce_model_name(model_name: ModelName | str) -> ModelName:
 class ModelFactory:
 	"""Return the requested model helper from a single import surface."""
 
-	def __new__(cls, session, model_name: ModelName | str):
+	def __new__(cls, model_name: ModelName | str):
 		key = _coerce_model_name(model_name)
 		try:
 			model_class = MODEL_REGISTRY[key]
@@ -60,7 +60,7 @@ class ModelFactory:
 			available = ", ".join(member.value for member in MODEL_REGISTRY)
 			raise ValueError(f"Unknown model '{model_name}'. Available models: {available}") from exc
 
-		return model_class(session)
+		return model_class()
 
 @overload
 def get_model(
@@ -172,6 +172,5 @@ def get_model_list() -> list:
 	return list(MODEL_REGISTRY.values())
 
 def get_model(model_name: ModelName | str):
-	session = SessionLocal()
-	return ModelFactory(session, model_name)
+	return ModelFactory(model_name)
 

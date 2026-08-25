@@ -1,10 +1,10 @@
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QDialog, QVBoxLayout
 from app.ui.ui_forms import PopupFormUI
 from PyQt6.QtCore import pyqtSignal
 from app.controllers.popup.dynamic_windows import FormProtocol
 from app.utils import load_gui, UiPath
 
-class BaseWindow(QWidget, PopupFormUI):
+class BaseWindow(QDialog, PopupFormUI):
     confirmed = pyqtSignal()
     
     def __init__(self, title:str, content:FormProtocol, parent=None):
@@ -18,8 +18,9 @@ class BaseWindow(QWidget, PopupFormUI):
         load_gui(UiPath.FORMS, "popup_form.ui", self)
         
         self.title.setText(self.title_content)
-        self.widget.layout().addWidget(self.content)
-        
+        layout = QVBoxLayout(self.widget)
+        layout.addWidget(self.content)
+
         self.confirm_btn.clicked.connect(self.accept)
         self.cancel_btn.clicked.connect(self.reject)
         

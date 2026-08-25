@@ -91,11 +91,12 @@ class TeacherLogic(QWidget, TeacherUI):
             return
     
         if action == WorkingMode.ADD:
-            try: 
-                self.manager.create(entity)
-                self.add_history(self.manager.get_last_id(), 
-                                date_inscrit=data["date_inscrit"] 
-                                )                
+            try:
+                with self.manager.transaction():
+                    self.manager.create(entity)
+                    self.add_history(self.manager.get_last_id(), 
+                                    date_inscrit=data["date_inscrit"] 
+                                    )                
             except IntegrityError:
                 error("هذا المعلم موجود.")
                 return
@@ -113,12 +114,12 @@ class TeacherLogic(QWidget, TeacherUI):
         self.combo_manager.update_cache_from_db("teachers")
 
     def delete(self):
-        if self.identifier is not None and not self.has_classes():
+        if self.identifier is not None:
             line = self.manager.get_by_id(self.identifier)
             name = line.name
             try:
-                if not self.has_classes():
-                    self.manager.delete(self.identifier)
+                if not self.has_classes(name):
+                    self.manager.sup_security(id=self.identifier, text=f"متأكد من حذف المعلم ؟")
                     self.identifier = None  # Reset identifier after deletion
                     self.show_teachers()
                     self.combo_manager.update_cache_from_db("teachers")
@@ -162,12 +163,12 @@ class TeacherLogic(QWidget, TeacherUI):
             ret = msg.question(None, 'تسجيل', "هل تريد تسجيل هذا المعلم؟", msg.StandardButton.Yes | msg.StandardButton.No)
 
             if ret == msg.StandardButton.Yes:
-                teacher = self.manager.get_by_id(self.identifier)
-                if teacher is not None:
-                    date = teacher.date_inscrit
-                self.add_history(self.identifier, date)
-                self.new_year(self.identifier)
-        self.reset()
+                with self.manager.transaction():
+                    teacher = self.manager.get_by_id(self.identifier)
+                    if teacher is not None:
+                        date = teacher.date_inscrit
+                    self.add_history(self.identifier, date)
+                    self.new_year(self.identifier)
         self.show_teachers()
 
     def new_year(self, teacher_id):
@@ -175,7 +176,6 @@ class TeacherLogic(QWidget, TeacherUI):
         if teacher is not None:
             try:
                 teacher.date_inscrit = QDate.currentDate().toPyDate()
-                self.manager.commit()
             except IntegrityError:
                 error("هذا المعلم موجود.")
             finally:

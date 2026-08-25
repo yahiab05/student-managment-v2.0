@@ -22,16 +22,16 @@
       </font>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
      <property name="verticalScrollMode">
-      <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+      <enum>QAbstractItemView::ScrollPerItem</enum>
      </property>
      <property name="horizontalScrollMode">
-      <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+      <enum>QAbstractItemView::ScrollPerItem</enum>
      </property>
     </widget>
    </item>
@@ -44,19 +44,13 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
        <widget class="QFrame" name="frame_37">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_27">
          <item>
@@ -67,7 +61,7 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="editable">
             <bool>false</bool>
@@ -82,13 +76,10 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
             <string>القسم:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -98,10 +89,7 @@
       <item>
        <widget class="QFrame" name="frame_38">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
@@ -118,13 +106,10 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+            <enum>QAbstractSpinBox::UpDownArrows</enum>
            </property>
            <property name="minimum">
             <number>1</number>
@@ -142,13 +127,10 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
             <string>الشهر:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -158,10 +140,7 @@
       <item>
        <widget class="QFrame" name="frame_39">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
@@ -178,13 +157,10 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+            <enum>QAbstractSpinBox::UpDownArrows</enum>
            </property>
            <property name="maximum">
             <number>222222222</number>
@@ -199,13 +175,10 @@
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::RightToLeft</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
             <string>السنة:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -213,19 +186,26 @@
        </widget>
       </item>
       <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QFrame" name="frame_40">
         <property name="frameShape">
-         <enum>QFrame::Shape::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Raised</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_30">
          <item>
           <spacer name="horizontalSpacer_27">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>318</width>
@@ -285,9 +265,6 @@
          </item>
          <item>
           <spacer name="horizontalSpacer_28">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>317</width>

@@ -123,7 +123,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         if self.identifier is None:
             error("يرجى تحديد الدخل")
             return
-        self.manager.delete(self.identifier)
+        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا الدخل ؟")
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)

@@ -3,11 +3,11 @@ from os import environ, getenv
 from pathlib import Path
 from subprocess import PIPE, run
 from datetime import datetime
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QStackedWidget, QWidget
 from app.ui.ui_forms import MainUI
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
 from app.models import get_model, ModelName
-from app.utils import load_gui, UiPath, get_combo_manager
+from app.utils import load_gui, UiPath, get_combo_manager, get_username
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
@@ -25,12 +25,16 @@ class mainWindow(QMainWindow, MainUI):
             ControllerSection.FINANCE: self.money
         }
         
+        self.showMaximized()
+        
         self.factory = ControllerFactory()
         self.factory.setup_sections(self.stackedWidget, buttons)
         
         self.access_manager = get_model(ModelName.ACCESS)
         self.combo_manager = get_combo_manager()
         self.combo_manager.update_all_cache()
+        
+        self.username.setText(get_username())
         
     def closeEvent(self, event):
         ret = QMessageBox.question(self, 'حفظ', "متأكد من حفظ المعطيات؟", 

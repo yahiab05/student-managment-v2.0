@@ -115,14 +115,12 @@ class ViewPayment(QWidget, V):
         access_manager = get_model(ModelName.ACCESS)
         return access_manager.get_access("payment_edit")
 
-
     def edit_price(self):
         if self.new_price.value() > 0:
             try:
                 self.manager.update_price(self.identifier, self.new_price.value())
             except Exception as e:
                 print(e)
-                self.manager.rollback()
                 error("لا يمكنك التحديث بعد الآن")
             finally:
                 self.cancel()

@@ -6,8 +6,8 @@ from sqlalchemy import extract
 
 class Income(CRUD):
     # Concrete child class for income records that uses the entery table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.INCOME)
+    def __init__(self):
+        super().__init__(ModelName.INCOME)
         self.set_static_metadata()
         
     def get_filter(self, code=None, name=None, way=None, type=None, addition_from_date=None, 
@@ -49,8 +49,8 @@ class Income(CRUD):
         self.data_to_export = data_to_export
         
 class Payment(CRUD):
-    def __init__(self, session):
-        super().__init__(session, ModelName.INCOME)
+    def __init__(self):
+        super().__init__(ModelName.INCOME)
         self.set_static_metadata()
         
     def get_filter(self, name=None, way=None, payment_from_date=None, payment_to_date=None, 
@@ -87,8 +87,8 @@ class Payment(CRUD):
 
 class Expense(CRUD):
     # Concrete child class for expense records that uses the outmoney table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.EXPENSES)
+    def __init__(self):
+        super().__init__(ModelName.EXPENSES)
         self.set_static_metadata()
         
     def get_filters(self, code=None, way_payment=None, name=None,
@@ -134,8 +134,8 @@ class Expense(CRUD):
 
 class Transfer(CRUD):
     # Concrete child class for transfer records that uses the transfer table.
-    def __init__(self, session):
-        super().__init__(session, ModelName.TRANSFER)
+    def __init__(self):
+        super().__init__(ModelName.TRANSFER)
         self.set_static_metadata()
         
     def get_filter(self,
@@ -174,8 +174,8 @@ class Transfer(CRUD):
     
 class Balance(CRUD):
     # Concrete child class for balance records that uses the balance table.
-    def __init__(self, session):
-        super().__init__(session)
+    def __init__(self):
+        super().__init__()
         self.db = self.repo.get_balance_repo()  # Use the specialized balance repository
         
     def get_balance(self,

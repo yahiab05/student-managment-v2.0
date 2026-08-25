@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
-from PyQt6.QtWidgets import QMessageBox
+from abc import ABC
+from PyQt6.QtWidgets import QMessageBox, QWidget
+from contextlib import contextmanager
 from app.repo.schemas.base_schema import BaseDataClass
 from app.utils import export_report, ReportType, ReportContext
 from app.repo import Repositories
@@ -13,14 +14,18 @@ class CRUD(ABC):
     title: str = None
     
 
-    def __init__(self, session, table=None):        
-        self.repo = Repositories(session)
+    def __init__(self, table=None):        
+        self.repo = Repositories()
         self.db = self.repo.get_repo(table)
         self.report_context = ReportContext()
 
     def create(self, data_obj: BaseDataClass):
         data = data_obj.to_dict()
         return self.db.add(data)
+    
+    def bulk_create(self, data_objs: list[BaseDataClass]):
+        data_list = [data_obj.to_dict() for data_obj in data_objs]
+        return self.db.bulk_add(data_list)
 
     def update(self, id, data_obj: BaseDataClass):
         data = data_obj.to_dict()
@@ -29,15 +34,18 @@ class CRUD(ABC):
         except ModuleNotFoundError:
             return
 
-    def sup_security(self, id):
+    def sup_security(self, widget:QWidget, text, id=0, filter=None):
         msg = QMessageBox()
-        ret = msg.question(self, 'حذف', "متأكد من حذف هذا الشخص ؟", msg.StandardButton.Yes | msg.StandardButton.No)
+        ret = msg.question(widget, 'حذف', text, msg.StandardButton.Yes | msg.StandardButton.No)
 
         if ret == msg.StandardButton.Yes:
-            self.delete(id)
-        else:
-            self.reset()
-
+            if filter is not None:
+                self.delete_by_filter(filter)
+            else:
+                if id == 0:
+                    raise ValueError("ID must be provided for deletion.")
+                self.delete(id)
+    
     def delete(self, id):
         try:
             return self.db.delete(id)
@@ -113,8 +121,12 @@ class CRUD(ABC):
         except ModuleNotFoundError:
             return
 
-    def rollback(self):
-        self.db.rollback()
-        
-    def commit(self):
-        self.db.commit()
+    @contextmanager
+    def transaction(self):
+        """Execute a series of database operations as a single transaction.
+
+        Args:
+            operations (list of callables): A list of functions that perform database operations.
+        """
+        with self.db.transaction() as session:
+            yield session

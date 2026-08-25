@@ -12,6 +12,7 @@ class RoleLogic(QWidget, RoleUI):
         load_gui(UiPath.OTHERS, "role.ui", self)
 
         self.manager = get_model(ModelName.ROLES)
+        self.user_manager = get_model(ModelName.USERS)
         self.combo_manager = get_combo_manager()
 
         self.name_selected = ""
@@ -93,9 +94,14 @@ class RoleLogic(QWidget, RoleUI):
                 self.payment_edit.setChecked(role.payment_editting)
 
     def delete_role(self):
+        filters = self.user_manager.get_filter(role=self.name_selected)
+        users_with_role = self.user_manager.get_by_filter(filters)
+        if len(users_with_role) > 0:
+            error("لا يمكن حذف هذا الدور لأنه مرتبط بمستخدمين")
+            return
         if self.name_selected:
             filters = self.manager.get_filter(role_name=self.name_selected)
-            self.manager.delete_by_filter(filters)
+            self.manager.sup_security(text= "متأكد من حذف هذا الدور ؟", filter=filters)
             self.combo_manager.update_cache_from_db(ComboName.ROLE)
         else:
             error("يرجى تحديد دور")      
@@ -203,7 +209,7 @@ class UserLogic(QWidget, UserUI):
             error("يرجى تحديد مستخدم")
             return
         
-        self.manager.delete(self.identifier)
+        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا المستخدم ؟")
         self.show_users()
         self.reset()
         self.identifier = None

@@ -176,6 +176,7 @@ class Settings(Base):
     out_code: Mapped[Optional[int]] = mapped_column(unique=True)
     way_payment: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
     fr: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    user: Mapped[str] = mapped_column(String(255), nullable=False)
 
 
 class OutMoney(Base):

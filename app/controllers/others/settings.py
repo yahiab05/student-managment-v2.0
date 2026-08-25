@@ -5,20 +5,20 @@ from app.utils import get_username, error, get_combo_manager, WorkingMode, Combo
 from app.models import ModelName, get_model
 from app.ui.ui_forms import SettingWithCodeFormUI, SettingFormUI, SettingsUI
 
-class BaseSettings(QWidget, SettingFormUI):
+class BaseSettings(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
         self.manager = get_model(ModelName.SETTINGS)
         self.combo_manager = get_combo_manager()
-
+        
     """Out section"""
     def setup(self):
         self.reset_btn.clicked.connect(self.reset_enteries)
         self.add_btn.clicked.connect(lambda: self.control(WorkingMode.ADD))
         self.update_btn.clicked.connect(lambda: self.control(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete)
-        self.list.itemDoubleClicked.connect(self.select_row)
+        self.list.doubleClicked.connect(self.select_row)
         self.entery.textChanged.connect(lambda: self.show_data(self.entery.text()))
 
     def control(self, action):
@@ -44,12 +44,16 @@ class BaseSettings(QWidget, SettingFormUI):
     
 class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
     def __init__(self, is_income, parent=None):
-        super().__init__(parent=parent)
+        BaseSettings.__init__(self, parent=parent)
         
         load_gui(UiPath.FORMS, "setting_with_code_form.ui", self)
         
         self.identifier = None
         self.income = is_income
+        
+        self.list.setColumnHidden(0, True)
+        
+        self.setup()
 
     def control(self, action):
         name = self.entery.text()
@@ -75,33 +79,43 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
         self.combo_manager.update_cache_from_db(ComboName.INCOME if self.income else ComboName.EXPENSES)
         
     def delete(self):
-        code = int(self.entery.text())
+        code = int(self.code.text())
         if self.check_used(code):
             error("لا يمكن الحذف لأنه يتم إستعماله")
         else:
             try:
-                self.manager.delete(self.identifier)
+                self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا النوع ؟")
             except IntegrityError:
                 error("لا يمكن الحذف لأنه يتم إستعماله")
             finally:
                 self.reset_enteries()
                 self.identifier = None
     
-    def select_row(self):
-        row = self.list.currentRow()
+    def select_row(self, index):
+        row = index.row()
+        print("Selected row index:", row)
         self.identifier = int(self.list.item(row, 0).text())
-        self.entery.setText(self.list.item(row, 1).text())
+        print("Selected identifier:", self.identifier)
+        print("Selected entery:", self.list.item(row, 1).text())
+        print("Selected entery:", self.list.item(row, 2))
         self.code.setValue(int(self.list.item(row, 2).text()))
+        self.entery.setText(self.list.item(row, 1).text())
+        
         
     def show_data(self, filters):
-        
         data = self.manager.get_by_filter(filters)
+        self.list.setRowCount(len(data))
         
         if len(data) > 0:
             for i, class_obj in enumerate(data):
                 self.list.setItem(i, 0, QTableWidgetItem(str(class_obj.id)))
-                self.list.setItem(i, 1, QTableWidgetItem(str(class_obj.out_money)))
-                self.list.setItem(i, 2, QTableWidgetItem(str(class_obj.out_code)))
+                self.list.setItem(i, 1, QTableWidgetItem(
+                    str(class_obj.out_money) if not self.income else str(class_obj.entery)
+                    ))
+                
+                self.list.setItem(i, 2, QTableWidgetItem(
+                    str(class_obj.out_code) if not self.income else str(class_obj.entery_code)
+                    ))
 
         self.nb.setText(str(len(data)))    
         
@@ -115,13 +129,13 @@ class IncomeSettings(SettingsWithCode):
         
         self.title.setText("Type de revenu")
         
-        self.setup()
+        self.show_data()
         
     def check_used(self, code):
         model = get_model(ModelName.INCOME)
         return model.check_used(code)
     
-    def show_data(self, name=None):
+    def show_data(self, name=""):
         filters = self.manager.get_filter(entery=name)
         super().show_data(filters)
 
@@ -131,26 +145,28 @@ class ExpenseSettings(SettingsWithCode):
         
         self.title.setText("Type de dépense")
         
-        self.setup()
+        self.show_data()
     def check_used(self, code):
         model = get_model(ModelName.EXPENSE)
         return model.check_used(code)
     
-    def show_data(self, name=None):
+    def show_data(self, name=""):
         filters = self.manager.get_filter(out_money=name)
         super().show_data(filters)
 
 class SettingsWithoutCode(BaseSettings, SettingFormUI):
     def __init__(self, setting: ComboName, parent=None):
-        super().__init__(parent=parent)
+        BaseSettings.__init__(self, parent=parent)
 
         load_gui(UiPath.FORMS, "setting_form.ui", self)
         
         self.setting = setting
+        
+        self.item = None
 
         self.setup()
-
-    def control(self, action):
+        
+    def control(self, action:WorkingMode):
         name = self.entery.text()
         username = get_username()
         
@@ -170,7 +186,7 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         if action == WorkingMode.ADD:
             self.manager.create(entity)
         else:
-            filter = self.get_appropriate_filter(name)
+            filter = self.get_appropriate_filter(self.item)
             self.manager.update_by_filter(filter, entity)
             
         self.reset_enteries()
@@ -186,7 +202,7 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         else:
             try:
                 filter = self.get_appropriate_filter(name)
-                self.manager.delete_by_filter(filter)
+                self.manager.sup_security(widget=self, text= "متأكد من حذف هذا النوع ؟", filter=filter)
             except IntegrityError:
                 error("لا يمكن الحذف لأنه يتم إستعماله")
             finally:
@@ -204,13 +220,14 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         else:
             raise ValueError("Invalid setting type")
         
-    def way_select_row(self):
+    def select_row(self):
         row = self.list.currentItem().text()
         self.entery.setText(row)
+        self.item = row 
         
-    def show_data(self, filters):
-        
+    def show_data(self, filters: list=[]):
         data = self.manager.get_by_filter(filters)
+        self.list.clear()
         
         if len(data) > 0:
             for i, class_obj in enumerate(data):
@@ -225,27 +242,29 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
 
 class WaySettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="way teaching", parent=parent)
+        super().__init__(setting=ComboName.WAY_TEACHING, parent=parent)
         
         self.title.setText("Méthode d'enseignement")
+        
+        self.show_data()
 
-        self.setup()
     def check_used(self, way):
         model = get_model(ModelName.CLASSES)
         filters = model.get_filters(way_teaching=way)
         return model.exists(filters)
 
-    def show_data(self, name=None):
+    def show_data(self, name=""):
         filters = self.manager.get_filter(way_teaching=name)
+        print("specific filters: ", filters)
         super().show_data(filters)
 
 class PaymentSettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="way payment", parent=parent)
+        super().__init__(setting=ComboName.WAY_PAYMENT, parent=parent)
         
         self.title.setText("Méthode de paiement")
-
-        self.setup()
+        
+        super().show_data()
 
     def check_used(self, name):
         return self.used_per_model(ModelName.INCOME, name) \
@@ -257,15 +276,15 @@ class PaymentSettings(SettingsWithoutCode):
         filters = model.get_filter(way_payment=name)
         return model.exists(filters)
 
-    def payment_show(self, name=None):
+    def show_data(self, name=""):
         filters = self.manager.get_filter(way_payment=name)
         super().show_data(filters)
 
 class FournisseurSettings(SettingsWithoutCode):
     def __init__(self, parent=None):
-        super().__init__(setting="fr", parent=parent)
+        super().__init__(setting=ComboName.FR, parent=parent)
 
-        self.setup()
+        self.show_data()
         self.title.setText("Fournisseur")
 
     def fournisseur_check_used(self, name):
@@ -273,7 +292,7 @@ class FournisseurSettings(SettingsWithoutCode):
         filters = model.get_filters(name=name)
         return model.exists(filters)
 
-    def fournisseur_show(self, name=None):
+    def show_data(self, name=""):
         filters = self.manager.get_filter(fr=name)
         super().show_data(filters)
 
