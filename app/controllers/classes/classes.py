@@ -15,7 +15,8 @@ from app.utils import (
     WorkingMode,
     ComboName,
     load_gui,
-    UiPath
+    UiPath,
+    traceback_to_string
 )
 from app.ui.ui_forms import ClassesUI, ClasseleveUI
 
@@ -41,13 +42,13 @@ class ClassesLogic(QWidget, ClassesUI):
         self.class_table.setModel(self.model)
         self.class_table.hideColumn(self.model.ID_COLUMN)
 
-
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
         self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))
         self.delete_btn.clicked.connect(self.delete_class)
         self.class_table.doubleClicked.connect(self.select_row)
         self.search.textChanged.connect(self.show_class)
+        self.reset_btn.clicked.connect(self.reset)
         self.teacher_search.currentTextChanged.connect(self.show_class)
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
@@ -95,21 +96,17 @@ class ClassesLogic(QWidget, ClassesUI):
             self.manager.update(self.identifier, entity)
             
         self.show_class()
-        self.combo_manager.update_cache_from_db(combo_name=ComboName.CLASS)
+        self.combo_manager.update_cache_from_db(data_name=ComboName.CLASS)
 
-    def select_row(self):
-        row = self.class_table.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد قسم")
-            return
-        
-        row_index = row[0].row()    
+    def select_row(self, index):
+        row_index = index.row()    
 
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
     def delete_class(self):
         self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا القسم ؟")
         self.combo_manager.update_cache_from_db("classes")
+        self.show_class()
 
     def show_class(self):
         name = self.search.text()
@@ -137,6 +134,11 @@ class ClassesLogic(QWidget, ClassesUI):
         self.manager.set_dynamic_metadata(data_to_export, row_count)
         
         self.manager.export_data(report_type=output_channel, parent=self)
+        
+    def reset(self):
+        self.search.setText("")
+        self.teacher_search.setCurrentIndex(-1)
+        self.show_class()
 
 class ClasseleveLogic(QWidget, ClasseleveUI):
     def __init__(self, parent=None):
@@ -153,6 +155,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
 
         self.set_table()
         self.populate_combo()
+        self.show_students_list()
 
         self.setup()
 
@@ -164,8 +167,6 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.reset_btn.clicked.connect(self.reset)
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
-
-        self.classes.setCurrentIndex(-1)
 
     def set_table(self):
         self.setup_classeleve()
@@ -180,29 +181,24 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.model = create_table_model(TableType.STUDENT_SEARCH)
 
         self.student_search_list.setModel(self.model)
-
-    def get_student_id(self):
-        row = self.student_search_list.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد التلميذ")
-            return
         
-        row_index = row[0].row()    
+        self.student_search_list.hideColumn(self.model.ID_COLUMN)
 
-        identifier = self.model.data(self.model.index(row_index, 0), role=0)
-
-        return identifier
-
-    def add(self):
+    def add(self, index=None):
+        if index is None:
+            index = self.student_search_list.selectionModel().selectedRows()[0]
+        
+        row_index = index.row()
+        
         class_name = self.classes.currentText()
+        student_id = self.model.data(self.model.index(row_index, 0), role=0)
 
         if class_name == "":
             error("يرجى اختيار صف")
             return
-
-        student_id = self.get_student_id()
-
-        if not self.manager.check(student_id, class_name):
+        
+        if self.manager.check(student_id, class_name):
+            print(f"Student {student_id} is already enrolled in class {class_name}")
             error("هذا التلميذ موجود في هذا الصف")
             return
         
@@ -218,32 +214,22 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         
         try:
             self.manager.create(entity)
-        except IntegrityError:
+            self.show_classeleve()
+        except IntegrityError as e:
             error("هذا التلميذ موجود في هذا الصف")
             return
-        finally:
-            pass # Replace it with refreshing the table
 
-    def delete(self):
-        line = self.line_to_delete()
+    def delete(self, index=None):
+        line = self.model_classeleve.data(self.model_classeleve.index(index.row(), 0), role=0)
+        if self.classes.currentText() == "تأمين":
+            error("لا يمكن حذف تلميذ من الصف تأمين")
+            return
         try:
             self.manager.sup_security(widget=self, id=line, text="متأكد من حذف هذا التلميذ من الصف ؟")
             self.show_classeleve()
         except ValueError as e:
             error(str(e))
-            return
-
-    def line_to_delete(self):
-        row = self.students.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد التلميذ")
-            return
-        
-        row_index = row[0].row()    
-
-        identifier = self.model_classeleve.data(self.model_classeleve.index(row_index, 0), role=0)
-
-        return identifier        
+            return      
 
     def show_classeleve(self):
         class_name = self.student_search.text()
@@ -254,7 +240,8 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
             class_name = self.classes.currentText()
             
         filters = self.manager.get_filters(class_name=class_name)
-        students = self.manager.get_by_filter(filters)
+        
+        students = self.manager.get_with_joined_load(relationship_name="students", filters=filters)
         
         self.model_classeleve.refresh(students)
 
@@ -271,12 +258,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.classes.setCurrentIndex(-1)
 
     def populate_combo(self):
-        classes = self.combo_manager.get_cached_data(data_name=ComboName.CLASS)
-
-        for class_name in classes:
-            self.classes.addItem(class_name[0])
-
-        self.classes.setCurrentIndex(-1)
+        self.combo_manager.update_combo(self.classes, ComboName.CLASS)
         
     def export(self, output_channel: ReportType):
         data_to_export = self.model_classeleve.get_current_data()

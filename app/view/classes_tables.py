@@ -46,19 +46,19 @@ class ClasseleveTableModel(BaseTable):
         if column == 0:
             return class_obj.id
         elif column == 1:
-            return class_obj.student.name
+            return class_obj.students.name
         elif column == 2:
             return class_obj.student_id
         elif column == 3:
             return class_obj.class_name
         elif column == 4:
-            item = class_obj.student.date_inscrit
+            item = class_obj.students.date_inscrit
             return item.strftime("%Y-%m-%d") if item else ""
         elif column == 5:
-            item = class_obj.student.birthday
+            item = class_obj.students.birthday
             return item.strftime("%Y-%m-%d") if item else ""
         elif column == 6:
-            return class_obj.student.num_tel
+            return class_obj.students.num_tel
         elif column == 7:
             return class_obj.user
         return None

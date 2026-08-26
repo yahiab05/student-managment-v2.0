@@ -77,6 +77,7 @@ class ClassesUI:
     class_table: QTableView
     printing_btn: QPushButton
     export_btn: QPushButton
+    reset_btn: QPushButton
 
 
 class ClassesPerStudentUI:

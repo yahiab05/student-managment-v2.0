@@ -113,7 +113,7 @@ class ClassesForm(QWidget, ClassesFormUI):
     def repopulate_fields(self, data: dict) -> None:
         self.name.setText(data.get("name", ""))
         self.way.setCurrentText(data.get("way", ""))
-        self.price.setText(data.get("price", ""))
+        self.price.setText(str(data.get("price", "")))
         self.note.setText(data.get("note", ""))
         self.teacher.setCurrentText(data.get("teacher", ""))
         

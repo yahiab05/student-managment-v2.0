@@ -33,7 +33,6 @@ class ControllerFactory:
         
     def create_controller(self, section: ControllerSection) -> QWidget:
         controller_class = self.controller.get(section)
-        print(f"Creating controller for section: {section}")
         if controller_class:
             return controller_class()
         else:
