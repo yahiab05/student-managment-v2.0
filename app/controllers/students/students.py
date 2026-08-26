@@ -34,7 +34,6 @@ class StudentsLogic(QWidget, StudentsUI):
         self.combo_manager = get_combo_manager
 
         self.to.setDate(QDate.currentDate())
-        self.du.setDate(QDate.currentDate())
         self.gender_search.setCurrentIndex(-1)
 
         self.animation = QPropertyAnimation(self.search_frame, b"maximumWidth")
@@ -63,7 +62,6 @@ class StudentsLogic(QWidget, StudentsUI):
         self.model = create_table_model(TableType.STUDENTS)
 
         self.student_tab.setModel(self.model)
-        self.student_tab.hideColumn(self.model.ID_COLUMN)
 
     def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
@@ -158,19 +156,14 @@ class StudentsLogic(QWidget, StudentsUI):
             error(str(e))
             return
         
-    def select_student(self):
-        row = self.student_tab.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد التلميذ")
-            return
-        
-        row_index = row[0].row()
+    def select_student(self, index):
+        row_index = index.row()
         
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
         self.student_tab.clearSelection()
 
     def delete(self):
-        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا التلميذ ؟")
+        self.manager.sup_security(widget=self ,id=self.identifier, text="متأكد من حذف هذا التلميذ ؟")
         self.identifier = None
         self.show_table()
 
@@ -187,18 +180,18 @@ class StudentsLogic(QWidget, StudentsUI):
         self.animation.start()
 
     def set_new_year(self):
-        student = self.manager.get_by_id(self.identifier)
-        if student is not None:
-            try:
-                with self.manager.transaction():
-                    old_date = student.date_inscrit
-                    student.date_inscrit = QDate.currentDate().toPyDate()
-                    self.add_history(self.identifier, old_date)
-            except Exception:
-                error("هذا التلميذ موجود.")
-
-        else:	
-            error("هذا التلميذ غير موجود.")
+        try:
+            with self.manager.transaction() as session:
+                student = self.manager.get_by_id(id=self.identifier, session=session)
+                if student is None:
+                    error("هذا التلميذ غير موجود.")
+                    return
+                old_date = student.date_inscrit
+                student.date_inscrit = QDate.currentDate().toPyDate()
+                self.add_history(student_id=self.identifier, date=old_date, session=session)
+        except Exception as e:
+            traceback_to_string(e)
+            error("هذا التلميذ موجود.")
 
         self.identifier = None
         self.show_table()
@@ -343,6 +336,8 @@ class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
         
         self.setup_table()
         self.setup()
+        
+        self.student_search()
 
     def setup(self):
         self.reset_btn.clicked.connect(self.reset)

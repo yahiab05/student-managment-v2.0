@@ -39,10 +39,11 @@ class Student(CRUD):
             error("لا يمكن حذف هذا الشخص لأنه مرتبط ببيانات أخرى في النظام.")
             return
         
-        student = self.get_by_id(id)
-        if student is not None:
-            student.activity = "غير فاعل"
-            self.db.commit()
+        with self.db.transaction() as session:
+            student = self.get_by_id(id, session=session)
+            
+            if student is not None:
+                student.activity = "غير فاعل"
 
     def permenant(self, id):
         
@@ -133,7 +134,7 @@ class StudentHistory(CRUD):
     def search_by_num_inscrit(self, num_inscrit: int):
         """Search history records by student number, joined with the student table."""
 
-        filters = [self.db.table.id == num_inscrit]
+        filters = [self.db.table.num_inscrit == num_inscrit]
         return self.get_with_joined_load("student", filters)
 
     def set_static_metadata(self):

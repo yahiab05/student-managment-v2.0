@@ -55,8 +55,8 @@ class CRUD(ABC):
     def get_all(self):
         return self.db.get_all()
 
-    def get_by_id(self, id):
-        return self.db.get_by_id(id)
+    def get_by_id(self, id, session=None):
+        return self.db.get_by_id(id, _session=session)
 
     def get_by_filter(self, filters: list):
         # Delegate filter-based queries to the shared database facade.

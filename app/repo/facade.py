@@ -12,7 +12,11 @@ class DBFacade:
         with SessionLocal() as session:
             return session.query(self.table).all()
     
-    def get_by_id(self, id, multiple=False):
+    def get_by_id(self, id, multiple=False, _session=None):
+        if _session is not None:
+            if multiple:
+                return _session.query(self.table).filter(self.table.id == id).all()
+            return _session.query(self.table).filter(self.table.id == id).first()
         with SessionLocal() as session:
             if multiple:
                 return session.query(self.table).filter(self.table.id == id).all()

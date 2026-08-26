@@ -60,7 +60,7 @@ class StudentForm(QWidget, StudentFormUI):
         self.parent_ent.setText(data.get("parent", ""))
         self.num_tel.setText(data.get("num_tel", ""))
         self.num_tel_2.setText(data.get("num_tel_2", ""))
-        self.cin.setText(data.get("cin", ""))
+        self.cin.setText(str(data.get("cin", "")))
         self.birthday.setDate(data.get("birthday", self.birthday.date()))
         self.activity.setCurrentText(data.get("activity", ""))
         self.excused.setCurrentText(data.get("excused", ""))
