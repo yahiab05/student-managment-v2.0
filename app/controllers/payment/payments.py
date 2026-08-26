@@ -18,7 +18,7 @@ class ViewPayment(QWidget, V):
         self.identifier = 0
         
         self.manager = get_model(ModelName.INCOME)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
 
         self.setup_table()
         self.setup()

@@ -41,7 +41,7 @@ class Repositories:
             "students": self.students,
             "students_history": self.students_history,
             "teachers": self.teachers,
-            "teachers_history": self.teachers_history,
+            "teacher_history": self.teachers_history,
             "classes": self.classes,
             "enrollments": self.classeleve,
             "income": self.income,

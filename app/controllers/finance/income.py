@@ -28,7 +28,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         self.identifier = None
         self.model = None
         self.manager = get_model(ModelName.INCOME)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
         
         self.populate_combo()

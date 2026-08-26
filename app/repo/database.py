@@ -50,7 +50,7 @@ while True:
         import time
         time.sleep(2)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 def create_db():
     Base.metadata.create_all(bind=engine, checkfirst=True)

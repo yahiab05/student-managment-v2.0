@@ -21,12 +21,9 @@ class BaseWindow(QDialog, PopupFormUI):
         layout = QVBoxLayout(self.widget)
         layout.addWidget(self.content)
 
-        self.confirm_btn.clicked.connect(self.accept)
+        self.confirm_btn.clicked.connect(self.on_accept)
         self.cancel_btn.clicked.connect(self.reject)
         
-    def accept(self):
+    def on_accept(self):
         self.confirmed.emit()
-        self.close()
-        
-    def reject(self):
         self.close()

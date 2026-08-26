@@ -19,9 +19,9 @@ class CRUD(ABC):
         self.db = self.repo.get_repo(table)
         self.report_context = ReportContext()
 
-    def create(self, data_obj: BaseDataClass):
+    def create(self, data_obj: BaseDataClass, session=None):
         data = data_obj.to_dict()
-        return self.db.add(data)
+        return self.db.add(data, _session=session)
     
     def bulk_create(self, data_objs: list[BaseDataClass]):
         data_list = [data_obj.to_dict() for data_obj in data_objs]

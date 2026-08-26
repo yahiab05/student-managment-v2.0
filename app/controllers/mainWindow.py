@@ -26,13 +26,13 @@ class mainWindow(QMainWindow, MainUI):
         }
         
         self.showMaximized()
+        self.combo_manager = get_combo_manager
+        self.combo_manager.update_all_cache()
         
         self.factory = ControllerFactory()
         self.factory.setup_sections(self.stackedWidget, buttons)
         
         self.access_manager = get_model(ModelName.ACCESS)
-        self.combo_manager = get_combo_manager()
-        self.combo_manager.update_all_cache()
         
         self.username.setText(get_username())
         

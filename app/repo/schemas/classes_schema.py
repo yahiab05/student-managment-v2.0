@@ -26,3 +26,12 @@ class ClassesSchema(BaseDataClass):
 class EnrollmentSchema(BaseDataClass):
     student_id: int
     class_name: str
+    
+    def validate(self):
+        if not super().validate():
+            raise ValueError("Validation failed in BaseDataClass")
+        if self.student_id is None or self.student_id == 0:
+            raise ValueError("رقم التلميذ مطلوب")
+        if self.class_name is None or self.class_name == "":
+            raise ValueError("اسم الصف مطلوب")
+        return True

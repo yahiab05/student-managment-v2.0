@@ -14,7 +14,7 @@ class ViewNotPayedLogic(QWidget, V):
 
         self.manager = get_model(ModelName.PAYMENTS)
         self.enrollment_manager = get_model(ModelName.ENROLLMENT)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
 
         self.month.setValue(1)
         self.year.setValue(QDate.currentDate().year())

@@ -10,7 +10,7 @@ class BaseSettings(QWidget):
         super().__init__(parent=parent)
         
         self.manager = get_model(ModelName.SETTINGS)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         
     """Out section"""
     def setup(self):

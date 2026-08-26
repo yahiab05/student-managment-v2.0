@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QMessageBox
 from PyQt6.QtCore import QDate
 from sqlalchemy.exc import IntegrityError
 
+from app.utils.combo_names import ComboName
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
@@ -17,7 +18,7 @@ class TeacherLogic(QWidget, TeacherUI):
 
         self.model = None
         self.manager = get_model(ModelName.TEACHERS)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.classes_manager = get_model(ModelName.CLASSES)
         self.history_manager = get_model(ModelName.TEACHERS_HISTORY)
 
@@ -41,7 +42,6 @@ class TeacherLogic(QWidget, TeacherUI):
         self.model = create_table_model(TableType.TEACHERS)
 
         self.teachers_table.setModel(self.model)
-        self.teachers_table.hideColumn(self.model.ID_COLUMN)
 
     def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
@@ -60,8 +60,10 @@ class TeacherLogic(QWidget, TeacherUI):
         def on_confirm():
             data = dialog.content.get_data()
             self.control(action, data)
+            dialog.close()
             
         dialog.confirmed.connect(on_confirm)
+        dialog.cancel_btn.clicked.connect(lambda: dialog.close())
         dialog.show()
 
     def control(self, action: WorkingMode, data: dict):
@@ -92,10 +94,12 @@ class TeacherLogic(QWidget, TeacherUI):
     
         if action == WorkingMode.ADD:
             try:
-                with self.manager.transaction():
-                    self.manager.create(entity)
-                    self.add_history(self.manager.get_last_id(), 
-                                    date_inscrit=data["date_inscrit"] 
+                with self.manager.transaction() as session:
+                    self.manager.create(entity, session=session)
+                    session.flush()  # Ensure the new teacher is written to the database
+                    self.add_history(teacher_id=self.manager.get_last_id(session=session), 
+                                    date=data["date_inscrit"],
+                                    session=session
                                     )                
             except IntegrityError:
                 error("هذا المعلم موجود.")
@@ -111,7 +115,7 @@ class TeacherLogic(QWidget, TeacherUI):
                 error("حدث خطأ أثناء تحديث المعلم.")
                 return
         self.show_teachers()
-        self.combo_manager.update_cache_from_db("teachers")
+        self.combo_manager.update_cache_from_db(ComboName.TEACHER)
 
     def delete(self):
         if self.identifier is not None:
@@ -183,10 +187,10 @@ class TeacherLogic(QWidget, TeacherUI):
         else:
             error("هذا المعلم غير موجود.")
 
-    def add_history(self, teacher_id, date):
+    def add_history(self, teacher_id, date, session=None):
         entity = SchemaFactory.TEACHER_HISTORY(
             teacher_id=teacher_id,
-            date_inscrit=date.toPyDate(),
+            date_inscrit=date,
             user=get_username()
         )
         
@@ -199,7 +203,7 @@ class TeacherLogic(QWidget, TeacherUI):
             return
         
         try:
-            self.history_manager.create(entity)
+            self.history_manager.create(entity, session=session)
         except IntegrityError:
             error("لم تتم الاضافة")
             

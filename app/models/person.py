@@ -3,6 +3,8 @@ from app.models.basic_operations import CRUD
 from app.models.classes import Enrollment
 from app.utils.utils import error
 
+from PyQt6.QtCore import QDate
+
 class Student(CRUD):
     # Concrete child class for student records that uses the students table.
     def __init__(self):
@@ -50,8 +52,8 @@ class Student(CRUD):
         
         return False
                 
-    def get_last_student(self):
-        return self.db.get_biggest_id()
+    def get_last_student(self, session=None) -> int:
+        return self.db.get_biggest_id(_session=session)
 
     def get_filters(self, name=None, gender=None, _from=None, _to=None, 
                     excused=None, activity=None, not_included: list=None):
@@ -63,8 +65,10 @@ class Student(CRUD):
             filters.append(self.db.table.name.ilike(f"%{name}%"))
 
         if _from and _to:
-            filters.append(self.db.table.date_inscrit >= self.history.set_date(_from))
-            filters.append(self.db.table.date_inscrit <= self.history.set_date(_to))
+            _from = _from.toPyDate() if isinstance(_from, QDate) else _from
+            _to = _to.toPyDate() if isinstance(_to, QDate) else _to
+            filters.append(self.db.table.date_inscrit >= _from)
+            filters.append(self.db.table.date_inscrit <= _to)
             self.intro = """ بين  """ + _from.strftime("%Y-%m-%d") + "  و  " + _to.strftime("%Y-%m-%d") + "\n"
         if excused:
             filters.append(self.db.table.excused == excused)
@@ -118,8 +122,8 @@ class Teacher(CRUD):
         self.foot = "المجموع: " + str(row_count)
         self.data_to_export = data_to_export
         
-    def get_last_id(self):
-        return self.db.get_biggest_id() 
+    def get_last_id(self, session=None):
+        return self.db.get_biggest_id(_session=session)
 
 class StudentHistory(CRUD):
     # Concrete child class for student history records that uses the students_history table.

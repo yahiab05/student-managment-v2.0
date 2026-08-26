@@ -31,13 +31,22 @@ class StudentForm(QWidget, StudentFormUI):
         super().__init__(parent)
         load_gui(UiPath.FORMS, "student_form.ui", self)
         
+        self.dev_populate_fields()
+        
+    def dev_populate_fields(self) -> None:
+        self.name.setText("محمد")
+        self.parent_ent.setText("أحمد")
+        self.num_tel.setText("12345678")
+        self.date_inscrit.setDate(QDate(2023, 1, 1))
+        self.birthday.setDate(QDate(2000, 1, 1))
+        
     def get_data(self):
         return {
             "name": self.name.text(),
             "parent": self.parent_ent.text(),
             "num_tel": self.num_tel.text(),
             "num_tel_2": self.num_tel_2.text(),
-            "cin": self.cin.text(),
+            "cin": self.cin.text() if self.cin.text() else 0,
             "birthday": self.birthday.date().toPyDate(),
             "activity": self.activity.currentText(),
             "excused": self.excused.currentText(),
@@ -89,7 +98,8 @@ class ClassesForm(QWidget, ClassesFormUI):
         super().__init__(parent)
         load_gui(UiPath.FORMS, "classes_form.ui", self)
 
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
+        self.populate_combos()
 
     def get_data(self):
         return {
@@ -117,7 +127,7 @@ class ExpensesForm(QWidget, ExpensesFormUI):
         super().__init__(parent)
         load_gui(UiPath.FORMS, "expenses_form.ui", self)
 
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
         
         self.setup_connections()
@@ -183,7 +193,7 @@ class IncomeForm(QWidget, IncomeFormUI):
         super().__init__(parent)
         load_gui(UiPath.FORMS, "income_from.ui", self)
 
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
         
     def setup_connections(self):
@@ -255,7 +265,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         
         self.student_manager = get_model(ModelName.STUDENT)
         self.manager = get_model(ModelName.PAYMENTS)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.enrollment_manager = get_model(ModelName.ENROLLMENT)
         self.classes_manager = get_model(ModelName.CLASSES)
 

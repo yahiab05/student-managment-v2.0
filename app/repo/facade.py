@@ -18,7 +18,11 @@ class DBFacade:
                 return session.query(self.table).filter(self.table.id == id).all()
             return session.query(self.table).filter(self.table.id == id).first()
         
-    def add(self, data):
+    def add(self, data, _session=None):
+        if _session is not None:
+            obj = self.table(**data)
+            _session.add(obj)
+            return obj
         obj = self.table(**data)
         with SessionLocal() as session:
             try:
@@ -39,9 +43,13 @@ class DBFacade:
                 session.rollback()
                 raise e
             
-    def get_biggest_id(self):
+    def get_biggest_id(self, _session=None):
+        if _session is not None:
+            last_id = _session.query(func.max(self.table.id)).scalar()
+            return last_id if last_id is not None else 0
         with SessionLocal() as session:    
-            return session.query(func.max(self.table.id)).scalar()
+            last_id = session.query(func.max(self.table.id)).scalar()
+            return last_id if last_id is not None else 0
 
     def update(self, id, data):
         with SessionLocal() as session:

@@ -5,7 +5,7 @@ class TeachersTableModel(BaseTable):
     def __init__(self):
         super().__init__()
         
-        self.headers = ["ID", "الاسم", "تاريخ التسجيل", "تاريخ الميلاد", "رقم الهاتف", "بمقابل", "ملاحظات", "المستخدم" ]
+        self.headers = ["ID", "الاسم", "تاريخ التسجيل", "تاريخ الميلاد", "رقم الهاتف", "ملاحظات", "المستخدم" ]
 
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
@@ -24,9 +24,9 @@ class TeachersTableModel(BaseTable):
             return class_obj.get_birthday()
         elif column == 4:
             return class_obj.phone
-        elif column == 6:
+        elif column == 5:
             return class_obj.note
-        elif column == 7:
+        elif column == 6:
             return class_obj.user
         return None
     
@@ -34,7 +34,7 @@ class TeachersHistoryTableModel(BaseTable):
     def __init__(self):
         super().__init__()
         
-        self.headers = ["ID", "الاسم", "سنوات التدريس", "تاريخ الميلاد", "بمقابل", "المستخدم" ]
+        self.headers = ["ID", "الاسم", "سنوات التدريس", "تاريخ الميلاد", "المستخدم" ]
         
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
@@ -51,7 +51,7 @@ class TeachersHistoryTableModel(BaseTable):
             return class_obj.get_date_inscrit()
         elif column == 3:
             return class_obj.teacher.get_birthday()
-        elif column == 5:
+        elif column == 4:
             return class_obj.user
         return None   
     

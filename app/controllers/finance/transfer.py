@@ -14,7 +14,7 @@ class TransferLogic(QWidget, TransferUI):
         load_gui(UiPath.FINANCE, "transfer.ui", self)
 
         self.model = None
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.manager = get_model(ModelName.TRANSFER)
         self.income_manager = get_model(ModelName.INCOME)
         self.expenses_manager = get_model(ModelName.EXPENSES)

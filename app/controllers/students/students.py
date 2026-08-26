@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
 from app.models import ModelName, get_model
 from sqlalchemy.exc import IntegrityError
+from app.utils.utils import traceback_to_string
 from app.view import TableType, create_table_model
 from os import path
 from app.repo.schemas import SchemaFactory
@@ -29,8 +30,8 @@ class StudentsLogic(QWidget, StudentsUI):
         
         self.manager = get_model(ModelName.STUDENT)
         self.enrollment_manager = get_model(ModelName.ENROLLMENT)
-        self.history_manager = get_model(ModelName.STUDENT_HISTORY)
-        self.combo_manager = get_combo_manager()
+        self.history_manager = get_model(ModelName.STUDENTS_HISTORY)
+        self.combo_manager = get_combo_manager
 
         self.to.setDate(QDate.currentDate())
         self.du.setDate(QDate.currentDate())
@@ -80,6 +81,7 @@ class StudentsLogic(QWidget, StudentsUI):
         def on_confirmed():
             data = dialog.content.get_data()
             self.controls(action, data)
+            dialog.close()
             
         dialog.confirmed.connect(on_confirmed)
         dialog.show()
@@ -115,13 +117,16 @@ class StudentsLogic(QWidget, StudentsUI):
         
         if action == WorkingMode.ADD:
             try:
-                with self.manager.transaction():
-                    self.manager.create(entity)
-                    student_id = self.manager.get_last_student().id
-                    self.add_ensurance(student_id, "تأمين")
-                    self.add_history(student_id, _date)
+                with self.manager.transaction() as session:
+                    self.manager.create(entity, session=session)
+                    session.flush()  # Ensure the new student is written to the database
+                    student_id = self.manager.get_last_student(session=session)
+                    print(f"Student ID: {student_id}")
+                    self.add_ensurance(student_id, "تأمين", session=session)
+                    self.add_history(student_id, _date, session=session)
             except Exception as e:
                 error(str(e))
+                print(traceback_to_string(e))
                 return
         else:
             try:
@@ -133,10 +138,11 @@ class StudentsLogic(QWidget, StudentsUI):
 
         self.show_table()
     
-    def add_ensurance(self, student_id, class_name):
+    def add_ensurance(self, student_id, class_name, session=None):
         ensurance = SchemaFactory.ENROLLMENT(
             student_id=student_id, 
-            class_name=class_name
+            class_name=class_name,
+            user=get_username()
             )
         try:
             if not ensurance.validate():
@@ -147,7 +153,7 @@ class StudentsLogic(QWidget, StudentsUI):
             return  
         
         try:
-            self.enrollment_manager.create(ensurance)
+            self.enrollment_manager.create(ensurance, session=session)
         except IntegrityError as e:
             error(str(e))
             return
@@ -197,7 +203,7 @@ class StudentsLogic(QWidget, StudentsUI):
         self.identifier = None
         self.show_table()
     
-    def add_history(self, student_id, date): 
+    def add_history(self, student_id, date, session=None): 
         entity = SchemaFactory.STUDENT_HISTORY(
             num_inscrit=student_id,
             date_inscrit= date,
@@ -212,7 +218,7 @@ class StudentsLogic(QWidget, StudentsUI):
             error(str(e))
             return
         try:
-            self.history_manager.create(entity)
+            self.history_manager.create(entity, session=session)
         except IntegrityError as e:
             error("لم تتم الاضافة")
 

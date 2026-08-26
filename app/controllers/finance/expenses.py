@@ -18,7 +18,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.identifier = None
         self.model = None
         self.manager = get_model(ModelName.EXPENSES)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
 
         self.reset_filter()

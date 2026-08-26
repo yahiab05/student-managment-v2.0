@@ -30,7 +30,7 @@ class ClassesLogic(QWidget, ClassesUI):
         self.identifier = 0
         
         self.manager = get_model(ModelName.CLASSES)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         
         self.setup()
         self.set_table()
@@ -54,7 +54,7 @@ class ClassesLogic(QWidget, ClassesUI):
 
     def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
-            kind=PopupKind.CLASS_FORM, 
+            kind=PopupKind.CLASSES, 
             title="إضافة قسم" if action == WorkingMode.ADD else "تعديل قسم", 
             parent=self
         )
@@ -149,7 +149,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         
         self.manager = get_model(ModelName.ENROLLMENT)
         self.classes_manager = get_model(ModelName.CLASSES)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
 
         self.set_table()
         self.populate_combo()

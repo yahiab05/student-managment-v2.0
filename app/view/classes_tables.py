@@ -5,7 +5,7 @@ class ClassesTableModel(BaseTable):
     def __init__(self):
         super().__init__()
         
-        self.headers = ["ID", "الاسم", "طريقة التدريس", "المعلم", "ملاحظة", "المبلغ", "مقابل", "عدد الحصص", "حصّة المعلم", "المستخدم"]
+        self.headers = ["ID", "الاسم", "طريقة التدريس", "المعلم", "ملاحظة", "المبلغ", "المستخدم"]
 
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:

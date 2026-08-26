@@ -81,3 +81,7 @@ def load_gui(prefix: UiPath="", ui_file: str="", widget=None) -> None:
         raise ValueError("UI file name must be provided.")
     ui_file_path = path.abspath(path.join(path.dirname(__file__), prefix, ui_file))
     loadUi(ui_file_path, widget)
+    
+def traceback_to_string(exc: Exception) -> str:
+    import traceback
+    return ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))

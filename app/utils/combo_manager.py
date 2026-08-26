@@ -1,4 +1,6 @@
 
+from builtins import KeyError
+
 from PyQt6.QtWidgets import QComboBox
 from .combo_names import ComboName, ComboSource
 
@@ -27,6 +29,8 @@ class ComboManager:
         """Refresh all supported cache entries from the database."""
         for data_name in self._cache_sources:
             self.update_cache_from_db(data_name)
+            
+        print("initial cache",self.cached)
         return self.cached
 
     def get_cached_data(self, data_name: ComboName):
@@ -40,12 +44,13 @@ class ComboManager:
         """Update a combo box widget with the cached data for the specified name."""
         try:
             data = self.get_cached_data(data_name)
+            print(data_name, data)
         except KeyError as error:
             raise KeyError(f"Unknown cached data name: {data_name}") from error
         
         self.update_with_data(combo_widget, data)   # Reset selection to no selection
         
-    def update_with_data(self, combo_widget: QComboBox, data: list):
+    def update_with_data(self, combo_widget: QComboBox, data: list[str]):
         """Update a combo box widget with a specific list of class names."""
         combo_widget.clear()
         combo_widget.addItems(data)

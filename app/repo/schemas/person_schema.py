@@ -35,8 +35,6 @@ class StudentSchema(PersonSchema):
     def validate(self):
         if not super().validate():
             return False
-        if self.id is None:
-            raise ValueError("رقم الطالب مطلوب")
         if self.gender is None or  self.gender == "":
             raise ValueError("الجنس مطلوب")
         if self.parent is None or self.parent == "":
@@ -50,15 +48,12 @@ class StudentSchema(PersonSchema):
 @dataclass
 class TeacherSchema(PersonSchema):
     phone: str
-    payed: str
     
     def validate(self):
         if not super().validate():
             return False
         if self.phone is None or self.phone == "":
             raise ValueError("رقم الهاتف مطلوب")
-        if self.payed is None or self.payed == "":
-            raise ValueError("الدفع مطلوب")
         return True
     
 @dataclass(kw_only=True)

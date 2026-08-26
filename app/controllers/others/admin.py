@@ -13,7 +13,7 @@ class RoleLogic(QWidget, RoleUI):
 
         self.manager = get_model(ModelName.ROLES)
         self.user_manager = get_model(ModelName.USERS)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
 
         self.name_selected = ""
         self.populate_combo()
@@ -141,7 +141,7 @@ class UserLogic(QWidget, UserUI):
         load_gui(UiPath.OTHERS, "user.ui", self)
         
         self.manager = get_model(ModelName.USERS)
-        self.combo_manager = get_combo_manager()
+        self.combo_manager = get_combo_manager
         
         self.identifier = None
 

@@ -19,7 +19,7 @@ class Classes(CRUD):
             filters.append(self.db.table.teacher == exact_teacher)
         if way_teaching:
             filters.append(self.db.table.way_teaching == way_teaching)
-        return self.get_by_filter(filters)
+        return filters
     
     def set_static_metadata(self):
         self.title = "قائمة الأقسام"

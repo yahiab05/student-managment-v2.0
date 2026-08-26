@@ -9,7 +9,7 @@ class ModelName(StrEnum):
 	ROLE = ROLES = "roles"
 	SETTINGS = auto()
 	STUDENT = STUDENTS = "students"
-	STUDENT_HISTORY = STUDENTS_HISTORY = "student_history"
+	STUDENT_HISTORY = STUDENTS_HISTORY = "students_history"
 	TEACHER = TEACHERS = "teachers"
 	TEACHER_HISTORY = TEACHERS_HISTORY = "teacher_history"
 	LOGIN = USER = USERS = "users"
