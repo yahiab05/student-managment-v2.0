@@ -6,7 +6,7 @@ from app.utils.combo_names import ComboName
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, WorkingMode, load_gui, UiPath
+from app.utils import error, get_username, get_combo_manager, ReportType, WorkingMode, load_gui, UiPath, traceback_to_string
 from app.ui.ui_forms import TeacherUI, TeacherHistoryUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -123,13 +123,14 @@ class TeacherLogic(QWidget, TeacherUI):
             name = line.name
             try:
                 if not self.has_classes(name):
-                    self.manager.sup_security(id=self.identifier, text=f"متأكد من حذف المعلم ؟")
+                    self.manager.sup_security(widget=self, id=self.identifier, text=f"متأكد من حذف المعلم ؟")
                     self.identifier = None  # Reset identifier after deletion
                     self.show_teachers()
                     self.combo_manager.update_cache_from_db("teachers")
                 else:
                     error(f"لا يمكن حذف المعلم {name} لوجود قسم له")
-            except IntegrityError:
+            except IntegrityError as e:
+                print(traceback_to_string(e))
                 error("حدث خطأ أثناء حذف المعلم.")
                 return
         else:	
@@ -139,13 +140,8 @@ class TeacherLogic(QWidget, TeacherUI):
         filters = self.classes_manager.get_filters(exact_teacher=name)
         return self.classes_manager.exists(filters)
 
-    def select_row(self):
-        row = self.teachers_table.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد قسم")
-            return
-        
-        row_index = row[0].row()
+    def select_row(self, index):
+        row_index = index.row()
         
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
@@ -167,23 +163,18 @@ class TeacherLogic(QWidget, TeacherUI):
             ret = msg.question(None, 'تسجيل', "هل تريد تسجيل هذا المعلم؟", msg.StandardButton.Yes | msg.StandardButton.No)
 
             if ret == msg.StandardButton.Yes:
-                with self.manager.transaction():
-                    teacher = self.manager.get_by_id(self.identifier)
-                    if teacher is not None:
-                        date = teacher.date_inscrit
-                    self.add_history(self.identifier, date)
-                    self.new_year(self.identifier)
+                with self.manager.transaction() as session:
+                    self.add_history(self.identifier, QDate.currentDate().toPyDate(), session=session)
+                    self.new_year(self.identifier, session=session)
         self.show_teachers()
 
-    def new_year(self, teacher_id):
-        teacher = self.manager.get_by_id(teacher_id)
+    def new_year(self, teacher_id, session=None):
+        teacher = self.manager.get_by_id(teacher_id, session=session)
         if teacher is not None:
             try:
                 teacher.date_inscrit = QDate.currentDate().toPyDate()
             except IntegrityError:
                 error("هذا المعلم موجود.")
-            finally:
-                self.show_teachers()
         else:
             error("هذا المعلم غير موجود.")
 

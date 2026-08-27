@@ -140,7 +140,7 @@ class TeachersHistory(Base):
     __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"), nullable=False)
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id", ondelete="SET NULL"))
     date_inscrit: Mapped[DateType] = mapped_column(nullable=False)
     user: Mapped[str] = mapped_column(String(255), nullable=False)
 
