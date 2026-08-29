@@ -27,7 +27,7 @@ class AccessManager:
         
         role = role[0]
         
-        self.access = {
+        self._access = {
             "students": role.students,
             "classes": role.classes,
             "teachers": role.teachers,
@@ -39,7 +39,7 @@ class AccessManager:
         }
         
     def get_access(self, section:str):
-        if self.access is None:
+        if self._access is None:
             self.set_access()
         
-        return self.access.get(section, False)
+        return self._access.get(section, False)

@@ -34,7 +34,7 @@ def get_student_list(search_text: str) -> list:
     session = SessionLocal()
 
     try:
-        pattern = f"%{search_text.strip()}%"
+        pattern = f"%{search_text}%"
 
         return (
             session.query(Students.id, Students.name)

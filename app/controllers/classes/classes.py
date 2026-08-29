@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QMessageBox, QApplication
+from PyQt6.QtWidgets import QWidget, QApplication
 from sqlalchemy.exc import IntegrityError
 
 from app.controllers.popup import create_popup_factory, PopupKind

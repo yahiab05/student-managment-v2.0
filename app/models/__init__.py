@@ -34,6 +34,7 @@ MODEL_REGISTRY = {
 	ModelName.USERS: Users,
 	ModelName.LOGIN: Login,
 	ModelName.ACCESS: AccessManager,
+	ModelName.PAYMENTS: Payment
 }
 
 

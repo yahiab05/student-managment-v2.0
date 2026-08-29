@@ -52,7 +52,7 @@ class Enrollment(CRUD):
         
         return verdict
     
-    def get_filters(self, class_name=None, student_id=None, not_class_name=None, not_included:list=None):
+    def get_filters(self, class_name=None, student_id=None, activity=None, not_class_name=None, not_included:list=None):
         # Return a list of filters based on the provided class_name.
         filters = []
         if class_name:
@@ -63,6 +63,10 @@ class Enrollment(CRUD):
             filters.append(self.db.table.class_name != not_class_name)
         if not_included:
             filters.append(self.db.table.student_id.not_in(not_included))
+        if activity:
+            filters.append(self.db.table.students.has(
+            activity=activity
+        ))
         return filters
 
     def set_static_metadata(self):

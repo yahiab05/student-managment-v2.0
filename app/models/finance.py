@@ -10,8 +10,7 @@ class Income(CRUD):
         super().__init__(ModelName.INCOME)
         self.set_static_metadata()
         
-    def get_filter(self, code=None, name=None, way=None, type=None, addition_from_date=None, 
-                addition_to_date=None, price=None, operator=None, in_bank=None):
+    def get_filter(self, code=None, name=None, way=None, type=None, addition_from_date=None, addition_to_date=None, price=None, operator=None, in_bank=None):
         filters = []
         if code:
             filters.append(self.db.table.code == code)
@@ -82,7 +81,6 @@ class Payment(CRUD):
     def set_dynamic_metadata(self, total_price, data_to_export):
         self.foot = f"""مجموع المداخيل: {total_price}"""
         self.data_to_export = data_to_export
-
 
 
 class Expense(CRUD):

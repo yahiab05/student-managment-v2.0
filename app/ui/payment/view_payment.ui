@@ -90,39 +90,6 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="edit_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>150</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>15</pointsize>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">border: 2px solid;
-background-color: rgb(255, 163, 72);
-border-color: rgb(0, 0, 0);
-border-radius: 10px;</string>
-               </property>
-               <property name="text">
-                <string>Modifier</string>
-               </property>
-               <property name="shortcut">
-                <string>Ctrl+E</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QPushButton" name="delete_btn">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
@@ -149,6 +116,39 @@ border-radius: 10px;</string>
                </property>
                <property name="text">
                 <string>Supprimer</string>
+               </property>
+               <property name="shortcut">
+                <string>Ctrl+E</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="edit_btn">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>15</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">border: 2px solid;
+background-color: rgb(255, 163, 72);
+border-color: rgb(0, 0, 0);
+border-radius: 10px;</string>
+               </property>
+               <property name="text">
+                <string>Modifier</string>
                </property>
                <property name="shortcut">
                 <string>Ctrl+E</string>
@@ -894,7 +894,7 @@ border-top: none
              <second>0</second>
              <year>1899</year>
              <month>12</month>
-             <day>18</day>
+             <day>17</day>
             </datetime>
            </property>
            <property name="displayFormat">

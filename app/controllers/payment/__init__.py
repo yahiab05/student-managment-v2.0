@@ -27,14 +27,14 @@ class PaymentPart(QWidget, PaymentPartUI):
         self.view_not_payed.clicked.connect(self.go_to_view_not_payed)
 
     def go_to_view_payment(self):
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
         self.vp.populate_combos()
         self.vp.setup_table()
         self.vp.show_students_list()
         self.buttons(self.view_payment)
 
     def go_to_view_not_payed(self):
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(1)
         self.vnp.populate_classes()
         self.buttons(self.view_not_payed)
 

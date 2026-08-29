@@ -277,6 +277,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         self.populate_combo()
         self.setup()
         self.show_bill()
+        self.search_student_func()
 
     def setup(self):
         self.add_btn.clicked.connect(self.control)
@@ -295,7 +296,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         self.student_list.hideColumn(self.model.ID_COLUMN)
 
     def search_student_func(self, name = None):
-        name = None if name == "" else name
+        name = "" if name is None else name
         
         students = get_student_list(name)
 
@@ -305,8 +306,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         
     def select_student(self, index):
         row = index.row()
-        print(row)
-        if not row:
+        if row is None:
             error("يرجى تحديد التلميذ")
             return
         
@@ -360,7 +360,7 @@ class PaymentForm(QWidget, AddPaymentUI):
             error(str(e))
             return
         
-        if self.is_unique(self.identifier, classroom, date):
+        if not self.is_unique(self.identifier, classroom, date):
             error("تم تسجيل هذا الدفع مسبقا")
             return
         self.add(entity)
@@ -435,7 +435,10 @@ class PaymentForm(QWidget, AddPaymentUI):
             self.price.setValue(price)
 
     def is_unique(self, identifier, classroom, date):
-
+        a = self.unique_in_database(identifier, classroom, date)
+        b = self.unique_in_momentane(identifier, classroom, date) 
+        return (a and b)  # If either is False, then it's not unique
+    def unique_in_database(self, identifier, classroom, date):
         # Checking for payment with the same identifier, classroom, and matching year and month
         if classroom == "تأمين":
             filters = self.manager.get_filter(
@@ -445,7 +448,7 @@ class PaymentForm(QWidget, AddPaymentUI):
             )
             
             # If payment exists and classroom is "تأمين", check if the year is different
-            return self.manager.exists(filters)  # It's not unique if same identifier, classroom, and year
+            return not self.manager.exists(filters)  # It's unique if no existing payment for the same year
         else:
             filters = self.manager.get_filter(
                 num_inscrit=identifier,
@@ -453,18 +456,20 @@ class PaymentForm(QWidget, AddPaymentUI):
                 year=date.year(),
                 month=date.month()
             )
+            return not self.manager.exists(filters)  # It's not unique if same identifier, classroom, year, and month
 
+    def unique_in_momentane(self, identifier, classroom, date):
         # Check in momentane for non-database temporary data
         if len(self.momentane) > 0:
             for i in self.momentane:
-                if i.classroom == "تأمين" and classroom == "تأمين":
+                if i.classroom == "تأمين" and classroom == "تأمين" and i.num_inscrit == identifier:
                     if i.payment_date.year == date.year():
-                        return True
+                        return False
                 else:
                     if i.num_inscrit == identifier and i.classroom == classroom and i.payment_date.year == date.year() and i.payment_date.month == date.month():
-                        return True
+                        return False
 
-        return False  # If no match, it's unique
+        return True  # If no match, it's unique
     
     def cheq_num_on_off(self):
         if self.way.currentText() == "صك":

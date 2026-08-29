@@ -1,7 +1,8 @@
 from app.controllers.popup.base_window import BaseWindow
 from app.controllers.popup.factory import (
     PopupFactory, 
-    PopupKind
+    PopupKind,
+    create_payment_window
 )
 
 def create_popup_factory(kind: PopupKind, title: str, parent=None) -> BaseWindow:

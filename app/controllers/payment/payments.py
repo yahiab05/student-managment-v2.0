@@ -1,10 +1,12 @@
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QDate
+from sqlalchemy.exc import IntegrityError
 
 from app.ui.ui_forms import ViewPaymentUI as V
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
-from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType, load_gui, UiPath
+from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType, load_gui, UiPath, traceback_to_string
+from app.controllers.popup import create_payment_window
 
 class ViewPayment(QWidget, V):
     def __init__(self):
@@ -17,18 +19,23 @@ class ViewPayment(QWidget, V):
 
         self.identifier = 0
         
-        self.manager = get_model(ModelName.INCOME)
+        self.manager = get_model(ModelName.PAYMENTS)
         self.combo_manager = get_combo_manager
 
         self.setup_table()
         self.setup()
+        
+        self.show_students_list()
 
     def setup(self):
+        self.add_btn.clicked.connect(self.open_popup)
+        self.edit_btn.clicked.connect(self.set_old_price)
+        self.delete_btn.clicked.connect(self.delete)
         self.search_ent.textChanged.connect(lambda: self.show_students_list(self.search_ent.text()))
         self.student_list.itemDoubleClicked.connect(self.select_student)
         self.search_btn.clicked.connect(self.search)
         self.reset_btn.clicked.connect(self.reset)
-        self.reg_tbl.clicked.connect(self.select_row)
+        self.reg_tbl.doubleClicked.connect(self.select_row)
         self.update_btn.clicked.connect(self.edit_price) 
         self.cancel_btn.clicked.connect(self.cancel)
         self.printing_btn.clicked.connect(lambda: self.export(ReportType.PRINT))
@@ -41,6 +48,10 @@ class ViewPayment(QWidget, V):
 
         self.total.setText(str(self.manager.get_total()))
         self.nb.setText(str(self.model.rowCount()))
+        
+    def open_popup(self):
+        popup = create_payment_window(self)
+        popup.show()
 
     def search(self):
         student = self.search_ent.text() if self.search_ent.text() != "" else None
@@ -88,28 +99,27 @@ class ViewPayment(QWidget, V):
 
         self.show_students_list()
 
-    def select_row(self):
+    def select_row(self, index):
         if self.has_access():
-            row = self.reg_tbl.selectionModel().selectedRows()
-            if not row:
-                error("يرجى تحديد وصل:")
-                return
-            
-            row_index = row[0].row()
+            row_index = index.row()
             
             self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
             self.reg_tbl.clearSelection()
-            self.stackedWidget.setCurrentIndex(1)
             self.search_frame.setEnabled(False)
-            self.set_old_price(self.identifier)
         else:
             error("ليس لديك صلاحية")
 
-    def set_old_price(self, identifier):
-        old_payment = self.manager.get_by_id(identifier)
+    def set_old_price(self):
+        if self.identifier is not None:
+            print(self.identifier)
+            old_payment = self.manager.get_by_id(self.identifier)
 
-        self.previous_price.setText(str(old_payment.price))  
+            print(old_payment.price)
+            self.previous_price.setText(str(old_payment.price))  
+            self.stackedWidget.setCurrentIndex(1)
+        else:
+            error("الرجاء اختيار الدفع الذي تريد تعديله")
 
     def has_access(self):
         access_manager = get_model(ModelName.ACCESS)
@@ -125,7 +135,7 @@ class ViewPayment(QWidget, V):
             finally:
                 self.cancel()
                 self.identifier = None
-                self.setup_table()
+                self.search()
         else:
             error("السعر يجب ان يكون اكبر من صفر")
 
@@ -138,6 +148,16 @@ class ViewPayment(QWidget, V):
     def populate_combos(self):
         self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
         self.combo_manager.update_combo(self.classroom, ComboName.CLASS)
+        
+    def delete(self):
+        try:
+            self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا الدفعة ؟")
+            self.identifier = None
+            self.search()
+            self.search_frame.setEnabled(True)
+        except IntegrityError as e:
+            print(traceback_to_string(e))
+            error("لا يمكنك حذف هذا الدفعة")
         
     def export(self, output_channel: ReportType):
         data = self.model.get_current_data()

@@ -5,7 +5,8 @@ class ModelName(StrEnum):
 	CLASSES = auto()
 	ENROLLMENT = ENROLLMENTS = "enrollments"
 	EXPENSE = EXPENSES = "expenses"
-	PAYMENTS = INCOME = "income"
+	PAYMENTS = auto() 
+	INCOME = auto()
 	ROLE = ROLES = "roles"
 	SETTINGS = auto()
 	STUDENT = STUDENTS = "students"

@@ -27,23 +27,28 @@ class ViewNotPayedLogic(QWidget, V):
 
     def search(self):
         class_ = self.classroom.currentText()
+        year = self.year.value()
         if not class_:
             error("يرجى تحديد الصف")
             return
 
-        elif class_ == "تأمين":
+        if class_ == "تأمين":
             filters = self.manager.get_filter(classroom=class_, year=year)
             data = self.manager.get_by_filter(filters)
             
-            query = [student.id for student in data]
+            query = [student.num_inscrit for student in data]
+            
+            print(query)
 
             filters = self.enrollment_manager.get_filters(not_included=query, activity="فاعل")
-            students = self.enrollment_manager.get_by_filter(filters)
+            students = self.enrollment_manager.get_with_joined_load("students", filters)
+            
+            print([s.students.name for s in students])
             
             self.tbl.clear()
 
             for s in students:
-                self.tbl.addItem(s.name)
+                self.tbl.addItem(s.students.name)
 
         else:
             month = self.month.value()
@@ -55,10 +60,10 @@ class ViewNotPayedLogic(QWidget, V):
             query = [student.id for student in data]
 
             filters = self.enrollment_manager.get_filters(
-                not_included=query, classroom=class_
+                not_included=query, class_name=class_
                 )
             
-            students = self.enrollment_manager.get_by_filter(filters)
+            students = self.enrollment_manager.get_with_joined_load("students", filters=filters)
 
             self.tbl.clear()
 

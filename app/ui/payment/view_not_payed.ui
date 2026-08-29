@@ -206,10 +206,13 @@
         <layout class="QHBoxLayout" name="horizontalLayout_30">
          <item>
           <spacer name="horizontalSpacer_27">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>318</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>
@@ -265,10 +268,13 @@
          </item>
          <item>
           <spacer name="horizontalSpacer_28">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>317</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>

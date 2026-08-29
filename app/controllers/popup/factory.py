@@ -10,6 +10,7 @@ from app.controllers.popup.dynamic_windows import (
     IncomeForm,
     StudentForm,
     TeacherForm,
+    PaymentForm
 )
 
 
@@ -53,3 +54,7 @@ class PopupFactory(PopupFactoryProtocol):
     def create_window(self, kind: PopupKind, title: str, parent=None) -> BaseWindow:
         content = self._create_content(kind, parent=parent)
         return BaseWindow(title=title, content=content, parent=parent)
+    
+    
+def create_payment_window(self, parent=None):
+    return PaymentForm(parent=parent)
