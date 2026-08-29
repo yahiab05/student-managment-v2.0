@@ -1,5 +1,6 @@
 from app.view.base_table import BaseTable
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor, QBrush
 
 class EnteryTableModel(BaseTable):
     def __init__(self):
@@ -56,7 +57,7 @@ class OutMoneyTableModel(BaseTable):
         elif column == 3:
             return out.price
         elif column == 4:
-            return out.bill_num
+            return out.bill_number
         elif column == 5:
             return out.type
         elif column == 6:
@@ -74,22 +75,30 @@ class BalanceTableModel(BaseTable):
         self.headers = ["الاسم", "المصاريف", "المداخيل", "التاريخ", "طريقة الدفع"]
 
     def data(self, index, role):
-        if not index.isValid() or not role == Qt.ItemDataRole.DisplayRole:
+        if not index.isValid():
             return None   
         
         balances = self.rows[index.row()]
         column = index.column()
     
-        if column == 0:
-            return balances.name
-        elif column == 1:
-            return balances.expenses
-        elif column == 2:
-            return balances.income
-        elif column == 3:
-            return balances.date.strftime("%Y-%m-%d")
-        elif column == 4:
-            return balances.way 
+        if role == Qt.ItemDataRole.DisplayRole:
+            if column == 0:
+                return balances.name
+            elif column == 1:
+                return balances.expenses
+            elif column == 2:
+                return balances.income
+            elif column == 3:
+                return balances.date.strftime("%Y-%m-%d")
+            elif column == 4:
+                return balances.way 
+        
+        if role == Qt.ItemDataRole.BackgroundRole:
+            if column == 1 and balances.expenses == 0:
+                return QBrush(QColor("white"))
+            elif column == 2 and balances.income == 0:
+                return QBrush(QColor("white"))
+            
         return None           
     
 class PaymentTableModel(BaseTable):

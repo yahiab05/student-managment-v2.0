@@ -1,4 +1,4 @@
-from sqlalchemy import func, union_all
+from sqlalchemy import func, union_all, literal
 from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import NoSuchColumnError
 from app.repo.database import SessionLocal
@@ -210,18 +210,18 @@ class BalanceFacade():
             income = session.query(
                 Entery.name.label("name"),
                 Entery.price.label("income"),
-                func.coalesce(0, '').label("expenses"),
+                literal(0).label("expenses"),
                 Entery.way.label("way"),
             Entery.addition_date.label("date")
         ).filter(*income_filters)
 
             expenses = session.query(
             OutMoney.name.label("name"),
-            func.coalesce(0, '').label("income"),
+            literal(0).label("income"),
             OutMoney.price.label("expenses"),
             OutMoney.way.label("way"),
             OutMoney.date.label("date")
         ).filter(*expense_filters)
         
-        combined_query = union_all(income, expenses)
+        combined_query = union_all(income, expenses).subquery()
         return session.query(combined_query).order_by(combined_query.c.date.desc()).all()

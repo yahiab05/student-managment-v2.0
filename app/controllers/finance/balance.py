@@ -35,8 +35,6 @@ class BalanceLogic(QWidget, BalanceUI):
 
         self.tbl.setModel(self.model)
 
-        self.set_totals()
-
         self.tbl.hideColumn(self.model.ID_COLUMN)
         
     def populate_combo(self):
@@ -50,7 +48,15 @@ class BalanceLogic(QWidget, BalanceUI):
         way = None if self.way.currentText() == "" else self.way.currentText() 
 
         data = self.manager.get_balance(
-            way_payment=way, 
+            way=way, 
+            from_date=from_date, 
+            to_date=to_date, 
+            price=price, 
+            operator=op
+            )
+        
+        self.set_totals(
+            way=way, 
             from_date=from_date, 
             to_date=to_date, 
             price=price, 
@@ -60,9 +66,17 @@ class BalanceLogic(QWidget, BalanceUI):
         self.model.refresh(data)
         self.tbl.repaint()
 
-    def set_totals(self):
-        total_expenses, total_income = self.expenses_manager.get_total(), self.income_manager.get_total(), 
-        balance = self.manager.get_balance(total_income, total_expenses)
+    def set_totals(self, way=None, from_date=None, to_date=None, price=None, operator=None):
+        income_filters, expense_filters = self.manager.db.get_filters(
+            way_payment=way, 
+            from_date=from_date, 
+            to_date=to_date, 
+            price=price, 
+            operator=operator
+        )
+        
+        total_expenses, total_income = self.expenses_manager.get_total(expense_filters), self.income_manager.get_total(income_filters) 
+        balance = self.manager.calculate_balance(total_income, total_expenses)
         
         self.total_out.setText(str(total_expenses))
         self.total_in.setText(str(total_income))
@@ -77,12 +91,13 @@ class BalanceLogic(QWidget, BalanceUI):
         
     def export(self, output_channel: ReportType):
         data = self.model.get_current_data()
-        total_income, total_expenses, balance = self.income_manager.get_total(), 
-        
-        self.expenses_manager.get_total(), self.manager.get_balance()
+        total_income, total_expenses, balance = self.income_manager.get_total(), \
+            self.expenses_manager.get_total(), self.manager.get_balance()
         
         self.manager.set_dynamic_metadata(
-            total_income, total_expenses, balance, data)
+            total_income, total_expenses, balance, data
+            )
+        
         self.manager.export_data(
             report_type=output_channel, 
             parent=self

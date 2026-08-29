@@ -23,12 +23,16 @@ class Income(CRUD):
         if addition_from_date and addition_to_date:
             filters.append(self.db.table.addition_date.between(addition_from_date, addition_to_date))
         if price and operator:
-            if operator == "greater":
+            if operator == "<":
                 filters.append(self.db.table.price > price)
-            elif operator == "less":
+            elif operator == ">":
                 filters.append(self.db.table.price < price)
-            elif operator == "equal":
+            elif operator == "=":
                 filters.append(self.db.table.price == price)
+            elif operator == "<=":
+                filters.append(self.db.table.price >= price)
+            elif operator == ">=":
+                filters.append(self.db.table.price <= price)
         if in_bank is not None:
             filters.append(self.db.table.in_bank == in_bank)
         return filters
@@ -89,7 +93,7 @@ class Expense(CRUD):
         super().__init__(ModelName.EXPENSES)
         self.set_static_metadata()
         
-    def get_filters(self, code=None, way_payment=None, name=None,
+    def get_filters(self, code=None, way_payment=None, name=None, bill_number=None,
             type=None,
             from_date=None,
             to_date=None,
@@ -108,12 +112,18 @@ class Expense(CRUD):
         if from_date and to_date:
             filters.append(self.db.table.date.between(from_date, to_date))
         if price and operator:
-            if operator == "greater":
+            if operator == "<":
                 filters.append(self.db.table.price > price)
-            elif operator == "less":
+            elif operator == ">":
                 filters.append(self.db.table.price < price)
-            elif operator == "equal":
+            elif operator == "=":
                 filters.append(self.db.table.price == price)
+            elif operator == "<=":
+                filters.append(self.db.table.price >= price)
+            elif operator == ">=":
+                filters.append(self.db.table.price <= price)
+        if bill_number:
+            filters.append(self.db.table.bill_number == bill_number)
         if in_bank is not None:
             filters.append(self.db.table.in_bank == in_bank)
         return filters
@@ -149,12 +159,16 @@ class Transfer(CRUD):
         if from_date and to_date:
             filters.append(self.db.table.date.between(from_date, to_date))
         if price and operator:
-            if operator == "greater":
+            if operator == ">":
                 filters.append(self.db.table.price > price)
-            elif operator == "less":
+            elif operator == "<":
                 filters.append(self.db.table.price < price)
-            elif operator == "equal":
+            elif operator == "=":
                 filters.append(self.db.table.price == price)
+            elif operator == ">=":
+                filters.append(self.db.table.price >= price)
+            elif operator == "<=":
+                filters.append(self.db.table.price <= price)
         if destination:
             filters.append(self.db.table.destination == destination)
         if origin:
@@ -191,7 +205,7 @@ class Balance(CRUD):
         )
         return self.db.get_balance(income_filters, expense_filters)
 
-    def get_balance(self, income, expense):
+    def calculate_balance(self, income, expense):
         return income - expense
     
     def set_static_metadata(self):

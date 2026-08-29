@@ -81,6 +81,19 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QLabel" name="solde">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -90,13 +103,13 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>100</width>
                 <height>40</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
+                <width>100</width>
                 <height>50</height>
                </size>
               </property>
@@ -116,6 +129,12 @@ border-radius: 15px</string>
             </item>
             <item>
              <widget class="QLabel" name="label_20">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>15</pointsize>
@@ -139,13 +158,13 @@ border-radius: 15px</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>100</width>
                 <height>40</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
+                <width>100</width>
                 <height>50</height>
                </size>
               </property>
@@ -165,6 +184,12 @@ border-radius: 15px</string>
             </item>
             <item>
              <widget class="QLabel" name="label_21">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>15</pointsize>
@@ -188,13 +213,13 @@ border-radius: 15px</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>200</width>
+                <width>70</width>
                 <height>40</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
+                <width>100</width>
                 <height>50</height>
                </size>
               </property>
@@ -214,6 +239,12 @@ border-radius: 15px</string>
             </item>
             <item>
              <widget class="QLabel" name="label_19">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>15</pointsize>

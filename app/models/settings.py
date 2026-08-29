@@ -44,7 +44,7 @@ class Settings(CRUD):
     def get_type(self, income_code=None, expense_code=None):
         filters = []
         if income_code:
-            filters.append(self.db.table.entry_code == income_code)
+            filters.append(self.db.table.entery_code == income_code)
             setting = self.get_by_filter(filters)
             return setting[0].entery if setting else None
         elif expense_code:

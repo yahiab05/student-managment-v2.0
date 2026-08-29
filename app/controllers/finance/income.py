@@ -48,12 +48,11 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
 
     def setup_table(self):
 
-        self.model = create_table_model(TableType.INCOME_TYPES)
+        self.model = create_table_model(TableType.INCOME)
 
         self.tbl.setModel(self.model)
 
-        self.total.setText(str(self.manager.get_total())) 
-        
+        self.tbl.hideColumn(self.model.ID_COLUMN)   
     def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.INCOME,
@@ -75,12 +74,12 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         in_bank = True if data["in_bank"] == "البنك" else False
         entity = SchemaFactory.INCOME(  
                 name=data["name"],
-                date=data["date"],
-                types=data["type"],
+                addition_date=data["date"],
+                type=data["type"],
                 way=data["way"],
                 price=data["price"],
                 note=data["note"],
-                num_bill=data["bill_number"],
+                bill_number=data["bill_number"],
                 cheq_num=data["cheq_num"],
                 code=data["code_input"],
                 in_bank=in_bank,
@@ -101,13 +100,13 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
             self.manager.update(self.identifier, entity)
         self.show_entery()
 
-    def select(self):
-        row = self.tbl.selectionModel().selectedRows()
-        if not row:
-            error("يرجى تحديد التلميذ")
+    def select(self, index=None):
+        row = index.row()
+        if row is None:
+            error("يرجى تحديد الدخل")
             return
         
-        row_index = row[0].row()    
+        row_index = row   
 
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
         types = self.model.data(self.model.index(row_index, 5), role=0)  
@@ -123,7 +122,11 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         if self.identifier is None:
             error("يرجى تحديد الدخل")
             return
-        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا الدخل ؟")
+        try:
+            self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا الدخل ؟")
+            self.show_entery()
+        except Exception as e:
+            error("حدث خطأ", e)
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)
@@ -149,14 +152,16 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
             name=name,
             way=way,
             type=type,
-            from_date=from_date,
-            to_date=to_date,
+            addition_from_date=from_date,
+            addition_to_date=to_date,
             price=price,
             operator=operator,
             code=code
         )
         
-        self.model.refresh(operator,price, from_date, to_date, way, type, name, code)
+        data = self.manager.get_by_filter(filters)
+        
+        self.model.refresh(data)
         self.tbl.repaint()
 
         self.total.setText(str(self.manager.get_total(filters)))

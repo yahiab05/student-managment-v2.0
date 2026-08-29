@@ -4,7 +4,7 @@ from PyQt6.QtCore import QDate
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode, load_gui, UiPath
+from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode, load_gui, UiPath, traceback_to_string
 from app.ui.ui_forms import OutMoneyUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -37,11 +37,10 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.export_btn.clicked.connect(lambda: self.export(ReportType.EXCEL))
 
     def setup_table(self):
-        self.model = create_table_model(TableType.OUT_MONEY)
+        self.model = create_table_model(TableType.EXPENSES)
 
         self.tbl.setModel(self.model)
 
-        self.total.setText(str(self.manager.get_total()))
         self.tbl.hideColumn(self.model.ID_COLUMN)
         
     def aquire_data(self, action: WorkingMode):
@@ -66,7 +65,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
         entity = SchemaFactory.EXPENSES(
             name=data["name"],
-            bill_num=data["bill_num"],
+            bill_number=data["bill_num"],
             date=data["date"],
             type=data["type"],
             way=data["way"],
@@ -95,13 +94,20 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
             else:
                 self.manager.update(self.identifier, entity)
         except Exception as e:
+            print(traceback_to_string(e))
             error("حدث خطأ")
         finally:
             self.reset_filter()
             self.show_out()
 
     def delete(self):
-        self.manager.sup_security(id=self.identifier, text="متأكد من حذف هذا المصروف ؟")
+        if self.identifier is None:
+            error("يرجى تحديد المصروف")
+            return
+        
+        self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا المصروف ؟")
+        self.identifier = None
+        self.show_out()
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)
@@ -124,7 +130,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
 
         filters = self.manager.get_filters(
             name=name,
-            way=way,
+            way_payment=way,
             type=type,
             from_date=from_date,
             to_date=to_date,
@@ -142,22 +148,20 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.combo_manager.update_combo(self.type_search, ComboName.EXPENSES)
         self.combo_manager.update_combo(self.way_search, ComboName.WAY_PAYMENT)
 
-    def select_out(self):
-        row = self.tbl.selectionModel().selectedRows()
-        if not row:
+    def select_out(self, index):
+        row = index.row()
+        if row is None:
             error("يرجى تحديد المصروف")
             return
         
-        row_index = row[0].row()    
+        row_index = row    
 
         self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
 
         self.tbl.clearSelection()
-        self.aquire_data("update")
-        
         
     def unique(self, bill_num, date):
-        filters = self.manager.get_filters(bill_num=bill_num, from_date=date, to_date=date)
+        filters = self.manager.get_filters(bill_number=bill_num, from_date=date, to_date=date)
         return self.manager.exists(filters)
 
     def get_code(self):

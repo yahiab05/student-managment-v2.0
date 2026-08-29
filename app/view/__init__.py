@@ -29,8 +29,8 @@ class TableType(str, Enum):
 	TEACHER_SEARCH = "teacher_search"
 	INCOME_TYPES = "income_types"
 	EXPENSE_TYPES = "expense_types"
-	ENTRY = "entry"
-	OUT_MONEY = "out_money"
+	INCOME = "entry"
+	EXPENSES = "out_money"
 	BALANCE = "balance"
 	PAYMENT = "payment"
 	TRANSFER = "transfer"
@@ -47,8 +47,8 @@ TABLE_MODEL_FACTORY = {
 	TableType.TEACHER_SEARCH: TeacherSearchTableModel,
 	TableType.INCOME_TYPES: IncomeTypeTableModel,
 	TableType.EXPENSE_TYPES: ExpenseTypeTableModel,
-	TableType.ENTRY: EnteryTableModel,
-	TableType.OUT_MONEY: OutMoneyTableModel,
+	TableType.INCOME: EnteryTableModel,
+	TableType.EXPENSES: OutMoneyTableModel,
 	TableType.BALANCE: BalanceTableModel,
 	TableType.PAYMENT: PaymentTableModel,
 	TableType.TRANSFER: TransferTableModel,

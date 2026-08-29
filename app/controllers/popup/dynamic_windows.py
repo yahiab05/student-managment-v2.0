@@ -130,7 +130,10 @@ class ExpensesForm(QWidget, ExpensesFormUI):
         self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
         
+        self.date.setDate(QDate.currentDate())
+        
         self.setup_connections()
+        self.populate_combos()
         
     def setup_connections(self):
         self.way.currentTextChanged.connect(self.cheq_num_on_off)
@@ -142,18 +145,18 @@ class ExpensesForm(QWidget, ExpensesFormUI):
             "name": self.name.currentText(),
             "bill_num": self.bill_num.text(),
             "way": self.way.currentText(),
-            "code_input": self.code_input.value(),
+            "code": self.code_input.value(),
             "date": self.date.date().toPyDate(),
             "type": self.type.currentText(),
-            "bank_caisse": self.bank_caisse.currentText(),
+            "in_bank": self.bank_caisse.currentText(),
             "note": self.note.text(),
-            "nb_cheque": self.nb_cheque.text(),
+            "cheq_num": self.nb_cheque.text(),
             "price": self.price.value(),
         }
 
     def repopulate_fields(self, data: dict) -> None:
         self.name.setCurrentText(data.get("name", ""))
-        self.bill_num.setText(data.get("bill_num", ""))
+        self.bill_num.setText(data.get("bill_number", ""))
         self.way.setCurrentText(data.get("way", ""))
         self.code_input.setValue(data.get("code_input", 0))
         self.date.setDate(data.get("date", self.date.date()))
@@ -196,6 +199,11 @@ class IncomeForm(QWidget, IncomeFormUI):
         self.combo_manager = get_combo_manager
         self.settings_manager = get_model(ModelName.SETTINGS)
         
+        self.date.setDate(QDate.currentDate())
+        
+        self.setup_connections()
+        self.populate_combos()
+        
     def setup_connections(self):
         self.way.currentTextChanged.connect(self.cheq_num_on_off)
         self.type.currentTextChanged.connect(self.get_code)
@@ -210,7 +218,7 @@ class IncomeForm(QWidget, IncomeFormUI):
             "way": self.way.currentText(),
             "bill_number": self.bill_number.text(),
             "cheq_num": self.nb_cheque.text(),
-            "bank_caisse": self.bank_caisse.currentText(),
+            "in_bank": self.bank_caisse.currentText(),
             "price": self.price.value(),
             "note": self.note.text(),
         }

@@ -40,7 +40,7 @@ class TransferLogic(QWidget, TransferUI):
 
     def transfer_security(self, account: Account):
         msg = QMessageBox()
-        ret = msg.question(self, 'حذف', "متأكد من حذف هذا الدخل ؟", msg.StandardButton.Yes | msg.StandardButton.No)
+        ret = msg.question(self, 'حذف', "متأكد من التحويل إلى " + account.value + " ؟", msg.StandardButton.Yes | msg.StandardButton.No)
 
         if ret == msg.StandardButton.Yes:
             self.transfer_order(account)
@@ -72,6 +72,7 @@ class TransferLogic(QWidget, TransferUI):
         try:
             self.manager.create(entity)
             self.reset()
+            self.show_table()
         except Exception as e:
             error(str(e))
 
