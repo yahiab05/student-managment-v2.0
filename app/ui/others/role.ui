@@ -338,22 +338,6 @@ border-top: none
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="absents">
-           <property name="font">
-            <font>
-             <pointsize>15</pointsize>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>الغيابات</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="money">
            <property name="font">
             <font>

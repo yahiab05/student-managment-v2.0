@@ -216,6 +216,8 @@ class UserLogic(QWidget, UserUI):
 
     def show_users(self):
         users = self.manager.get_all()
+        self.tbl.setRowCount(len(users))
+        
 
         for i in range(len(users)):
             user = users[i]
@@ -223,7 +225,7 @@ class UserLogic(QWidget, UserUI):
             self.tbl.setItem(i, 1, QTableWidgetItem(user.username))
             self.tbl.setItem(i, 2, QTableWidgetItem(user.password))
             self.tbl.setItem(i, 3, QTableWidgetItem(user.role_name))
-
+            
     def populate_combo(self):
         self.combo_manager.update_combo(self.role, ComboName.ROLE)
 
