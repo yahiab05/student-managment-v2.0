@@ -191,7 +191,7 @@ border-radius: 15px</string>
              </font>
             </property>
             <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
+             <enum>Qt::RightToLeft</enum>
             </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
@@ -206,10 +206,10 @@ border-radius: 15px</string>
              <enum>QAbstractItemView::SelectItems</enum>
             </property>
             <property name="verticalScrollMode">
-             <enum>QAbstractItemView::ScrollPerItem</enum>
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <property name="horizontalScrollMode">
-             <enum>QAbstractItemView::ScrollPerItem</enum>
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <property name="showGrid">
              <bool>false</bool>
@@ -565,7 +565,7 @@ border-top: none
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
@@ -593,6 +593,9 @@ border-top: none
            </attribute>
            <attribute name="horizontalHeaderDefaultSectionSize">
             <number>150</number>
+           </attribute>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
            </attribute>
           </widget>
          </item>

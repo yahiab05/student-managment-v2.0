@@ -27,7 +27,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QFrame" name="">
+       <widget class="QFrame" name="frame">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <spacer name="horizontalSpacer_6">
@@ -260,7 +260,7 @@ border-top: none
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
@@ -287,7 +287,7 @@ border-top: none
             <enum>QAbstractItemView::ScrollPerPixel</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerItem</enum>
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
            </property>
            <property name="showGrid">
             <bool>false</bool>

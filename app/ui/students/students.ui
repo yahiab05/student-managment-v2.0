@@ -320,10 +320,10 @@ border-top: none
          <enum>QAbstractItemView::SelectItems</enum>
         </property>
         <property name="verticalScrollMode">
-         <enum>QAbstractItemView::ScrollPerItem</enum>
+         <enum>QAbstractItemView::ScrollPerPixel</enum>
         </property>
         <property name="horizontalScrollMode">
-         <enum>QAbstractItemView::ScrollPerItem</enum>
+         <enum>QAbstractItemView::ScrollPerPixel</enum>
         </property>
         <property name="showGrid">
          <bool>false</bool>

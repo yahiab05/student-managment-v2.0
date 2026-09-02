@@ -604,7 +604,7 @@ color: rgb(255, 255, 255);</string>
                 <second>0</second>
                 <year>1899</year>
                 <month>12</month>
-                <day>20</day>
+                <day>19</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -682,7 +682,7 @@ color: rgb(255, 255, 255);</string>
                 <second>0</second>
                 <year>1899</year>
                 <month>12</month>
-                <day>21</day>
+                <day>20</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -1023,16 +1023,19 @@ border-top: none
          <enum>QAbstractItemView::SelectItems</enum>
         </property>
         <property name="verticalScrollMode">
-         <enum>QAbstractItemView::ScrollPerItem</enum>
+         <enum>QAbstractItemView::ScrollPerPixel</enum>
         </property>
         <property name="horizontalScrollMode">
-         <enum>QAbstractItemView::ScrollPerItem</enum>
+         <enum>QAbstractItemView::ScrollPerPixel</enum>
         </property>
         <property name="showGrid">
          <bool>false</bool>
         </property>
         <attribute name="horizontalHeaderMinimumSectionSize">
          <number>150</number>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
         </attribute>
        </widget>
       </item>
