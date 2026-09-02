@@ -16,7 +16,7 @@ from app.utils import (
     ComboName,
     load_gui,
     UiPath,
-    traceback_to_string
+    get_selection_status_stylesheet,
 )
 from app.ui.ui_forms import ClassesUI, ClasseleveUI
 
@@ -36,6 +36,7 @@ class ClassesLogic(QWidget, ClassesUI):
         self.setup()
         self.set_table()
         self.populate_combos()
+        self.deselection()
 
     def set_table(self):
         self.model = create_table_model(TableType.CLASSES)
@@ -94,19 +95,35 @@ class ClassesLogic(QWidget, ClassesUI):
             self.manager.create(entity)
         elif action == WorkingMode.UPDATE:
             self.manager.update(self.identifier, entity)
+            self.deselection()
             
         self.show_class()
         self.combo_manager.update_cache_from_db(data_name=ComboName.CLASS)
-
+        
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
+        
     def select_row(self, index):
         row_index = index.row()    
 
-        self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        
+        self.selection(identifier)
 
     def delete_class(self):
+        if self.identifier is None:
+            error("يرجى تحديد قسم")
+            return
+        
         self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا القسم ؟")
         self.combo_manager.update_cache_from_db("classes")
         self.show_class()
+        self.deselection()
 
     def show_class(self):
         name = self.search.text()

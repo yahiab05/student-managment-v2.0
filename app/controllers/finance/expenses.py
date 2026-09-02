@@ -4,7 +4,8 @@ from PyQt6.QtCore import QDate
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, ComboName, WorkingMode, load_gui, UiPath, traceback_to_string
+from app.utils import (error, get_username, get_combo_manager, ReportType, ComboName, 
+                        WorkingMode, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
 from app.ui.ui_forms import OutMoneyUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -25,6 +26,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.setup()
         self.populate_combo()
         self.setup_table()
+        self.deselection()
 
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
@@ -42,6 +44,14 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.tbl.setModel(self.model)
 
         self.tbl.hideColumn(self.model.ID_COLUMN)
+        
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
         
     def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(
@@ -93,6 +103,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
                     self.manager.create(entity)
             else:
                 self.manager.update(self.identifier, entity)
+                self.deselection()  
         except Exception as e:
             print(traceback_to_string(e))
             error("حدث خطأ")
@@ -108,6 +119,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا المصروف ؟")
         self.identifier = None
         self.show_out()
+        self.deselection()
 
     def reset_filter(self):
         self.operatore.setCurrentIndex(-1)
@@ -156,8 +168,8 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         
         row_index = row    
 
-        self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
-
+        identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        self.selection(identifier)
         self.tbl.clearSelection()
         
     def unique(self, bill_num, date):

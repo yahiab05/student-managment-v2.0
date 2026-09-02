@@ -5,7 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from app.ui.ui_forms import ViewPaymentUI as V
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
-from app.utils import error, get_student_list, get_combo_manager, ComboName, ReportType, load_gui, UiPath, traceback_to_string
+from app.utils import (error, get_student_list, get_combo_manager, ComboName, 
+                        ReportType, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
 from app.controllers.popup import create_payment_window
 
 class ViewPayment(QWidget, V):
@@ -26,6 +27,7 @@ class ViewPayment(QWidget, V):
         self.setup()
         
         self.show_students_list()
+        self.deselection()
 
     def setup(self):
         self.add_btn.clicked.connect(self.open_popup)
@@ -98,12 +100,21 @@ class ViewPayment(QWidget, V):
         self.num_inscrit.setText("")
 
         self.show_students_list()
+        
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
 
     def select_row(self, index):
         if self.has_access():
             row_index = index.row()
             
-            self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
+            identifier = self.model.data(self.model.index(row_index, 0), role=0)
+            self.selection(identifier)
 
             self.reg_tbl.clearSelection()
             self.search_frame.setEnabled(False)
@@ -134,7 +145,7 @@ class ViewPayment(QWidget, V):
                 error("لا يمكنك التحديث بعد الآن")
             finally:
                 self.cancel()
-                self.identifier = None
+                self.deselection()
                 self.search()
         else:
             error("السعر يجب ان يكون اكبر من صفر")
@@ -152,7 +163,7 @@ class ViewPayment(QWidget, V):
     def delete(self):
         try:
             self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا الدفعة ؟")
-            self.identifier = None
+            self.deselection()
             self.search()
             self.search_frame.setEnabled(True)
         except IntegrityError as e:

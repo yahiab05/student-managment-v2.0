@@ -1,11 +1,10 @@
-from PyQt6.uic import loadUi
-from PyQt6.QtWidgets import QWidget, QApplication, QMessageBox
+from PyQt6.QtWidgets import QWidget, QApplication
 from PyQt6.QtCore import QDate, QPropertyAnimation, QEasingCurve
 from app.models import ModelName, get_model
 from sqlalchemy.exc import IntegrityError
 from app.utils.utils import traceback_to_string
 from app.view import TableType, create_table_model
-from os import path
+
 from app.repo.schemas import SchemaFactory
 from app.utils import (
     error, 
@@ -14,7 +13,8 @@ from app.utils import (
     ReportType,
     load_gui,
     WorkingMode,
-    UiPath
+    UiPath,
+    get_selection_status_stylesheet
 )
 from app.ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 from app.controllers.popup import create_popup_factory, PopupKind
@@ -44,6 +44,7 @@ class StudentsLogic(QWidget, StudentsUI):
         self.setup_table()
 
         self.setup()
+        self.deselection()
 
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
@@ -129,7 +130,7 @@ class StudentsLogic(QWidget, StudentsUI):
         else:
             try:
                 self.manager.update(id=self.identifier, data_obj=entity)
-                self.identifier = None
+                self.deselection()
             except Exception as e:
                 error(str(e))
                 return
@@ -159,12 +160,17 @@ class StudentsLogic(QWidget, StudentsUI):
     def select_student(self, index):
         row_index = index.row()
         
-        self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        self.selection(identifier)
         self.student_tab.clearSelection()
 
     def delete(self):
+        if self.identifier is None:
+            error("يرجى تحديد التلميذ")
+            return
+        
         self.manager.sup_security(widget=self ,id=self.identifier, text="متأكد من حذف هذا التلميذ ؟")
-        self.identifier = None
+        self.deselection()
         self.show_table()
 
     def search_section(self, action):
@@ -178,6 +184,14 @@ class StudentsLogic(QWidget, StudentsUI):
             print("not recognized")
         
         self.animation.start()
+        
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
 
     def set_new_year(self):
         try:
@@ -193,7 +207,7 @@ class StudentsLogic(QWidget, StudentsUI):
             traceback_to_string(e)
             error("هذا التلميذ موجود.")
 
-        self.identifier = None
+        self.deselection()
         self.show_table()
     
     def add_history(self, student_id, date, session=None): 

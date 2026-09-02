@@ -78,6 +78,7 @@ class ClassesUI:
     printing_btn: QPushButton
     export_btn: QPushButton
     reset_btn: QPushButton
+    select_info: QLabel
 
 
 class ClassesPerStudentUI:
@@ -133,6 +134,7 @@ class EnteryMoneyUI:
     total: QLabel
     reset_btn: QPushButton
     search_btn: QPushButton
+    select_info: QLabel
 
 
 class MoneyUI:
@@ -163,6 +165,7 @@ class OutMoneyUI:
     total: QLabel
     reset_btn: QPushButton
     search_btn: QPushButton
+    select_info: QLabel
 
 
 class BalanceUI:
@@ -214,6 +217,7 @@ class ClassesFormUI:
     price: QLineEdit
     name: QLineEdit
     teacher: QComboBox
+    select_info: QLabel
 
 
 class ExpensesFormUI:
@@ -227,6 +231,7 @@ class ExpensesFormUI:
     bank_caisse: QComboBox
     note: QLineEdit
     nb_cheque: QLineEdit
+    select_info: QLabel
     name: QComboBox
 
 
@@ -242,6 +247,7 @@ class IncomeFormUI:
     bank_caisse: QComboBox
     price: QDoubleSpinBox
     note: QLineEdit
+    select_info: QLabel
 
 
 class PopupFormUI:
@@ -415,6 +421,7 @@ class ViewPaymentUI:
     to: QDateEdit
     reset_btn: QPushButton
     search_btn: QPushButton
+    select_info: QLabel
 
 
 class StudentHistoryUI:
@@ -457,6 +464,7 @@ class StudentsUI:
     activity_search: QComboBox
     gender_search: QComboBox
     nb: QLabel
+    select_info: QLabel
 
 
 class TeacherUI:
@@ -470,7 +478,8 @@ class TeacherUI:
     teachers_table: QTableView
     printing_btn: QPushButton
     export_btn: QPushButton
-
+    select_info: QLabel
+    
 
 class TeacherHistoryUI:
     teacher_history: QWidget

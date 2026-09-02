@@ -6,7 +6,8 @@ from app.utils.combo_names import ComboName
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, WorkingMode, load_gui, UiPath, traceback_to_string
+from app.utils import (error, get_username, get_combo_manager, ReportType, WorkingMode, 
+                        load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
 from app.ui.ui_forms import TeacherUI, TeacherHistoryUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -22,7 +23,8 @@ class TeacherLogic(QWidget, TeacherUI):
         self.classes_manager = get_model(ModelName.CLASSES)
         self.history_manager = get_model(ModelName.TEACHERS_HISTORY)
 
-        self.identifier = None
+        self.indentifier = None
+        self.deselection()
         
         self.setup()
         self.setup_table()
@@ -110,7 +112,7 @@ class TeacherLogic(QWidget, TeacherUI):
                     error("يرجى تحديد معلم")
                     return
                 self.manager.update(self.identifier, entity)
-                self.identifier = None  # Reset identifier after update
+                self.deselection()
             except IntegrityError as e:
                 error("حدث خطأ أثناء تحديث المعلم.")
                 return
@@ -124,8 +126,8 @@ class TeacherLogic(QWidget, TeacherUI):
             try:
                 if not self.has_classes(name):
                     self.manager.sup_security(widget=self, id=self.identifier, text=f"متأكد من حذف المعلم ؟")
-                    self.identifier = None  # Reset identifier after deletion
                     self.show_teachers()
+                    self.deselection()
                     self.combo_manager.update_cache_from_db("teachers")
                 else:
                     error(f"لا يمكن حذف المعلم {name} لوجود قسم له")
@@ -143,8 +145,17 @@ class TeacherLogic(QWidget, TeacherUI):
     def select_row(self, index):
         row_index = index.row()
         
-        self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
-
+        identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        self.selection(identifier)
+        
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
+        
     def show_teachers(self):
         name = self.search.text() 
         
@@ -158,7 +169,7 @@ class TeacherLogic(QWidget, TeacherUI):
         self.nb.setText(str(self.model.rowCount()))
 
     def new_year_security(self):
-        if self.identifier != 0:
+        if self.identifier != 0 and self.identifier is not None:
             msg = QMessageBox()
             ret = msg.question(None, 'تسجيل', "هل تريد تسجيل هذا المعلم؟", msg.StandardButton.Yes | msg.StandardButton.No)
 
@@ -166,7 +177,9 @@ class TeacherLogic(QWidget, TeacherUI):
                 with self.manager.transaction() as session:
                     self.add_history(self.identifier, QDate.currentDate().toPyDate(), session=session)
                     self.new_year(self.identifier, session=session)
+            
         self.show_teachers()
+        self.deselection()
 
     def new_year(self, teacher_id, session=None):
         teacher = self.manager.get_by_id(teacher_id, session=session)

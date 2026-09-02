@@ -28,6 +28,18 @@ def info(message: str) -> None:
     msg.exec()
     msg.show()
     
+def get_selection_status_stylesheet(is_selected: bool) -> str:
+    if is_selected:
+        string = "background-color: green;"
+        string += "border: 0px solid black;"
+        string += "border-radius: 10px;"
+        return string
+    else:
+        string = "background-color: red;"
+        string += "border: 0px solid black;"
+        string += "border-radius: 10px;"
+        return string
+    
 def get_student_list(search_text: str) -> list:
     from app.repo import SessionLocal, Students
 

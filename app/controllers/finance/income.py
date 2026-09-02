@@ -11,7 +11,8 @@ from app.utils import (
     ComboName,
     WorkingMode,
     load_gui,
-    UiPath
+    UiPath,
+    get_selection_status_stylesheet
     )
 
 from app.view import TableType, create_table_model
@@ -35,6 +36,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         self.reset_filter()
         self.setup_table()
         self.setup()
+        self.deselection()
 
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
@@ -53,6 +55,15 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         self.tbl.setModel(self.model)
 
         self.tbl.hideColumn(self.model.ID_COLUMN)   
+    
+    def selection(self, identifier):
+        self.identifier = identifier
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(True))
+        
+    def deselection(self):
+        self.identifier = None
+        self.select_info.setStyleSheet(get_selection_status_stylesheet(False))
+        
     def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
             kind=PopupKind.INCOME,
@@ -98,6 +109,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
             self.manager.create(entity)
         else:
             self.manager.update(self.identifier, entity)
+            self.deselection()
         self.show_entery()
 
     def select(self, index=None):
@@ -108,7 +120,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         
         row_index = row   
 
-        self.identifier = self.model.data(self.model.index(row_index, 0), role=0)
+        identifier = self.model.data(self.model.index(row_index, 0), role=0)
         types = self.model.data(self.model.index(row_index, 5), role=0)  
 
         self.tbl.clearSelection()
@@ -118,6 +130,8 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
             error("لا يمكن التحديث")
             return
         
+        self.selection(identifier)
+        
     def delete_income(self):
         if self.identifier is None:
             error("يرجى تحديد الدخل")
@@ -125,6 +139,7 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
         try:
             self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا الدخل ؟")
             self.show_entery()
+            self.deselection()
         except Exception as e:
             error("حدث خطأ", e)
 
