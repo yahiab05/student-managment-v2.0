@@ -17,6 +17,7 @@ from app.utils import (
     load_gui,
     UiPath,
     get_selection_status_stylesheet,
+    set_header_resize_mode
 )
 from app.ui.ui_forms import ClassesUI, ClasseleveUI
 
@@ -42,7 +43,8 @@ class ClassesLogic(QWidget, ClassesUI):
         self.model = create_table_model(TableType.CLASSES)
         self.class_table.setModel(self.model)
         self.class_table.hideColumn(self.model.ID_COLUMN)
-
+        set_header_resize_mode(self.class_table, self.model)
+    
     def setup(self):
         self.add_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.ADD))
         self.update_btn.clicked.connect(lambda: self.aquire_data(WorkingMode.UPDATE))

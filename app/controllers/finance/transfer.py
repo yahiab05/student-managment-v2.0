@@ -4,7 +4,7 @@ from PyQt6.QtCore import QDate
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
-from app.utils import error, get_username, get_combo_manager, ReportType, Account, load_gui, UiPath
+from app.utils import error, get_username, get_combo_manager, ReportType, Account, load_gui, UiPath, set_header_resize_mode
 from app.ui.ui_forms import TransferUI
 
 class TransferLogic(QWidget, TransferUI):
@@ -37,6 +37,7 @@ class TransferLogic(QWidget, TransferUI):
 
         self.table.setModel(self.model)
         self.table.hideColumn(self.model.ID_COLUMN)
+        set_header_resize_mode(self.table, self.model)
 
     def transfer_security(self, account: Account):
         msg = QMessageBox()

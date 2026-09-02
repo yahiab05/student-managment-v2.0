@@ -11,7 +11,8 @@ from app.utils.utils import (
     load_gui, 
     UiPath,
     traceback_to_string, 
-    get_selection_status_stylesheet
+    get_selection_status_stylesheet,
+    set_header_resize_mode
 )
 from app.repo.database import SessionLocal
 

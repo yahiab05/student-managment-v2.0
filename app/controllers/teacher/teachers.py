@@ -7,7 +7,8 @@ from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
 from app.utils import (error, get_username, get_combo_manager, ReportType, WorkingMode, 
-                        load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
+                        load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet,
+                        set_header_resize_mode)
 from app.ui.ui_forms import TeacherUI, TeacherHistoryUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -44,6 +45,8 @@ class TeacherLogic(QWidget, TeacherUI):
         self.model = create_table_model(TableType.TEACHERS)
 
         self.teachers_table.setModel(self.model)
+        set_header_resize_mode(self.teachers_table, self.model)
+
 
     def aquire_data(self, action: WorkingMode):
         dialog = create_popup_factory(

@@ -12,7 +12,8 @@ from app.utils import (
     WorkingMode,
     load_gui,
     UiPath,
-    get_selection_status_stylesheet
+    get_selection_status_stylesheet,
+    set_header_resize_mode
     )
 
 from app.view import TableType, create_table_model
@@ -54,7 +55,8 @@ class EnteryLogic(QWidget, EnteryMoneyUI):
 
         self.tbl.setModel(self.model)
 
-        self.tbl.hideColumn(self.model.ID_COLUMN)   
+        self.tbl.hideColumn(self.model.ID_COLUMN)  
+        set_header_resize_mode(self.tbl, self.model)
     
     def selection(self, identifier):
         self.identifier = identifier

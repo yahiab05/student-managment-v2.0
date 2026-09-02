@@ -14,7 +14,8 @@ from app.utils import (
     load_gui,
     WorkingMode,
     UiPath,
-    get_selection_status_stylesheet
+    get_selection_status_stylesheet,
+    set_header_resize_mode
 )
 from app.ui.ui_forms import StudentsUI, StudentHistoryUI, ClassesPerStudentUI
 from app.controllers.popup import create_popup_factory, PopupKind
@@ -63,6 +64,7 @@ class StudentsLogic(QWidget, StudentsUI):
         self.model = create_table_model(TableType.STUDENTS)
 
         self.student_tab.setModel(self.model)
+        set_header_resize_mode(self.student_tab, self.model)
 
     def aquire_data(self, action:WorkingMode):
         dialog = create_popup_factory(
@@ -306,6 +308,7 @@ class StudentsHistoryLogic(QWidget, StudentHistoryUI):
 
         self.student_tab.setModel(self.model)
         self.student_tab.hideColumn(self.model.ID_COLUMN)
+        set_header_resize_mode(self.student_tab, self.model)
 
     def search(self):
         identifier = self.num_ins_search.text()
@@ -363,6 +366,7 @@ class ClassesPerStudentLogic(QWidget, ClassesPerStudentUI):
 
         self.student_list.setModel(self.model)
         self.student_list.hideColumn(self.model.ID_COLUMN)
+        set_header_resize_mode(self.student_list, self.model)
         
     def student_search(self):
         name = self.search_ent.text()

@@ -5,7 +5,8 @@ from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
 from app.repo.schemas import SchemaFactory
 from app.utils import (error, get_username, get_combo_manager, ReportType, ComboName, 
-                        WorkingMode, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
+                        WorkingMode, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet,
+                        set_header_resize_mode)
 from app.ui.ui_forms import OutMoneyUI
 from app.controllers.popup import create_popup_factory, PopupKind
 
@@ -44,6 +45,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
         self.tbl.setModel(self.model)
 
         self.tbl.hideColumn(self.model.ID_COLUMN)
+        set_header_resize_mode(self.tbl, self.model)
         
     def selection(self, identifier):
         self.identifier = identifier

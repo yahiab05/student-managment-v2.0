@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QHeaderView, QMessageBox
 from PyQt6.uic import loadUi
 from os import path
 
@@ -39,6 +39,13 @@ def get_selection_status_stylesheet(is_selected: bool) -> str:
         string += "border: 0px solid black;"
         string += "border-radius: 10px;"
         return string
+    
+def set_header_resize_mode(table_view, model):
+    header = table_view.horizontalHeader()
+    
+    for column in range(model.columnCount()):
+        header.setSectionResizeMode(column, QHeaderView.ResizeMode.ResizeToContents)
+        
     
 def get_student_list(search_text: str) -> list:
     from app.repo import SessionLocal, Students

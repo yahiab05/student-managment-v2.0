@@ -6,7 +6,8 @@ from app.ui.ui_forms import ViewPaymentUI as V
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
 from app.utils import (error, get_student_list, get_combo_manager, ComboName, 
-                        ReportType, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet)
+                        ReportType, load_gui, UiPath, traceback_to_string, get_selection_status_stylesheet,
+                        set_header_resize_mode)
 from app.controllers.popup import create_payment_window
 
 class ViewPayment(QWidget, V):
@@ -47,6 +48,7 @@ class ViewPayment(QWidget, V):
         self.model = create_table_model(TableType.PAYMENT)
 
         self.reg_tbl.setModel(self.model)
+        set_header_resize_mode(self.reg_tbl, self.model)
 
         self.total.setText(str(self.manager.get_total()))
         self.nb.setText(str(self.model.rowCount()))

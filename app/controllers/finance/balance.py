@@ -3,7 +3,7 @@ from PyQt6.QtCore import QDate
 
 from app.view import TableType, create_table_model
 from app.models import ModelName, get_model
-from app.utils import get_combo_manager, ReportType, ComboName, load_gui, UiPath
+from app.utils import get_combo_manager, ReportType, ComboName, load_gui, UiPath, set_header_resize_mode
 from app.ui.ui_forms import BalanceUI
 
 
@@ -36,6 +36,8 @@ class BalanceLogic(QWidget, BalanceUI):
         self.tbl.setModel(self.model)
 
         self.tbl.hideColumn(self.model.ID_COLUMN)
+        
+        set_header_resize_mode(self.tbl, self.model)
         
     def populate_combo(self):
         self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
