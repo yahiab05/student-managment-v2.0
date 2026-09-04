@@ -4,12 +4,13 @@ from builtins import KeyError
 from PyQt6.QtWidgets import QComboBox
 from .combo_names import ComboName, ComboSource
 
+from app.repo.database import SessionLocal
+
 
 class ComboManager:
-    def __init__(self, session):
-        self.session = session
+    def __init__(self):
         
-        self.source = ComboSource(session)
+        self.source = ComboSource()
         
         self._cache_sources = self.source.get_cached_source()
         self.cached = self.source.get_cached_data()
@@ -21,8 +22,11 @@ class ComboManager:
         except KeyError as error:
             raise KeyError(f"Unknown cached data name: {data_name}") from error
 
-        rows = self.session.query(model).with_entities(getattr(model, column_name)).all()
+        with SessionLocal() as session:
+            rows = session.query(model).with_entities(getattr(model, column_name)).all()
+        print([row[0] for row in rows])
         self.cached[data_name] = [row[0] for row in rows if row[0] is not None]
+        print(f"Updated {data_name} cache with {self.cached[data_name]} entries")
         return self.cached[data_name]
 
     def update_all_cache(self):

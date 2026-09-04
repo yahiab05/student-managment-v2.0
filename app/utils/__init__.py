@@ -14,11 +14,9 @@ from app.utils.utils import (
     get_selection_status_stylesheet,
     set_header_resize_mode
 )
-from app.repo.database import SessionLocal
 
 def create_combo_manager() -> ComboManager:
-    session = SessionLocal()
-    combo_manager = ComboManager(session)
+    combo_manager = ComboManager()
     return combo_manager
 
 get_combo_manager = create_combo_manager()  # Create a single instance of ComboManager

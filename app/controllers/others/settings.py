@@ -69,28 +69,32 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
             error("Verifier les données")
             return
         if action == WorkingMode.ADD:
-            self.manager.create(entity)
+            try:
+                self.manager.create(entity)
+            except IntegrityError:
+                error("Ce code est déjà utilisé. Veuillez en choisir un autre.")
+                return
         else:
-            self.manager.update(self.identifier, entity)
-            
+            try:
+                self.manager.update(self.identifier, entity)
+            except IntegrityError:
+                error("Ce code est déjà utilisé. Veuillez en choisir un autre.")
+                return
+
         self.reset_enteries()
         self.identifier = None
         self.show_data()
         self.combo_manager.update_cache_from_db(ComboName.INCOME if self.income else ComboName.EXPENSES)
         
     def delete(self):
-        code = int(self.code.text())
-        if self.check_used(code):
+        try:
+            self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا النوع ؟")
+        except IntegrityError:
             error("لا يمكن الحذف لأنه يتم إستعماله")
-        else:
-            try:
-                self.manager.sup_security(widget=self, id=self.identifier, text="متأكد من حذف هذا النوع ؟")
-            except IntegrityError:
-                error("لا يمكن الحذف لأنه يتم إستعماله")
-            finally:
-                self.reset_enteries()
-                self.identifier = None
-    
+        finally:
+            self.reset_enteries()
+            self.identifier = None
+
     def select_row(self, index):
         row = index.row()
         print("Selected row index:", row)
@@ -184,10 +188,18 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
             error("Verifier les données")
             return
         if action == WorkingMode.ADD:
-            self.manager.create(entity)
+            try:
+                self.manager.create(entity)
+            except IntegrityError:
+                error("Ce code est déjà utilisé. Veuillez en choisir un autre.")
+                return
         else:
-            filter = self.get_appropriate_filter(self.item)
-            self.manager.update_by_filter(filter, entity)
+            try:
+                filter = self.get_appropriate_filter(self.item)
+                self.manager.update_by_filter(filter, entity)
+            except IntegrityError:
+                error("Ce code est déjà utilisé. Veuillez en choisir un autre.")
+                return
             
         self.reset_enteries()
         self.identifier = None
@@ -196,19 +208,15 @@ class SettingsWithoutCode(BaseSettings, SettingFormUI):
         
     def delete(self):
         name = self.entery.text()
-
-        if self.check_used(name):
+        try:
+            filter = self.get_appropriate_filter(name)
+            self.manager.sup_security(widget=self, text= "متأكد من حذف هذا النوع ؟", filter=filter)
+        except IntegrityError as e:
             error("لا يمكن الحذف لأنه يتم إستعماله")
-        else:
-            try:
-                filter = self.get_appropriate_filter(name)
-                self.manager.sup_security(widget=self, text= "متأكد من حذف هذا النوع ؟", filter=filter)
-            except IntegrityError:
-                error("لا يمكن الحذف لأنه يتم إستعماله")
-            finally:
-                self.reset_enteries()
-                self.identifier = None
-                self.combo_manager.update_cache_from_db(self.setting)
+        finally:
+            self.reset_enteries()
+            self.identifier = None
+            self.combo_manager.update_cache_from_db(self.setting)
                 
     def get_appropriate_filter(self, name):
         if self.setting == ComboName.WAY_TEACHING:

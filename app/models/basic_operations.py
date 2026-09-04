@@ -1,6 +1,8 @@
 from abc import ABC
 from PyQt6.QtWidgets import QMessageBox, QWidget
 from contextlib import contextmanager
+
+from sqlalchemy.exc import IntegrityError
 from app.repo.schemas.base_schema import BaseDataClass
 from app.utils import export_report, ReportType, ReportContext
 from app.repo import Repositories
@@ -72,6 +74,8 @@ class CRUD(ABC):
             return self.db.update_by_filter(filters, data)
         except ModuleNotFoundError:
             return
+        except IntegrityError as e:
+            raise e
         
     def delete_by_filter(self, filters: list): #this is a comment
         try:

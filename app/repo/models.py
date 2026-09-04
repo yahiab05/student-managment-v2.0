@@ -1,7 +1,8 @@
 from datetime import date as DateType
 from typing import Optional
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, and_
+from sqlalchemy.orm import foreign
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from PyQt6.QtCore import QDate
 from app.repo.database import Base
@@ -100,13 +101,15 @@ class Classes(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True, unique=True)
-    way: Mapped[str] = mapped_column(String(255), nullable=False)
-    teacher: Mapped[str] = mapped_column(String(255), nullable=False)
+    way: Mapped[str] = mapped_column(String(255), ForeignKey("settings.way_teaching"), nullable=False)
+    teacher: Mapped[str] = mapped_column(String(255), ForeignKey("teachers.name"), nullable=False)
     note: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     user: Mapped[str] = mapped_column(String(255), nullable=False)
 
     students: Mapped[list["Students"]] = relationship("Students", secondary="classeleve", back_populates="courses")
+    settings: Mapped["Settings"] = relationship("Settings", backref="classes", lazy=True, viewonly=True)
+    teachers: Mapped["Teachers"] = relationship("Teachers", backref="classes", lazy=True, viewonly=True)
 
     def __repr__(self):
         return f"Class(id={self.id}, name={self.name}, way={self.way}, teacher={self.teacher}, price={self.price})"
@@ -188,13 +191,25 @@ class OutMoney(Base):
     bill_number: Mapped[str] = mapped_column(String(255), nullable=False)
     date: Mapped[DateType] = mapped_column(nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
-    way: Mapped[str] = mapped_column(String(255), nullable=False)
+    way: Mapped[str] = mapped_column(String(255), ForeignKey("settings.way_payment"), nullable=False)
     cheq_num: Mapped[Optional[str]] = mapped_column(String(255))
     note: Mapped[str] = mapped_column(String(255),  nullable=False)
-    code: Mapped[int] = mapped_column(nullable=False)
-    type: Mapped[str] = mapped_column(String(255), nullable=False)
+    code: Mapped[int] = mapped_column(ForeignKey("settings.out_code"), nullable=False)
+    type: Mapped[str] = mapped_column(String(255), ForeignKey("settings.out_money"), nullable=False)
     user: Mapped[str] = mapped_column(String(255), nullable=False)
     in_bank: Mapped[bool] = mapped_column(nullable=False)
+    
+    settings: Mapped["Settings"] = relationship(
+        "Settings",
+        primaryjoin=lambda: and_(
+            foreign(OutMoney.way) == Settings.way_payment,
+            foreign(OutMoney.code) == Settings.out_code,
+            foreign(OutMoney.type) == Settings.out_money,
+        ),
+        foreign_keys=lambda: [OutMoney.way, OutMoney.code, OutMoney.type],
+        lazy=True,
+        viewonly=True,
+    )
 
     def __repr__(self):
         return f"OutMoney(id={self.id}, name={self.name}, bill_num={self.bill_num}, date={self.date}, price={self.price})"
@@ -215,15 +230,27 @@ class Entery(Base):
     bill_number: Mapped[str] = mapped_column(String(255), nullable=False)
     payment_date: Mapped[Optional[DateType]] = mapped_column()
     addition_date: Mapped[DateType] = mapped_column(nullable=False)
-    way: Mapped[str] = mapped_column(String(255), nullable=False)
-    type: Mapped[str] = mapped_column(String(255), nullable=False)
-    code: Mapped[int] = mapped_column(nullable=False)
+    way: Mapped[str] = mapped_column(String(255), ForeignKey("settings.way_payment"), nullable=False)
+    type: Mapped[str] = mapped_column(String(255), ForeignKey("settings.entery"), nullable=False)
+    code: Mapped[int] = mapped_column(ForeignKey("settings.entery_code"), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     note: Mapped[Optional[str]] = mapped_column(String(255))
     user: Mapped[str] = mapped_column(String(255), nullable=False)
     cheq_num: Mapped[Optional[str]] = mapped_column(String(255))
     classroom: Mapped[Optional[str]] = mapped_column(String(255))
     in_bank: Mapped[bool] = mapped_column(nullable=False)
+    
+    settings: Mapped["Settings"] = relationship(
+        "Settings",
+        primaryjoin=lambda: and_(
+            foreign(Entery.way) == Settings.way_payment,
+            foreign(Entery.code) == Settings.entery_code,
+            foreign(Entery.type) == Settings.entery,
+        ),
+        foreign_keys=lambda: [Entery.way, Entery.code, Entery.type],
+        lazy=True,
+        viewonly=True,
+    )
 
     def __repr__(self):
         return f"Entery(id={self.id}, date={self.addition_date}, type={self.type}, code={self.code}, price={self.price})"

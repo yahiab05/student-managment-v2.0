@@ -20,8 +20,7 @@ class ComboName(StrEnum):
     ENROLLMENTS = "enrollments"
 
 class ComboSource:
-    def __init__(self, session):
-        self.session = session
+    def __init__(self):
         
         self._cache_sources = {
             ComboName.CLASS: (ClassesCombo, "name"),
