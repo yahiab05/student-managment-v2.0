@@ -27,8 +27,8 @@ class Classes(CRUD):
         self.headers = ["الثمن", "الأستاذ", "الطريقة", "الإسم"]
 
     def set_dynamic_metadata(self, data_to_export, row_count):
-        self.foot = f"""عدد الأقسام: {row_count}"""
-
+        self.footer = f"""عدد الأقسام: {row_count}"""
+        self.data_to_export = []
         for class_ in data_to_export:
             row = [
                 str(class_.price),
@@ -74,7 +74,7 @@ class Enrollment(CRUD):
         self.headers = ["رقم الهاتف", "تاريخ الولادة", "رقم الترسيم", "السيد(ة)"]
 
     def set_dynamic_metadata(self, data_to_export, row_count, class_name, teacher):
-        self.foot = f"عدد التلاميذ: {row_count}"
+        self.footer = f"عدد التلاميذ: {row_count}"
         
         self.intro = ""
         if class_name:
@@ -85,10 +85,10 @@ class Enrollment(CRUD):
         self.data_to_export = []
         for student in data_to_export:
             row = [
-                str(student.student_id.num_tel),
-                student.student_id.birthday.strftime("%Y-%m-%d"),
+                str(student.students.num_tel),
+                student.students.birthday.strftime("%Y-%m-%d"),
                 str(student.student_id),
-                student.student.name,
+                student.students.name,
             ]
             self.data_to_export.append(row)
         

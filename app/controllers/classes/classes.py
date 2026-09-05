@@ -195,6 +195,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.model_classeleve = create_table_model(TableType.CLASS_ENROLLMENT)
 
         self.students.setModel(self.model_classeleve)
+        set_header_resize_mode(self.students, self.model_classeleve)
 
     def setup_students(self):
         self.model = create_table_model(TableType.STUDENT_SEARCH)
@@ -202,6 +203,7 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
         self.student_search_list.setModel(self.model)
         
         self.student_search_list.hideColumn(self.model.ID_COLUMN)
+        set_header_resize_mode(self.student_search_list, self.model)
 
     def add(self, index=None):
         if index is None:
@@ -251,16 +253,15 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
             return      
 
     def show_classeleve(self):
-        class_name = self.student_search.text()
+        class_name = self.classes.currentText()
         if class_name == "":
             class_name = None
-
-        if self.classes.currentText() != "":
-            class_name = self.classes.currentText()
+            students = []
             
-        filters = self.manager.get_filters(class_name=class_name)
+        else:
+            filters = self.manager.get_filters(class_name=class_name)
         
-        students = self.manager.get_with_joined_load(relationship_name="students", filters=filters)
+            students = self.manager.get_with_joined_load(relationship_name="students", filters=filters)
         
         self.model_classeleve.refresh(students)
 

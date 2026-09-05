@@ -48,8 +48,18 @@ class Income(CRUD):
         self.headers = ["المبلغ", "وسيلة الدخل", "الإسم", "نوع الدخل", "رقم الوصل", "التاريخ"]
         
     def set_dynamic_metadata(self, total_price, data_to_export):
-        self.foot = f"""مجموع المداخيل: {total_price}"""
-        self.data_to_export = data_to_export
+        self.footer = f"""مجموع المداخيل: {total_price}"""
+        self.data_to_export = []
+        
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.price,
+                row.way,
+                row.name,
+                row.type,
+                row.code,
+                row.addition_date.strftime("%Y-%m-%d")
+            ])
         
 class Payment(CRUD):
     def __init__(self):
@@ -83,8 +93,17 @@ class Payment(CRUD):
         self.headers = ["طريقة الخلاص", "المبلغ", "مقابل شهر", "بعنوان", "رقم الوصل", "السيد(ة)"]
         
     def set_dynamic_metadata(self, total_price, data_to_export):
-        self.foot = f"""مجموع المداخيل: {total_price}"""
-        self.data_to_export = data_to_export
+        self.footer = f"""مجموع المداخيل: {total_price}"""
+        self.data_to_export = []
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.way,
+                row.price,
+                row.payment_date,
+                row.classroom,
+                row.bill_number,
+                row.name
+            ])
 
 
 class Expense(CRUD):
@@ -137,8 +156,16 @@ class Expense(CRUD):
         self.headers = ["المبلغ", "وسيلة الدفع", "نوع المصروف", "التاريخ", "الرمز"]
         
     def set_dynamic_metadata(self, total_price, data_to_export):
-        self.foot = f"""مجموع المصاريف: {total_price}"""
-        self.data_to_export = data_to_export
+        self.footer = f"""مجموع المصاريف: {total_price}"""
+        self.data_to_export = []
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.price,
+                row.way,
+                row.type,
+                row.date.strftime("%Y-%m-%d"),
+                row.bill_number
+            ])
 
 class Transfer(CRUD):
     # Concrete child class for transfer records that uses the transfer table.
@@ -181,14 +208,22 @@ class Transfer(CRUD):
         self.headers = ["المبلغ", "الوجهة", "الأصل", "التاريخ"]
         
     def set_dynamic_metadata(self, total_price, data_to_export):
-        self.foot = f"""مجموع التحويلات: {total_price}"""
-        self.data_to_export = data_to_export
-    
+        self.footer = f"""مجموع التحويلات: {total_price}"""
+        self.data_to_export = []
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.price,
+                "البنك" if row.destination == "bank" else "الخزينة",
+                "البنك" if row.origin == "bank" else "الخزينة",
+                row.date.strftime("%Y-%m-%d")
+            ])
+
 class Balance(CRUD):
     # Concrete child class for balance records that uses the balance table.
     def __init__(self):
         super().__init__()
         self.db = self.repo.get_balance_repo()  # Use the specialized balance repository
+        self.set_static_metadata()
         
     def get_balance(self,
             price=None,
@@ -213,7 +248,7 @@ class Balance(CRUD):
         self.headers = ["المبلغ المقبول" ,"المبلغ المصروف", "وسيلة الدخل/المصروف", "التاريخ", "الاسم"]
 
     def set_dynamic_metadata(self, total_income, total_expenses, balance, data_to_export):
-        self.foot = f"""مجموع المداخيل: {total_income} \n 
+        self.footer = f"""مجموع المداخيل: {total_income} \n 
         مجموع المصاريف: {total_expenses} \n
         الحاصل: {balance}"""
         self.data_to_export = data_to_export

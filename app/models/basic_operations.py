@@ -96,7 +96,7 @@ class CRUD(ABC):
         return self.db.get_with_joined_load(relationship_name, filters)
             
     def export_data(self, report_type: ReportType, parent):
-        if self.data_to_export is None or self.headers is None:
+        if not self.data_to_export or not self.headers:
             raise ValueError("Data and headers must be set before exporting.")
         
         try:

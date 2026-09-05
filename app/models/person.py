@@ -87,10 +87,10 @@ class Student(CRUD):
     def set_static_metadata(self):
         self.title = "قائمة التلميذ"
 
-        self.header = ["معفى", "رقم الهاتف", "تاريخ الولادة", "الإسم"]
+        self.headers = ["معفى", "رقم الهاتف", "تاريخ الولادة", "الإسم"]
             
     def set_dynamic_metadata(self, data_to_export, row_count):
-        self.foot = f"عدد التلاميذ: {row_count}"
+        self.footer = f"عدد التلاميذ: {row_count}"
         self.data_to_export = []
         for student in data_to_export:
             row = [
@@ -117,11 +117,18 @@ class Teacher(CRUD):
     def set_static_metadata(self):
         self.title = "قائمة الأساتذة"
 
-        self.header = ["رقم الهاتف", "تاريخ الولادة", "الإسم"]
+        self.headers = ["رقم الهاتف", "تاريخ الولادة", "الإسم"]
 
     def set_dynamic_metadata(self, data_to_export, row_count):
-        self.foot = "المجموع: " + str(row_count)
-        self.data_to_export = data_to_export
+        self.footer = "المجموع: " + str(row_count)
+        self.data_to_export = []
+        for teacher in data_to_export:
+            row = [
+                str(teacher.phone),
+                teacher.birthday.strftime("%Y-%m-%d"),
+                teacher.name
+            ]
+            self.data_to_export.append(row)
         
     def get_last_id(self, session=None):
         return self.db.get_biggest_id(_session=session)
@@ -139,11 +146,20 @@ class StudentHistory(CRUD):
 
     def set_static_metadata(self):
         self.title = "قائمة التلميذ"
-        self.header = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
+        self.headers = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
 
     def set_dynamic_metadata(self, data_to_export, row_count):
-        self.data_to_export = data_to_export
-        self.foot = "المجموع: " + str(row_count)
+        self.data_to_export = []
+        for student in data_to_export:
+            row = [
+                str(student.excused),
+                str(student.students.num_tel),
+                str(student.students.years_of_study),
+                student.students.birthday.strftime("%Y-%m-%d"),
+                student.students.name
+            ]
+            self.data_to_export.append(row)
+        self.footer = "المجموع: " + str(row_count)
         self.intro = "تلميذ برقم الهوية: " + str(self.data_to_export[0].id) if self.data_to_export else "تلميذ غير موجود"
 
 
@@ -151,6 +167,8 @@ class TeacherHistory(CRUD):
     # Concrete child class for teacher history records that uses the teachershistory table.
     def __init__(self):
         super().__init__(ModelName.TEACHERS_HISTORY)
+        
+        self.set_static_metadata()
 
     def search_by_id(self, teacher_id: int):
         """Search history records by teacher ID, joined with the teacher table."""
@@ -161,8 +179,14 @@ class TeacherHistory(CRUD):
     def set_static_metadata(self):
         self.title = "قائمة الأساتذة"
 
-        self.headers = ["تاريخ الولادة", "سنوات التدريس", "الإسم", "رقم التسجيل"]
+        self.headers = ["تاريخ الولادة", "الإسم", "رقم التسجيل"]
 
     def set_dynamic_metadata(self, data_to_export, row_count):
-        self.foot = f"""عدد الأساتذة: {row_count}"""
-        self.data_to_export = data_to_export
+        self.footer = f"""عدد السنوات: {row_count}"""
+        self.data_to_export = []
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.teacher.birthday.strftime("%Y-%m-%d"),
+                row.teacher.name,
+                str(row.teacher_id)
+            ])

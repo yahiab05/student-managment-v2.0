@@ -156,9 +156,9 @@ class TransferTableModel(BaseTable):
         elif column == 1:
             return transfer.price
         elif column == 2:
-            return transfer.origin
+            return  "البنك" if transfer.origin == "bank" else "الخزينة"
         elif column == 3:
-            return transfer.destination
+            return "البنك" if transfer.destination == "bank" else "الخزينة"
         elif column == 4:
             return transfer.date.strftime("%Y-%m-%d")
         elif column == 5:

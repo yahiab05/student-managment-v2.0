@@ -93,8 +93,8 @@ class BalanceLogic(QWidget, BalanceUI):
         
     def export(self, output_channel: ReportType):
         data = self.model.get_current_data()
-        total_income, total_expenses, balance = self.income_manager.get_total(), \
-            self.expenses_manager.get_total(), self.manager.get_balance()
+        total_income, total_expenses = self.income_manager.get_total(), self.expenses_manager.get_total()
+        balance = self.manager.calculate_balance(total_income, total_expenses)
         
         self.manager.set_dynamic_metadata(
             total_income, total_expenses, balance, data

@@ -24,7 +24,7 @@ get_combo_manager = create_combo_manager()  # Create a single instance of ComboM
 def export_report(report_type, parent, headers, data, title="", intro="", foot=""):
     report = ReportContext()
     strategy = ReportStrategyFactory.get_strategy(report_type, parent)
-    report.strategy(strategy)  # Set the strategy
+    report.strategy = strategy  # Set the strategy
     report.set_data(headers, data, title, intro, foot)
     report.export()
 

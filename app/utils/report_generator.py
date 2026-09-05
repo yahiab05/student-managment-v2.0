@@ -1,10 +1,10 @@
 from xlsxwriter import Workbook, exceptions
 from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.QtCore import Qt
-from PyQt6.uic import loadUi
-from os import path
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
 from jinja2 import Template
+from .utils import load_gui, UiPath
+from app.ui.ui_forms import PrintingUI
     
 class ExcelGenerator:
     def __init__(self, headers, data):
@@ -13,7 +13,7 @@ class ExcelGenerator:
         
     def excel(self, file):
         try:
-            book = Workbook(file[0])
+            book = Workbook(file)
             sheet = book.add_worksheet("dataimported")
 
             # initialize rows and columns of the worksheet
@@ -37,12 +37,11 @@ class ExcelGenerator:
             pass
 
 
-class Printing(QDialog):
-    def __init__(self):
-        super().__init__()
+class Printing(QDialog, PrintingUI):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-        ui_path = path.abspath("../dar coran(new)/ui/printing.ui")  # Convert to absolute path
-        loadUi(ui_path, self)
+        load_gui(widget=self, prefix=UiPath.OTHERS, ui_file="printing.ui")
 
         self.adapt_size()
 

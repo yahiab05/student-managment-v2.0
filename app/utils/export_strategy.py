@@ -31,8 +31,10 @@ class ExcelStrategy:
         self.foot: str = None
         
     def export(self):
-        file = QFileDialog.getSaveFileName(self.parent, 'Save file', '', '*.xlsx')
-        if file[0]:
+        file, _ = QFileDialog.getSaveFileName(self.parent, 'Save file', '', "*.xlsx, Excel Files (*.xlsx)")
+        if file:
+            if not file.lower().endswith(".xlsx"):
+                file += ".xlsx"
             ExcelGenerator(self.headers, self.data).excel(file)
             
     def set_data(self, headers, data, title:str="", intro:str="", foot:str="") -> None:
@@ -49,7 +51,7 @@ class PrintingStrategy(Strategy):
         self.foot: str = None
         
     def export(self):
-        dialog = Printing()
+        dialog = Printing(parent=self.parent)
         dialog.setup_document(self.data, self.headers, self.title, self.intro, self.foot)
         dialog.show()
         

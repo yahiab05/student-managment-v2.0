@@ -132,3 +132,6 @@ class TeacherHistoryUI:
 
 class TeacherPartUI:
     pass
+
+class PrintingUI:
+    pass

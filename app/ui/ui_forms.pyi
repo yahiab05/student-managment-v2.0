@@ -497,3 +497,8 @@ class TeacherPartUI:
     teacher_history: QPushButton
     teacher: QPushButton
     stackedWidget: QStackedWidget
+    
+class PrintingUI:
+    printing_plain: QTextEdit
+    cancel: QPushButton
+    printing: QPushButton
