@@ -13,6 +13,12 @@
     <height>624</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -35,6 +41,12 @@
     </property>
     <item alignment="Qt::AlignTop">
      <widget class="QFrame" name="frame">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>120</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">padding: 10px;
 background-color: rgb(85, 170, 255);</string>
@@ -76,6 +88,9 @@ border-radius: 15px</string>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>308</width>
@@ -110,12 +125,15 @@ border-radius: 15px</string>
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>307</width>
-           <height>20</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -270,43 +288,6 @@ border-radius: 15px</string>
             <property name="icon">
              <iconset>
               <normaloff>../../../../Users/User/Desktop/icons/settings-5-xl.png</normaloff>../../../../Users/User/Desktop/icons/settings-5-xl.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>35</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="absents">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>15</pointsize>
-             </font>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>الغيابات</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>../../../../Users/User/Desktop/icons/us-dollar-xl.png</normaloff>../../../../Users/User/Desktop/icons/us-dollar-xl.png</iconset>
             </property>
             <property name="iconSize">
              <size>

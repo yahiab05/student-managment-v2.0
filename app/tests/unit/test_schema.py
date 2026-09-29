@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from app.repo.schemas import SchemaFactory
 from app.repo.schemas import (
     AbsentSSchema,
@@ -151,130 +152,100 @@ def test_create_function_with_args():
         "way": "way1",
         "type": "type1",
         "bill_number": "12548dd",
+=======
+from datetime import date
 
-    }, 
-    {
-        "cheq_num": ""  ,
-        "note": "",
-        "num_inscrit": None,
-        "payment_date": None,
-        "addition_date": None,
-        "classroom": None
-    },
-    {
-        "cheq_num": "test",
-        "note": "test",
-        "num_inscrit": 1,
-        "payment_date": "2022-01-01",
-        "addition_date": "2022-01-01",
-        "classroom": "test"
-    }),
-    (SchemaFactory.EXPENSES, {
-        "name": "Ali",
-        "price": 100.52,
-        "code": 13,
-        "user": "user",
-        "way": "way1",
-        "type": "type1",
-        "bill_num": "12548dd",
-        "date": "2022-01-01"
-    }, 
-    {
-        "cheq_num": ""  ,
-        "note": ""
-    },
-    {
-        "cheq_num": "test",
-        "note": "test"
-    }),
-    (SchemaFactory.STORAGE, {
-        "income_id":1,
-        "user": "user",
-        "income": 100.52,
-        "date": "2022-01-01",
-    },
-    {
-        "expense_id": None,
-        "expense": None,
-        "note": ""
-    },
-    {
-        "expense_id": None,
-        "expense": None,
-        "note": "test"
-    }),
-    (SchemaFactory.STORAGE, {
-        "expense_id":1,
-        "user": "user",
-        "expense": 100.52,
-        "date": "2022-01-01",
-    },
-    {
-        "income_id": None,
-        "income": None,
-        "note": ""
-    },
-    {
-        "income_id": None,
-        "income": None,
-        "note": "test"
-    }),
-    (SchemaFactory.ROLE, {
-        "name": "test",
-        "classes": True,
-        "students": True,
-        "teachers": True,
-        "payment": True,
-        "money": True,
-        "absent": True,
-        "settings": True,
-        "user": True,
-        "payment_editting": True
-    }, None, None),
-    (SchemaFactory.SETTINGS, {
-        "way_teaching": "test",
-        "entery": "test",
-        "entery_code": 1,
-        "out_money": "test",
-        "out_code": 1,
-        "way_payment": "test",
-        "fr": "test"
-    }, None, None),
-    (SchemaFactory.USER, {
-        "username": "test",
-        "password": "test",
-        "role_name": "test"
-    }, None, None),
-    (SchemaFactory.SETTINGS, {
-        "way_teaching": "test",
-        "entery": "test",
-        "entery_code": 1,
-        "out_money": "test",
-        "out_code": 1,
-        "way_payment": "test",
-    }, None, {
-        "fr": None
-    })
-])
-def test_create_function(schema_factory_member, expected_schema, optional_args=None, default_args=None):
-    if optional_args is not None:
-        schema_factory_member.create(**expected_schema)
-        output = expected_schema | optional_args
-        
-        assert schema_factory_member.schema_class().to_dict() == output
-    
-    if default_args is not None and optional_args is None:
-        expected_schema = expected_schema | default_args
-        schema_factory_member.create(**expected_schema)
-        
-        assert schema_factory_member.schema_class().to_dict() == expected_schema
-    
-    if default_args is None and optional_args is not None:
-        expected_schema = expected_schema | default_args
-        schema_factory_member.create(**expected_schema)
-        
-        assert schema_factory_member.schema_class().to_dict() == expected_schema
-    
-    
-    
-    
+import pytest
+
+from app.repo.schemas import SchemaFactory
+from app.repo.schemas.classes_schema import ClassesSchema
+from app.repo.schemas.money_schema import TransferSchema
+from app.repo.schemas.others_schema import RoleSchema, SettingsSchema
+from app.repo.schemas.person_schema import StudentSchema
+from app.utils import Account
+
+
+def test_schema_factory_available_contains_core_schemas():
+    available = SchemaFactory.available()
+    assert "CLASSES" in available
+    assert "ROLE" in available
+    assert "INCOME" in available
+
+
+def test_schema_factory_get_schema_and_create():
+    schema_cls = SchemaFactory.get_schema("CLASSES")
+    assert schema_cls is ClassesSchema
+
+    obj = SchemaFactory.create(
+        "CLASSES",
+        name="A",
+        way="offline",
+        teacher="T",
+        note="",
+        price=120,
+        user="admin",
+    )
+    assert isinstance(obj, ClassesSchema)
+    assert obj.validate() is True
+
+
+def test_schema_factory_unknown_raises():
+    with pytest.raises(ValueError):
+        SchemaFactory.get_schema("DOES_NOT_EXIST")
+
+
+def test_role_schema_validation_required_fields():
+    with pytest.raises(ValueError):
+        RoleSchema(
+            user="admin",
+            name="",
+            classes=True,
+            students=True,
+            teachers=True,
+            payment=True,
+            money=True,
+            settings=True,
+            user=True,
+            payment_editting=True,
+        ).validate()
+
+
+def test_settings_schema_requires_codes_when_values_present():
+    with pytest.raises(ValueError):
+        SettingsSchema(user="u", entery="Income type", entery_code=None).validate()
+
+    with pytest.raises(ValueError):
+        SettingsSchema(user="u", out_money="Expense type", out_code=None).validate()
+
+
+def test_student_schema_requires_id_and_core_fields():
+    with pytest.raises(ValueError):
+        StudentSchema(
+            user="u",
+            name="Student",
+            birthday=date(2010, 1, 1),
+            date_inscrit=date(2020, 1, 1),
+            gender="M",
+            parent="P",
+            cin=1,
+            activity="active",
+            num_tel="111",
+            excused="no",
+            id=None,
+        ).validate()
+
+
+def test_transfer_schema_prevents_same_origin_and_destination():
+    with pytest.raises(ValueError):
+        TransferSchema(
+            user="u",
+            price=100,
+            origin=Account.BANK,
+            destination=Account.BANK,
+            date=date(2025, 1, 1),
+        ).validate()
+
+
+
+>>>>>>> feature/controllers
+

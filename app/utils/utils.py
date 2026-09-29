@@ -1,8 +1,10 @@
-from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtCore import QDate
-from ..repo.models import SessionLocal
-from ..repo.models import Bank, Caisse
+from PyQt6.QtWidgets import QHeaderView, QMessageBox
+from PyQt6.uic import loadUi
+from os import path
+
 from PyQt6.QtCore import QSettings
+
+from enum import StrEnum, auto
 
 def set_username(username: str) -> None:
     settings = QSettings("Dar Coran", "Gestion")
@@ -19,97 +21,86 @@ def error(message: str) -> None:
     msg.exec()
     msg.show()
     
-def income_added(where, id, amount , date, note) -> None:
-    session = SessionLocal()
-
-    if where == "bank":
-        bank = Bank(income_id=id,income=amount, note=note)
-        bank.date = bank.set_date(date)
-        session.add(bank)
-    else:
-        caisse = Caisse(income_id=id, income=amount, note=note)
-        caisse.date = caisse.set_date(date)
-        session.add(caisse)
-
-    session.commit()
-    session.close()
+def info(message: str) -> None:
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Icon.Information)
+    msg.setText(message)
+    msg.exec()
+    msg.show()
     
-def pydate_to_qdate(pydate) -> QDate:
-    return QDate.fromString(pydate.strftime("%Y-%m-%d"), "yyyy-MM-dd")
-
-@staticmethod
-def expense_added(where, id, amount, date, note) -> None:
-    session = SessionLocal()
-
-    if where == "bank":
-        bank = Bank(expense_id=id, expense=amount, note=note)
-        bank.date = bank.set_date(date)
-        session.add(bank)
+def get_selection_status_stylesheet(is_selected: bool) -> str:
+    if is_selected:
+        string = "background-color: green;"
+        string += "border: 0px solid black;"
+        string += "border-radius: 10px;"
+        return string
     else:
-        caisse = Caisse(expense_id=id, expense=amount, note=note)
-        caisse.date = caisse.set_date(date) 
-        session.add(caisse)
+        string = "background-color: red;"
+        string += "border: 0px solid black;"
+        string += "border-radius: 10px;"
+        return string
+    
+def set_header_resize_mode(table_view, model):
+    header = table_view.horizontalHeader()
+    
+    for column in range(model.columnCount()):
+        header.setSectionResizeMode(column, QHeaderView.ResizeMode.ResizeToContents)
+        
+    
+def get_student_list(search_text: str) -> list:
+    from app.repo import SessionLocal, Students
 
-    session.commit()
-    session.close()
-
-def income_updated(where, id, amount):
     session = SessionLocal()
 
-    if where == "bank":
-        bank = session.query(Bank).filter(Bank.income_id == id).first()            
-        bank.income = amount
-    else:
-        caisse = session.query(Caisse).filter(Caisse.income_id == id).first()            
-        caisse.income = amount
+    try:
+        pattern = f"%{search_text}%"
 
-    session.commit()
-    session.close()
-
-
-def expense_updated(where, id, amount) -> None:
-    session = SessionLocal()
-
-    if where == "bank":
-        bank = session.query(Bank).filter(Bank.expense_id == id).first()            
-        bank.expense = amount
-    else:
-        caisse = session.query(Caisse).filter(Caisse.expense_id == id).first()            
-        caisse.expense = amount
-
-    session.commit()
-    session.close()
-
-# delete if not needed
-def get_next_auto_increment():
-    session = SessionLocal()
+        return (
+            session.query(Students.id, Students.name)
+            .filter(Students.name.ilike(pattern))
+            .order_by(Students.name.asc(), Students.id.asc())
+            .all()
+        )
+    finally:
+        session.close()
+        
+class Account(StrEnum):
+    BANK = auto()
+    CAISSE = auto()
     
-    query = text(f"""
-        SELECT AUTO_INCREMENT 
-        FROM INFORMATION_SCHEMA.TABLES 
-        WHERE TABLE_SCHEMA = :db_name AND TABLE_NAME = :table_name
-    """)
+    @property
+    def opposite(self):
+        if self == Account.BANK:
+            return Account.CAISSE
+        elif self == Account.CAISSE:
+            return Account.BANK
     
-    result = session.execute(query, {"db_name": "students1", "table_name": "entery"}).scalar()
+class ReportType(StrEnum):
+    PRINT = auto()
+    EXCEL = auto()
     
-    session.close()
-    return result
+class WorkingMode(StrEnum):
+    ADD = auto()
+    UPDATE = auto()
     
-# delete if not needed
-def bank_or_caisse(where, identifier) -> int:
-    session = SessionLocal()
-
-    if where == "i":
-        caisse = session.query(Caisse).filter(Caisse.income_id == identifier).first()
-
-        if caisse is not None:
-            return 0
-        else:
-            return 1
-    else:
-        caisse = session.query(Caisse).filter(Caisse.expense_id == identifier).first()
-
-        if caisse is not None:
-            return 0
-        else:
-            return 1
+class UiPath(StrEnum):
+    STUDENTS = "../ui/students/"
+    CLASSES = "../ui/classes/"
+    TEACHERS = "../ui/teacher/"
+    PAYMENTS = "../ui/payment/"
+    OTHERS = "../ui/others/"
+    FINANCE = "../ui/finance/"
+    FORMS= "../ui/forms/"
+    LOGIN = MAIN = "../ui/"
+    
+def load_gui(prefix: UiPath="", ui_file: str="", widget=None) -> None:
+    if widget is None:
+        raise ValueError("Widget must be provided to load the UI.")
+    if not ui_file:
+        raise ValueError("UI file name must be provided.")
+    ui_file_path = path.abspath(path.join(path.dirname(__file__), prefix, ui_file))
+    loadUi(ui_file_path, widget)
+    
+def traceback_to_string(exc: Exception) -> str:
+    import traceback
+    return ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))

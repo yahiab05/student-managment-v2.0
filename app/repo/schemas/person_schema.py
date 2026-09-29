@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 from datetime import datetime
 
 @dataclass(kw_only=True)
-class PersonSchema(ABC, BaseDataClass):
+class PersonSchema(BaseDataClass):
     name: str
     birthday: datetime
     date_inscrit: datetime
@@ -24,25 +23,22 @@ class PersonSchema(ABC, BaseDataClass):
     
 @dataclass
 class StudentSchema(PersonSchema):
-    num_inscrit: int
     gender: str
     parent: str
     cin: int
     activity: str
     num_tel: str
     excused: str
-    
+
+    id: int = None
+
     def validate(self):
         if not super().validate():
             return False
-        if self.num_inscrit is None:
-            raise ValueError("رقم الطالب مطلوب")
         if self.gender is None or  self.gender == "":
             raise ValueError("الجنس مطلوب")
         if self.parent is None or self.parent == "":
             raise ValueError("اسم الولي مطلوب")
-        if self.cin is None:
-            raise ValueError("رقم الهوية مطلوب")
         if self.activity is None or self.activity == "":
             raise ValueError("النشاط مطلوب")
         if self.num_tel is None or self.num_tel == "":
@@ -52,19 +48,16 @@ class StudentSchema(PersonSchema):
 @dataclass
 class TeacherSchema(PersonSchema):
     phone: str
-    payed: str
     
     def validate(self):
         if not super().validate():
             return False
         if self.phone is None or self.phone == "":
             raise ValueError("رقم الهاتف مطلوب")
-        if self.payed is None or self.payed == "":
-            raise ValueError("الدفع مطلوب")
         return True
     
-@dataclass
-class HistorySchema(ABC, BaseDataClass):
+@dataclass(kw_only=True)
+class HistorySchema(BaseDataClass):
     date_inscrit: datetime
     
     def validate(self):
@@ -88,13 +81,10 @@ class StudentHistorySchema(HistorySchema):
 @dataclass
 class TeacherHistorySchema(HistorySchema):
     teacher_id: int
-    payed: str
     
     def validate(self):
         if not super().validate():
             return False
         if self.teacher_id is None:
             raise ValueError("رقم المعلم مطلوب")
-        if self.payed is None or self.payed == "":
-            raise ValueError("الدفع مطلوب")
         return True

@@ -1,15 +1,22 @@
-from .absent_schema import AbsentSSchema, AbsentTSchema
-from .classes_schema import ClassesSchema, EnrollmentSchema
-from .person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
-from .money_schema import EntrySchema, ExpensesSchema, StorageSchema
-from .others_schema import RoleSchema, SettingsSchema, UserSchema
-from enum import Enum
 from typing import Type
 
+from app.repo.schemas.classes_schema import ClassesSchema, EnrollmentSchema
+from app.repo.schemas.person_schema import StudentSchema, TeacherSchema, StudentHistorySchema, TeacherHistorySchema
+from app.repo.schemas.money_schema import EntrySchema, ExpensesSchema, TransferSchema
+from app.repo.schemas.others_schema import RoleSchema, SettingsSchema, UserSchema
 
-class SchemaFactory(Enum):
-    ABSENT_S = AbsentSSchema
-    ABSENT_T = AbsentTSchema
+
+class SchemaFactory:
+    """Single entry point for all schema dataclasses.
+
+    Static use (preferred — full autocomplete on schema name and fields):
+        instance = SchemaFactory.CLASSES(name="Math", ...)
+
+    Dynamic use (name only known at runtime):
+        Schema = SchemaFactory.get_schema("CLASSES")
+        instance = Schema(**payload)
+    """
+
     CLASSES = ClassesSchema
     ENROLLMENT = EnrollmentSchema
     STUDENT = StudentSchema
@@ -18,23 +25,24 @@ class SchemaFactory(Enum):
     TEACHER_HISTORY = TeacherHistorySchema
     INCOME = EntrySchema
     EXPENSES = ExpensesSchema
-    STORAGE = StorageSchema
+    TRANSFER = TransferSchema
     ROLE = RoleSchema
     SETTINGS = SettingsSchema
     USER = UserSchema
-    
-    def __init__(self, schema_class):
-        self._schema_class = schema_class
-        self._instance = None
-        
-    @property
-    def instance(self):
-        return self._instance
-    
-    @property
-    def schema_class(self) -> Type:
-        return self._schema_class
-    
-    def create(self, **kwargs):
-        self._instance = self.schema_class(**kwargs)
-    
+
+    @classmethod
+    def get_schema(cls, name: str) -> Type:
+        try:
+            return getattr(cls, name)
+        except AttributeError:
+            raise ValueError(
+                f"Unknown schema: '{name}'. Available schemas: {cls.available()}"
+            )
+
+    @classmethod
+    def create(cls, name: str, **kwargs):
+        return cls.get_schema(name)(**kwargs)
+
+    @classmethod
+    def available(cls) -> list[str]:
+        return [k for k, v in vars(cls).items() if isinstance(v, type)]
