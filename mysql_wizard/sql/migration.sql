@@ -1,9 +1,6 @@
 SET autocommit = 1;
 SET FOREIGN_KEY_CHECKS = 0;
 SET SQL_SAFE_UPDATES = 0;
-SET GLOBAL wait_timeout = 28800;
-SET GLOBAL net_read_timeout = 600;
-SET GLOBAL net_write_timeout = 600;
 
 -- auto increment reset
 -- ---------------------------
@@ -59,19 +56,17 @@ insert into darcoran.teachers (
     birthday,
     phone,
     note,
-    payed,
     `user`
     )
 select 
 	`name`,
 	cast(date_inscrit as date),
     coalesce(
-    cast(birthday as date),
-    cast("2020-01-01" as date)
+        cast(birthday as date),
+        cast("2020-01-01" as date)
     ),
     coalesce(phone, ""),
     coalesce(note, ""),
-    coalesce(money, ""),
     coalesce(`user`, "") as `user`
 from {{old_db}}.teacher;
 -- -----------------
@@ -98,7 +93,9 @@ truncate table darcoran.`role`;
 ALTER TABLE darcoran.`role` AUTO_INCREMENT = 1;
 
 insert into darcoran.`role` (
-	`name`, classes, students, teachers, payment, money, absent, settings, `user`, payment_editting
+	`name`, classes, students, teachers, 
+    payment, money, settings, `user`, 
+    payment_editting
 )
 select 
 	`name`,
@@ -122,10 +119,6 @@ select
 		when money = "" then 0
         else 1
 	end as money,
-    case
-		when absent = "" then 0
-        else 1
-	end as absent,
     case
 		when settings = "" then 0
         else 1
@@ -153,15 +146,13 @@ truncate table darcoran.classes;
 ALTER TABLE darcoran.classes AUTO_INCREMENT = 1;
 
 insert into darcoran.classes (
-	`name`, way, teacher, note, price, `user`, seance, `exchange`, teacher_part
+	`name`, way, teacher, note, price, 
+    `user`
     )
 select 
 	`name`, way, teacher, note, 
     cast(price as decimal(10, 2)), 
-    coalesce(`user`, "") as `user`, 
-    coalesce(seance, 0), 
-    coalesce(`exchange`, 0), 
-    coalesce(cast(teacher_part as decimal(10, 2)), 0)
+    coalesce(`user`, "") as `user`
 from {{old_db}}.classes;
 -- ------------------------------
 -- classelve
@@ -169,8 +160,8 @@ truncate table darcoran.classeleve;
 ALTER TABLE darcoran.classeleve AUTO_INCREMENT = 1;
 
 insert into darcoran.classeleve (
-	student_id, class_name
+	student_id, class_name, `user`
     )
 select
-	num_inscrit, `class`
+	num_inscrit, `class`, coalesce(`user`, "") as `user`
 from {{old_db}}.classeleve;

@@ -28,11 +28,22 @@ class WizardPage(QWidget):
     def create_new_database(self):
         if self.connection is None:
             self.connect_to_database()
+            
+        script_path = Path(__file__).resolve().parents[1] / "sql" / "structure.sql"
+        script = script_path.read_text(encoding="utf-8")
+        statements = [
+            stmt.strip() for stmt in script.split(";") 
+            if stmt.strip()
+            ]
 
         with self.connection.cursor() as cursor:
-            cursor.execute(
-                f"CREATE DATABASE IF NOT EXISTS `{self.database_name}`"
-            )
+            for statement in statements:
+                if statement:
+                    cursor.execute(
+                        str(
+                            statement
+                        )
+                    )
         self.test_connection()
     
     def connect_to_database(self, database=None):
@@ -84,6 +95,8 @@ class WizardPage(QWidget):
             self.test_connection()
         except Exception as error:
             self._show_error(str(error))
+            if self.connection is not None:
+                self.connection.rollback()
             return False
         finally:
             if self.connection is not None:

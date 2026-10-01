@@ -1,0 +1,48 @@
+stages:
+  - build
+  - wizard-tests
+  - app-tests
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  TEST_IMAGE: "$CI_REGISTRY_IMAGE/test:$CI_COMMIT_SHA"
+  MYSQL_DATABASE: "legacy_db"
+  MYSQL_USER: "root"
+  MYSQL_PASSWORD: "root"
+  MYSQL_ROOT_PASSWORD: "root"
+  QT_QPA_PLATFORM: "offscreen"
+
+build-test-image:
+  stage: build
+  image: docker:27.4.1
+  services:
+    - name: docker:27.4.1-dind
+      alias: docker
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker build --file Dockerfile.test --tag "$TEST_IMAGE" .
+    - docker push "$TEST_IMAGE"
+
+wizard-tests:
+  stage: wizard-tests
+  image: "$TEST_IMAGE"
+  services:
+    - name: mysql:8.0
+      alias: mysql
+  needs:
+    - build-test-image
+  before_script:
+    - until mysqladmin ping -h mysql -u root -proot --silent; do sleep 2; done
+    - mysql -h mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS legacy_db"
+    - mysql -h mysql -u root -proot legacy_db < mysql_wizard/sql/old_schema.sql
+    - mysql -h mysql -u root -proot legacy_db < mysql_wizard/sql/test_seed.sql
+  script:
+    - WIZARD_DB_INTEGRATION=1 pytest -q mysql_wizard/tests
+
+app-tests:
+  stage: app-tests
+  image: "$TEST_IMAGE"
+  needs:
+    - wizard-tests
+  script:
+    - pytest -q app/tests
