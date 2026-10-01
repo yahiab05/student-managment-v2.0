@@ -1,0 +1,111 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  TEST_IMAGE: dar-coran-test:${{ github.sha }}
+  MYSQL_DATABASE: legacy_db
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: root
+  QT_QPA_PLATFORM: offscreen
+
+jobs:
+  build-test-image:
+    name: Build test image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker test image
+        run: docker build --file Dockerfile.test --tag "$TEST_IMAGE" .
+
+      - name: Export Docker test image
+        run: docker save "$TEST_IMAGE" | gzip > test-image.tar.gz
+
+      - name: Upload Docker test image
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-image
+          path: test-image.tar.gz
+          if-no-files-found: error
+
+  wizard-tests:
+    name: Wizard tests
+    runs-on: ubuntu-latest
+    needs: build-test-image
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker test image
+        uses: actions/download-artifact@v4
+        with:
+          name: test-image
+
+      - name: Load Docker test image
+        run: gunzip -c test-image.tar.gz | docker load
+
+      - name: Load legacy schema and fixtures
+        run: >-
+          docker run --rm --network host
+          --volume "$GITHUB_WORKSPACE:/workspace"
+          "$TEST_IMAGE" sh -c
+          'until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do sleep 2; done;
+          mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS legacy_db";
+          mysql -h 127.0.0.1 -uroot -proot legacy_db < /workspace/mysql_wizard/sql/old_schema.sql;
+          mysql -h 127.0.0.1 -uroot -proot legacy_db < /workspace/mysql_wizard/sql/test_seed.sql'
+
+      - name: Run wizard tests
+        run: >-
+          docker run --rm --network host
+          --env QT_QPA_PLATFORM=offscreen
+          --env WIZARD_DB_INTEGRATION=1
+          --env MYSQL_HOST=127.0.0.1
+          --env MYSQL_PORT=3306
+          --env MYSQL_DATABASE=legacy_db
+          --env MYSQL_USER=root
+          --env MYSQL_PASSWORD=root
+          "$TEST_IMAGE" pytest -q mysql_wizard/tests
+
+  app-tests:
+    name: App tests
+    runs-on: ubuntu-latest
+    needs: wizard-tests
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download Docker test image
+        uses: actions/download-artifact@v4
+        with:
+          name: test-image
+
+      - name: Load Docker test image
+        run: gunzip -c test-image.tar.gz | docker load
+
+      - name: Run app tests
+        run: >-
+          docker run --rm
+          --env QT_QPA_PLATFORM=offscreen
+          "$TEST_IMAGE" pytest -q app/tests
