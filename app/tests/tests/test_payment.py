@@ -1,6 +1,6 @@
 # test_payments.py
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import DEFAULT, MagicMock, patch
 from PyQt6.QtCore import QDate
 
 from app.controllers.payment.payments import ViewPayment
@@ -11,17 +11,35 @@ from app.utils import ReportType
 
 @pytest.fixture(autouse=True)
 def mock_payment_deps():
-    with patch('app.controllers.payment.payments.load_gui') as mock_load_pay, \
-        patch('app.controllers.payment.not_payed_view.load_gui') as mock_load_not, \
-        patch('app.controllers.payment.__init__.load_gui') as mock_load_part, \
-        patch('app.controllers.payment.payments.get_model') as mock_get_model, \
-        patch('app.controllers.payment.not_payed_view.get_model') as mock_get_model_not, \
-        patch('app.controllers.payment.payments.get_student_list') as mock_student_list, \
-        patch('app.controllers.payment.payments.get_combo_manager') as mock_combo, \
-        patch('app.controllers.payment.not_payed_view.get_combo_manager') as mock_combo_not, \
-        patch('app.controllers.payment.payments.create_table_model') as mock_create_table, \
-        patch('app.controllers.payment.payments.error') as mock_error, \
-        patch('app.controllers.payment.not_payed_view.error') as mock_error_not:
+    with patch.multiple(
+        'app.controllers.payment.payments',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_student_list=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+        error=DEFAULT,
+    ) as payment_mocks, patch.multiple(
+        'app.controllers.payment.not_payed_view',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        error=DEFAULT,
+    ) as not_payed_mocks, patch.multiple(
+        'app.controllers.payment.__init__',
+        load_gui=DEFAULT,
+    ) as payment_part_mocks:
+        mock_load_pay = payment_mocks['load_gui']
+        mock_get_model = payment_mocks['get_model']
+        mock_student_list = payment_mocks['get_student_list']
+        mock_combo = payment_mocks['get_combo_manager']
+        mock_create_table = payment_mocks['create_table_model']
+        mock_error = payment_mocks['error']
+        mock_load_not = not_payed_mocks['load_gui']
+        mock_get_model_not = not_payed_mocks['get_model']
+        mock_combo_not = not_payed_mocks['get_combo_manager']
+        mock_error_not = not_payed_mocks['error']
+        mock_load_part = payment_part_mocks['load_gui']
         
         mock_model = MagicMock()
         mock_model.get_total = MagicMock(return_value=100)

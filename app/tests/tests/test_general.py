@@ -1,16 +1,17 @@
 # test_controllers.py
 import pytest
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import DEFAULT, MagicMock, patch
 from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtCore import QDate
 
 # Import the classes to test (they will be patched with mocks for UI)
-from app.controllers.classes.classes import ClassesLogic, ClasseleveLogic, ClassPart
-from app.controllers.finance.balance import BalanceLogic
-from app.controllers.finance.expenses import OutMoneyLogic
-from app.controllers.finance.income import EnteryLogic
-from app.controllers.finance.transfer import TransferLogic
-from app.controllers.finance import MoneyPart
+from app.controllers.classes import ClassesLogic, ClasseleveLogic, ClassPart
+from app.controllers.finance import (BalanceLogic,
+        OutMoneyLogic,
+        EnteryLogic,
+        TransferLogic,
+        MoneyPart
+)
 from app.utils import WorkingMode, ReportType, Account
 
 
@@ -18,41 +19,94 @@ from app.utils import WorkingMode, ReportType, Account
 @pytest.fixture(autouse=True)
 def mock_dependencies():
     """Mock all external dependencies to avoid real UI and DB."""
-    with patch('app.controllers.classes.classes.load_gui') as mock_load_gui, \
-         patch('app.controllers.classes.classes.get_model') as mock_get_model, \
-         patch('app.controllers.classes.classes.get_combo_manager') as mock_combo_manager, \
-         patch('app.controllers.classes.classes.create_table_model') as mock_create_table, \
-         patch('app.controllers.classes.classes.create_popup_factory') as mock_popup_factory, \
-         patch('app.controllers.classes.classes.SchemaFactory') as mock_schema_factory, \
-         patch('app.controllers.classes.classes.get_username', return_value='test_user'), \
-         patch('app.controllers.classes.classes.error') as mock_error, \
-         patch('app.controllers.classes.classes.get_student_list') as mock_student_list, \
-         patch('app.controllers.finance.balance.load_gui') as mock_balance_load, \
-         patch('app.controllers.finance.balance.get_model') as mock_balance_get_model, \
-         patch('app.controllers.finance.balance.get_combo_manager') as mock_balance_combo, \
-         patch('app.controllers.finance.balance.create_table_model') as mock_balance_table, \
-         patch('app.controllers.finance.expenses.load_gui') as mock_exp_load, \
-         patch('app.controllers.finance.expenses.get_model') as mock_exp_get_model, \
-         patch('app.controllers.finance.expenses.get_combo_manager') as mock_exp_combo, \
-         patch('app.controllers.finance.expenses.create_table_model') as mock_exp_table, \
-         patch('app.controllers.finance.expenses.create_popup_factory') as mock_exp_popup, \
-         patch('app.controllers.finance.expenses.SchemaFactory') as mock_exp_schema, \
-         patch('app.controllers.finance.expenses.get_username', return_value='test_user'), \
-         patch('app.controllers.finance.income.load_gui') as mock_inc_load, \
-         patch('app.controllers.finance.income.get_model') as mock_inc_get_model, \
-         patch('app.controllers.finance.income.get_combo_manager') as mock_inc_combo, \
-         patch('app.controllers.finance.income.create_table_model') as mock_inc_table, \
-         patch('app.controllers.finance.income.create_popup_factory') as mock_inc_popup, \
-         patch('app.controllers.finance.income.SchemaFactory') as mock_inc_schema, \
-         patch('app.controllers.finance.income.get_username', return_value='test_user'), \
-         patch('app.controllers.finance.transfer.load_gui') as mock_trans_load, \
-         patch('app.controllers.finance.transfer.get_model') as mock_trans_get_model, \
-         patch('app.controllers.finance.transfer.get_combo_manager') as mock_trans_combo, \
-         patch('app.controllers.finance.transfer.create_table_model') as mock_trans_table, \
-         patch('app.controllers.finance.transfer.SchemaFactory') as mock_trans_schema, \
-         patch('app.controllers.finance.transfer.get_username', return_value='test_user'), \
-         patch('app.controllers.finance.__init__.load_gui') as mock_part_load, \
-         patch('app.controllers.classes.__init__.load_gui') as mock_classpart_load:
+    with patch.multiple(
+        'app.controllers.classes.classes',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+        create_popup_factory=DEFAULT,
+        SchemaFactory=DEFAULT,
+        get_username=DEFAULT,
+        error=DEFAULT,
+        get_student_list=DEFAULT,
+        QMessageBox=DEFAULT,
+    ) as class_mocks, patch.multiple(
+        'app.controllers.finance.balance',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+    ) as balance_mocks, patch.multiple(
+        'app.controllers.finance.expenses',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+        create_popup_factory=DEFAULT,
+        SchemaFactory=DEFAULT,
+        get_username=DEFAULT,
+    ) as expense_mocks, patch.multiple(
+        'app.controllers.finance.income',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+        create_popup_factory=DEFAULT,
+        SchemaFactory=DEFAULT,
+        get_username=DEFAULT,
+    ) as income_mocks, patch.multiple(
+        'app.controllers.finance.transfer',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        create_table_model=DEFAULT,
+        SchemaFactory=DEFAULT,
+        get_username=DEFAULT,
+    ) as transfer_mocks, patch.multiple(
+        'app.controllers.finance.__init__',
+        load_gui=DEFAULT,
+    ) as money_mocks, patch.multiple(
+        'app.controllers.classes.__init__',
+        load_gui=DEFAULT,
+    ) as class_part_mocks:
+        mock_load_gui = class_mocks['load_gui']
+        mock_get_model = class_mocks['get_model']
+        mock_combo_manager = class_mocks['get_combo_manager']
+        mock_create_table = class_mocks['create_table_model']
+        mock_popup_factory = class_mocks['create_popup_factory']
+        mock_schema_factory = class_mocks['SchemaFactory']
+        mock_error = class_mocks['error']
+        mock_student_list = class_mocks['get_student_list']
+        mock_qmsg = class_mocks['QMessageBox']
+        mock_balance_load = balance_mocks['load_gui']
+        mock_balance_get_model = balance_mocks['get_model']
+        mock_balance_combo = balance_mocks['get_combo_manager']
+        mock_balance_table = balance_mocks['create_table_model']
+        mock_exp_load = expense_mocks['load_gui']
+        mock_exp_get_model = expense_mocks['get_model']
+        mock_exp_combo = expense_mocks['get_combo_manager']
+        mock_exp_table = expense_mocks['create_table_model']
+        mock_exp_popup = expense_mocks['create_popup_factory']
+        mock_exp_schema = expense_mocks['SchemaFactory']
+        mock_inc_load = income_mocks['load_gui']
+        mock_inc_get_model = income_mocks['get_model']
+        mock_inc_combo = income_mocks['get_combo_manager']
+        mock_inc_table = income_mocks['create_table_model']
+        mock_inc_popup = income_mocks['create_popup_factory']
+        mock_inc_schema = income_mocks['SchemaFactory']
+        mock_trans_load = transfer_mocks['load_gui']
+        mock_trans_get_model = transfer_mocks['get_model']
+        mock_trans_combo = transfer_mocks['get_combo_manager']
+        mock_trans_table = transfer_mocks['create_table_model']
+        mock_trans_schema = transfer_mocks['SchemaFactory']
+        mock_part_load = money_mocks['load_gui']
+        mock_classpart_load = class_part_mocks['load_gui']
+
+        class_mocks['get_username'].return_value = 'test_user'
+        expense_mocks['get_username'].return_value = 'test_user'
+        income_mocks['get_username'].return_value = 'test_user'
+        transfer_mocks['get_username'].return_value = 'test_user'
         
         # Provide mocks for common objects
         mock_combo_mgr = MagicMock()
@@ -132,24 +186,20 @@ def mock_dependencies():
         # Error mock
         mock_error.side_effect = lambda msg: print(f"Error: {msg}")  # For test output
 
-        # QMessageBox mock
-        with patch('app.controllers.classes.classes.QMessageBox') as mock_qmsg:
-            mock_qmsg_instance = MagicMock()
-            mock_qmsg_instance.question = MagicMock(return_value=QMessageBox.StandardButton.Yes)
-            mock_qmsg.return_value = mock_qmsg_instance
+        mock_qmsg.question.return_value = QMessageBox.StandardButton.Yes
 
-            yield {
-                'load_gui': mock_load_gui,
-                'get_model': mock_get_model,
-                'combo_manager': mock_combo_mgr,
-                'table_model': mock_table_model,
-                'popup_factory': mock_popup_factory,
-                'schema_factory': mock_schema_factory,
-                'error': mock_error,
-                'student_list': mock_student_list,
-                'qmsg': mock_qmsg,
-                'model': mock_model,
-            }
+        yield {
+            'load_gui': mock_load_gui,
+            'get_model': mock_get_model,
+            'combo_manager': mock_combo_mgr,
+            'table_model': mock_table_model,
+            'popup_factory': mock_popup_factory,
+            'schema_factory': mock_schema_factory,
+            'error': mock_error,
+            'student_list': mock_student_list,
+            'qmsg': mock_qmsg,
+            'model': mock_model,
+        }
 
 
 # ---------- Tests for ClassesLogic ----------
@@ -1001,8 +1051,8 @@ class TestTransferLogic:
     def test_totals_summary(self, mock_dependencies):
         logic = TransferLogic()
         with patch.object(logic, 'totals_to_bank', return_value=100) as mock_tb, \
-             patch.object(logic, 'totals_to_caisse', return_value=30) as mock_tc, \
-             patch.object(logic, 'expense_income_totals') as mock_eit:
+            patch.object(logic, 'totals_to_caisse', return_value=30) as mock_tc, \
+            patch.object(logic, 'expense_income_totals') as mock_eit:
             mock_eit.side_effect = [(200, 50), (300, 60)]  # for bank and caisse respectively
             summary = logic.totals_summary(price=100, operator='op', from_date='2026-01-01', to_date='2026-01-02')
             assert summary['total_to_bank'] == 100

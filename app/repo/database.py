@@ -7,12 +7,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 class DBConfig:
     def __init__(self):
-        environment = environ.get("APP_ENV", "db")
 
         config_path = (
             Path(__file__).resolve().parents[2]
             / "config"
-            / f"{environment}.ini"
+            / "db.ini"
         )
 
         config = ConfigParser()

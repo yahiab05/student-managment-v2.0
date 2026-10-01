@@ -1,6 +1,6 @@
 # test_settings.py
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import DEFAULT, MagicMock, patch
 from PyQt6.QtWidgets import QTableWidgetItem
 
 from app.controllers.others.settings import (
@@ -13,12 +13,21 @@ from app.utils import WorkingMode, ComboName
 
 @pytest.fixture(autouse=True)
 def mock_settings_deps():
-    with patch('app.controllers.others.settings.load_gui') as mock_load, \
-         patch('app.controllers.others.settings.get_model') as mock_get_model, \
-         patch('app.controllers.others.settings.get_combo_manager') as mock_combo, \
-         patch('app.controllers.others.settings.error') as mock_error, \
-         patch('app.controllers.others.settings.SchemaFactory') as mock_schema, \
-         patch('app.controllers.others.settings.get_username', return_value='test_user'):
+    with patch.multiple(
+        'app.controllers.others.settings',
+        load_gui=DEFAULT,
+        get_model=DEFAULT,
+        get_combo_manager=DEFAULT,
+        error=DEFAULT,
+        SchemaFactory=DEFAULT,
+        get_username=DEFAULT,
+    ) as settings_mocks:
+        mock_load = settings_mocks['load_gui']
+        mock_get_model = settings_mocks['get_model']
+        mock_combo = settings_mocks['get_combo_manager']
+        mock_error = settings_mocks['error']
+        mock_schema = settings_mocks['SchemaFactory']
+        settings_mocks['get_username'].return_value = 'test_user'
         
         mock_model = MagicMock()
         mock_model.create = MagicMock()

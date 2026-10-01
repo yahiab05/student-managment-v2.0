@@ -1,21 +1,22 @@
 # test_admin.py
 import pytest
 from unittest.mock import MagicMock, patch
-from PyQt6.QtWidgets import QTableWidgetItem
 
-from app.controllers.others.admin import RoleLogic, UserLogic, UserPart
+from app.controllers.others import RoleLogic, UserLogic, UserPart
 from app.utils import WorkingMode, ComboName
 
 
 @pytest.fixture(autouse=True)
 def mock_admin_deps():
     """Mock dependencies for admin tests."""
-    with patch('app.controllers.others.admin.load_gui') as mock_load, \
-         patch('app.controllers.others.admin.get_model') as mock_get_model, \
-         patch('app.controllers.others.admin.get_combo_manager') as mock_combo, \
-         patch('app.controllers.others.admin.error') as mock_error, \
-         patch('app.controllers.others.admin.SchemaFactory') as mock_schema:
-        
+    with patch.multiple(
+        "app.controllers.others",
+        load_gui="gui",
+        get_model="model",
+        get_combo_manager="combo",
+        error="error",
+        SchemaFactory="schema"
+    ) as mocks:
         mock_model = MagicMock()
         mock_model.create = MagicMock()
         mock_model.update_by_filter = MagicMock()
@@ -32,24 +33,24 @@ def mock_admin_deps():
             if name in ['ROLES', 'USERS', 'ACCESS']:
                 return mock_model
             return MagicMock()
-        mock_get_model.side_effect = get_model_side_effect
+        mocks['model'].side_effect = get_model_side_effect
 
         mock_combo_mgr = MagicMock()
         mock_combo_mgr.update_combo = MagicMock()
         mock_combo_mgr.update_cache_from_db = MagicMock()
-        mock_combo.return_value = mock_combo_mgr
+        mocks['combo'].return_value = mock_combo_mgr
 
         mock_entity = MagicMock()
         mock_entity.validate = MagicMock(return_value=True)
-        mock_schema.ROLE.return_value = mock_entity
-        mock_schema.USER.return_value = mock_entity
+        mocks['schema'].ROLE.return_value = mock_entity
+        mocks['schema'].USER.return_value = mock_entity
 
         yield {
-            'load': mock_load,
-            'get_model': mock_get_model,
+            'load': mocks["gui"],
+            'get_model': mocks['model'],
             'combo': mock_combo_mgr,
-            'error': mock_error,
-            'schema': mock_schema,
+            'error': mocks['error'],
+            'schema': mocks['schema'],
             'model': mock_model,
         }
 

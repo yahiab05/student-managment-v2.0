@@ -42,7 +42,6 @@ def test_schema_factory_unknown_raises():
 def test_role_schema_validation_required_fields():
     with pytest.raises(ValueError):
         RoleSchema(
-            user="admin",
             name="",
             classes=True,
             students=True,
