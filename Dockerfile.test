@@ -26,5 +26,3 @@ COPY config ./config
 COPY wizard.py main.py ./
 
 RUN uv sync --frozen
-
-CMD ["uv", "run", "python", "-m", "pytest", "-q"]
