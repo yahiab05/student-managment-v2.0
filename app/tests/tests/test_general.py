@@ -30,8 +30,10 @@ def mock_dependencies():
         get_username=DEFAULT,
         error=DEFAULT,
         get_student_list=DEFAULT,
-        QMessageBox=DEFAULT,
     ) as class_mocks, patch.multiple(
+        'app.models.basic_operations',
+        QMessageBox=DEFAULT,
+    ) as basic_operations_mocks, patch.multiple(
         'app.controllers.finance.balance',
         load_gui=DEFAULT,
         get_model=DEFAULT,
@@ -78,7 +80,7 @@ def mock_dependencies():
         mock_schema_factory = class_mocks['SchemaFactory']
         mock_error = class_mocks['error']
         mock_student_list = class_mocks['get_student_list']
-        mock_qmsg = class_mocks['QMessageBox']
+        mock_qmsg = basic_operations_mocks['QMessageBox']
         mock_balance_load = balance_mocks['load_gui']
         mock_balance_get_model = balance_mocks['get_model']
         mock_balance_combo = balance_mocks['get_combo_manager']
@@ -115,7 +117,10 @@ def mock_dependencies():
         mock_combo_mgr.get_cached_data = MagicMock(return_value=[('Class A',), ('Class B',)])
         
         mock_model = MagicMock()
-        mock_model.get_by_id = MagicMock(return_value=MagicMock(__dict__={'id':1, 'name':'Test'}))
+        mock_obj = MagicMock()
+        mock_obj.id = 1
+        mock_obj.name = 'Test'
+        mock_model.get_by_id.return_value = mock_obj
         mock_model.create = MagicMock()
         mock_model.update = MagicMock()
         mock_model.delete = MagicMock()
@@ -382,7 +387,7 @@ class TestClasseleveLogic:
 
     def test_sup_security_yes(self, mock_dependencies):
         logic = ClasseleveLogic()
-        with patch('app.controllers.classes.classes.QMessageBox') as mock_qmsg:
+        with patch('app.models.basic_operations.QMessageBox') as mock_qmsg:
             mock_qmsg_instance = MagicMock()
             mock_qmsg_instance.question = MagicMock(return_value=QMessageBox.StandardButton.Yes)
             mock_qmsg.return_value = mock_qmsg_instance
@@ -394,7 +399,7 @@ class TestClasseleveLogic:
 
     def test_sup_security_no(self, mock_dependencies):
         logic = ClasseleveLogic()
-        with patch('app.controllers.classes.classes.QMessageBox') as mock_qmsg:
+        with patch('app.models.basic_operations.QMessageBox') as mock_qmsg:
             mock_qmsg_instance = MagicMock()
             mock_qmsg_instance.question = MagicMock(return_value=QMessageBox.StandardButton.No)
             mock_qmsg.return_value = mock_qmsg_instance

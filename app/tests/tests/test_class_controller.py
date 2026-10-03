@@ -184,7 +184,7 @@ class TestClasseleveLogic:
 
     def test_sup_security_yes(self, mock_dependencies):
         logic = ClasseleveLogic()
-        with patch('app.controllers.classes.classes.QMessageBox') as mock_qmsg:
+        with patch('app.models.basic_operations.QMessageBox') as mock_qmsg:
             mock_qmsg_instance = MagicMock()
             mock_qmsg_instance.question = MagicMock(return_value=QMessageBox.StandardButton.Yes)
             mock_qmsg.return_value = mock_qmsg_instance
@@ -196,7 +196,7 @@ class TestClasseleveLogic:
 
     def test_sup_security_no(self, mock_dependencies):
         logic = ClasseleveLogic()
-        with patch('app.controllers.classes.classes.QMessageBox') as mock_qmsg:
+        with patch('app.models.basic_operations.QMessageBox') as mock_qmsg:
             mock_qmsg_instance = MagicMock()
             mock_qmsg_instance.question = MagicMock(return_value=QMessageBox.StandardButton.No)
             mock_qmsg.return_value = mock_qmsg_instance
@@ -292,5 +292,4 @@ class TestClassPart:
         part.classes.setStyleSheet.assert_called_with("color: white")
         part.classeleve.setStyleSheet.assert_called_with("color: white")
         button.setStyleSheet.assert_called_with("color: green")
-
 
