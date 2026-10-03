@@ -6,6 +6,9 @@ from typing import Protocol
 class CommonSchema(Protocol):
     def validate(self):
         pass
+    
+    def to_dict(self):
+        return self.__dict__
 
 @dataclass
 class RoleSchema(BaseDataClass):

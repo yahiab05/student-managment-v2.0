@@ -39,11 +39,9 @@ class Login(CRUD):
             self.db.table.password == password
         ]
         if not self.exists([filters[0]]):
-            error("اسم المستخدم غير صحيح")
-            return False
+            return False, 1  # Username does not exist
         
         if not self.exists(filters):
-            error("كلمة المرور غير صحيحة")
-            return False
+            return False, 2  # Password is incorrect
         
         return True

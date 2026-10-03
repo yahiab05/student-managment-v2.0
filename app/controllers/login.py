@@ -1,4 +1,4 @@
-from os import path
+from os import error, path
 from PyQt6.QtWidgets import QApplication, QWidget
 from PyQt6.uic import loadUi
 from app.repo import create_db
@@ -30,10 +30,15 @@ class Login(QWidget, LoginUI):
     def check_login(self):
         username = self.username.text()
         password = self.password.text()
-        login_checked = self.manager.check_login(username, password)
-        print(f"Login checked: {login_checked} for user: {username}")
-        if login_checked:
-            self.open_app(username)
+        login_checked, err_type = self.manager.check_login(username, password)
+        if not login_checked:
+            if err_type == 1:
+                error("اسم المستخدم غير صحيح")
+            elif err_type == 2:
+                error("كلمة المرور غير صحيحة")
+            return
+        
+        self.open_app(username)
             
     def open_app(self, user):
         set_username(user)
