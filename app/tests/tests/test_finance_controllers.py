@@ -563,8 +563,8 @@ class TestTransferLogic:
     def test_totals_summary(self, mock_dependencies):
         logic = TransferLogic()
         with patch.object(logic, 'totals_to_bank', return_value=100) as mock_tb, \
-             patch.object(logic, 'totals_to_caisse', return_value=30) as mock_tc, \
-             patch.object(logic, 'expense_income_totals') as mock_eit:
+            patch.object(logic, 'totals_to_caisse', return_value=30) as mock_tc, \
+            patch.object(logic, 'expense_income_totals') as mock_eit:
             mock_eit.side_effect = [(200, 50), (300, 60)]  # for bank and caisse respectively
             summary = logic.totals_summary(price=100, operator='op', from_date='2026-01-01', to_date='2026-01-02')
             assert summary['total_to_bank'] == 100

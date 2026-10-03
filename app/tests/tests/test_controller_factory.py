@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QStackedWidget, QPushButton
 
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
 from app.controllers.classes import ClassPart
+from app.controllers.finance import MoneyPart
 from app.controllers.students import StudentsPart
 from app.controllers.teacher import TeachersPart
 from app.controllers.payment import PaymentPart
@@ -32,7 +33,7 @@ class TestControllerFactoryMapping:
             (ControllerSection.TEACHERS, TeachersPart),
             (ControllerSection.CLASSES, ClassPart),
             (ControllerSection.PAYMENTS, PaymentPart),
-            (ControllerSection.FINANCE, PaymentPart),
+            (ControllerSection.FINANCE, MoneyPart),
             (ControllerSection.ADMIN, UserPart),
             (ControllerSection.SETTINGS, SettingsLogic),
         ],
@@ -41,12 +42,6 @@ class TestControllerFactoryMapping:
                                             section: ControllerSection, 
                                             expected_cls: type):
         assert factory.controller[section] is expected_cls
-
-    def test_finance_and_payments_share_same_controller_class(self, factory: ControllerFactory):
-        # FINANCE and PAYMENTS intentionally point to the same controller.
-        assert factory.controller[ControllerSection.FINANCE] is \
-            factory.controller[ControllerSection.PAYMENTS]
-
 
 class TestCreateController:
     def test_create_controller_returns_instance_of_correct_class(self, qapp, factory: ControllerFactory):

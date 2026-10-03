@@ -1,5 +1,6 @@
 from .admin import UserLogic, RoleLogic
-from .settings import SettingsLogic
+from .settings import (SettingsUI, WaySettings, IncomeSettings, 
+                        ExpenseSettings, PaymentSettings, FournisseurSettings)
 
 from PyQt6.QtWidgets import QWidget, QPushButton
 
@@ -42,4 +43,32 @@ class UserPart(QWidget, UserPartUI):
 
         button.setStyleSheet("color: green")
 
-# THe settings part is added from another file
+class SettingsLogic(QWidget, SettingsUI):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        load_gui(UiPath.OTHERS, "settings.ui", self)
+
+        self.setup()
+
+    def setup(self):
+        settings = [
+            WaySettings(parent=self.plane),
+            IncomeSettings(parent=self.plane),
+            ExpenseSettings(parent=self.plane),
+            PaymentSettings(parent=self.plane),
+            FournisseurSettings(parent=self.plane)
+        ]
+        buttons = [
+            self.way_btn,
+            self.income_btn,
+            self.expense_btn,
+            self.payment_btn,
+            self.fr_btn
+        ]
+        for i in range(len(settings)):
+            self.plane.addWidget(settings[i])
+            buttons[i].clicked.connect(
+                lambda checked=False, i=i: self.plane.setCurrentWidget(settings[i])
+                )
+        self.plane.setCurrentWidget(settings[0])
