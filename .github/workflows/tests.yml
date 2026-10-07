@@ -1,4 +1,4 @@
-name: Tests
+name: Tests and builds
 
 on:
   push:
@@ -109,3 +109,17 @@ jobs:
           docker run --rm
           --env QT_QPA_PLATFORM=offscreen
           "$TEST_IMAGE" uv run python -m pytest -q app/tests
+  build:
+    name: Build executables
+    needs: 
+      - app-tests
+      - wizard-tests
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      

@@ -9,7 +9,7 @@ class DBConfig:
     def __init__(self):
 
         config_path = (
-            Path(__file__).resolve().parents[2]
+            Path(__file__).resolve().parents[1]
             / "config"
             / "db.ini"
         )
