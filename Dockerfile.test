@@ -22,7 +22,6 @@ COPY pyproject.toml uv.lock README.md ./
 
 COPY app ./app
 COPY mysql_wizard ./mysql_wizard
-COPY config ./config
 COPY wizard.py main.py ./
 
 RUN uv sync --frozen
