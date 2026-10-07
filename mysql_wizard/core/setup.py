@@ -7,12 +7,12 @@ from PyQt6.uic import loadUi
 
 
 class WizardPage(QWidget):
-    host = "localhost"
+    host = "192.168.1.5"
     port = 3306
     root_user = "root"
     root_password = "yahia"
     database_name = "darcoran"
-    application_host = "localhost"
+    application_host = "192.168.1.5"
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -72,7 +72,7 @@ class WizardPage(QWidget):
         return True
     
     def migrate_data(self):
-        old_db = self.lineEdit.text().strip()
+        old_db = "students1"
         if not re.fullmatch(r"[A-Za-z0-9_$]+", old_db):
             self._show_error("Enter a valid old database name.")
             return False
