@@ -4,15 +4,16 @@ import re
 import pymysql
 from PyQt6.QtWidgets import QMessageBox, QWidget
 from PyQt6.uic import loadUi
+from mysql_wizard.conf.listener import is_mysql_running_locally, discover_database_server
+from mysql_wizard.conf.broadcast import advertise_database_server
 
 
 class WizardPage(QWidget):
-    host = "192.168.1.5"
-    port = 3306
+    host = None
+    port = None
     root_user = "root"
-    root_password = "yahia"
-    database_name = "darcoran"
-    application_host = "192.168.1.5"
+    root_password = None
+    name = "darcoran"
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -24,7 +25,23 @@ class WizardPage(QWidget):
         ui_path = Path(__file__).resolve().parents[1] / "ui" / "wizard.ui"
         loadUi(str(ui_path), self)
         self.pushButton.clicked.connect(self.migrate_data)
-    
+
+    def set_host_and_port(self):
+        if is_mysql_running_locally():
+            self.host = "127.0.0.1"
+            self.port = 3306
+            broadcast, _ = advertise_database_server(port=self.port)
+        else:
+            try:
+                self.host, self.port = discover_database_server()
+                if self.host is None or self.port is None:
+                    raise RuntimeError(
+                        "No Darcoran database server was found."
+                    )
+            except RuntimeError as error:
+                self._show_error(str(error))
+                return False
+        return True
     def create_new_database(self):
         if self.connection is None:
             self.connect_to_database()
@@ -47,6 +64,9 @@ class WizardPage(QWidget):
         self.test_connection()
     
     def connect_to_database(self, database=None):
+        self.set_host_and_port()
+        self.root_password = self.password.text().strip()
+        self.root_password = self.root_password if self.root_password else "root"
         if self.connection is not None:
             self.connection.close()
 
@@ -72,7 +92,7 @@ class WizardPage(QWidget):
         return True
     
     def migrate_data(self):
-        old_db = "students1"
+        old_db = self.name.text().strip()
         if not re.fullmatch(r"[A-Za-z0-9_$]+", old_db):
             self._show_error("Enter a valid old database name.")
             return False
@@ -80,7 +100,7 @@ class WizardPage(QWidget):
         try:
             self.connect_to_database()
             self.create_new_database()
-            self.connect_to_database(self.database_name)
+            self.connect_to_database(self.name)
 
             migration_path = Path(__file__).resolve().parents[1] / "sql" / "migration.sql"
             migration_sql = migration_path.read_text(encoding="utf-8")
@@ -112,7 +132,7 @@ class WizardPage(QWidget):
 
         user_path = Path(__file__).resolve().parents[1] / "sql" / "user.sql"
         user_sql = user_path.read_text(encoding="utf-8").replace(
-            "{{ip}}", self.application_host
+            "{{ip}}", self.host
         )
         self._execute_script(user_sql)
         self.test_connection()

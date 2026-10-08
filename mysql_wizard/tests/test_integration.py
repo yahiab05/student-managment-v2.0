@@ -51,7 +51,7 @@ def test_wizard_migrates_seeded_legacy_database(qapp, monkeypatch):
         port=page.port,
         user=page.root_user,
         password=page.root_password,
-        database=page.database_name,
+        database=page.name,
     )
     with connection.cursor() as cursor:
         cursor.execute("SELECT name FROM students WHERE name = 'CI Test Student'")
