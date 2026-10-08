@@ -10,15 +10,17 @@ def test_advertise_database_server_registers_service(monkeypatch):
     service_info = MagicMock()
     service_info_type = MagicMock(return_value=service_info)
 
-    monkeypatch.setattr(broadcast.socket, "gethostname", lambda: "test-host")
     monkeypatch.setattr(broadcast, "ServiceInfo", service_info_type)
     monkeypatch.setattr(broadcast, "Zeroconf", lambda: zeroconf)
 
-    result = broadcast.advertise_database_server(port=3307)
+    result = broadcast.advertise_database_server(
+        hostname="127.0.0.1",
+        port=3307,
+    )
 
     service_info_type.assert_called_once_with(
         listener.SERVICE_TYPE,
-        f"test-host.{listener.SERVICE_TYPE}",
+        f"127.0.0.1.{listener.SERVICE_TYPE}",
         port=3307,
         properties={
             "service": "darcoran",
@@ -27,6 +29,11 @@ def test_advertise_database_server_registers_service(monkeypatch):
     )
     zeroconf.register_service.assert_called_once_with(service_info)
     assert result == (zeroconf, service_info)
+
+
+def test_advertise_database_server_requires_hostname():
+    with pytest.raises(ValueError, match="hostname must be provided"):
+        broadcast.advertise_database_server()
 
 
 def test_database_service_listener_stores_service_info_for_available_service():
@@ -119,6 +126,7 @@ def test_discover_database_server_raises_when_no_service_is_found(monkeypatch):
 
 
 def test_discover_database_server_raises_when_service_has_no_address(monkeypatch):
+    
     service_info = MagicMock()
     service_info.parsed_addresses.return_value = []
     zeroconf = MagicMock()

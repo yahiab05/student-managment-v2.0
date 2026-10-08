@@ -36,7 +36,7 @@ def test_seeded_legacy_database_contains_fixture(database_connection):
 
 def test_wizard_migrates_seeded_legacy_database(qapp, monkeypatch):
     page = WizardPage()
-    page.lineEdit.setText(os.getenv("MYSQL_DATABASE", "legacy_db"))
+    page.database_name.setText(os.getenv("MYSQL_DATABASE", "legacy_db"))
     page.host = os.getenv("MYSQL_HOST", "mysql")
     page.port = int(os.getenv("MYSQL_PORT", "3306"))
     page.root_user = os.getenv("MYSQL_USER", "root")

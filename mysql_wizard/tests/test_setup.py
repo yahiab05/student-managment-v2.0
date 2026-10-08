@@ -19,7 +19,7 @@ def connection():
 
 
 def test_setup_loads_ui_and_connects_migrate_signal(page):
-    assert page.lineEdit.text() == ""
+    assert page.database_name.text() == ""
     assert page.pushButton.text() == "Migrate"
     assert page.pushButton.receivers(page.pushButton.clicked) == 1
 
@@ -66,7 +66,7 @@ def test_execute_script_ignores_blank_statements(page, connection):
 
 def test_create_new_user_replaces_application_host(page, connection, monkeypatch):
     page.connection = connection
-    page.application_host = "10.0.0.5"
+    page.host = "10.0.0.5"
     monkeypatch.setattr(
         "pathlib.Path.read_text",
         lambda *_args, **_kwargs: "CREATE USER 'app'@'{{ip}}';",
@@ -80,7 +80,7 @@ def test_create_new_user_replaces_application_host(page, connection, monkeypatch
 
 
 def test_migrate_data_rejects_invalid_database_name(page, monkeypatch):
-    page.lineEdit.setText("legacy-db; DROP DATABASE darcoran")
+    page.database_name.setText("legacy-db; DROP DATABASE darcoran")
     show_error = MagicMock()
     monkeypatch.setattr(page, "_show_error", show_error)
 
@@ -89,7 +89,7 @@ def test_migrate_data_rejects_invalid_database_name(page, monkeypatch):
 
 
 def test_migrate_data_runs_all_steps_and_substitutes_database(page, connection, monkeypatch):
-    page.lineEdit.setText("legacy_db")
+    page.database_name.setText("legacy_db")
     page.connection = connection
     page.connect_to_database = MagicMock()
     page.create_new_database = MagicMock()
@@ -111,7 +111,7 @@ def test_migrate_data_runs_all_steps_and_substitutes_database(page, connection, 
 
 
 def test_migrate_data_rolls_back_and_reports_failures(page, connection, monkeypatch):
-    page.lineEdit.setText("legacy_db")
+    page.database_name.setText("legacy_db")
     page.connection = connection
     page.connect_to_database = MagicMock(side_effect=RuntimeError("database down"))
     show_error = MagicMock()

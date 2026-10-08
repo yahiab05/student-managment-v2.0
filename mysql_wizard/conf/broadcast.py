@@ -7,8 +7,10 @@ from zeroconf import Zeroconf, ServiceInfo
 from mysql_wizard.conf.listener import SERVICE_TYPE
 
 
-def advertise_database_server(port=3306):
-    hostname = socket.gethostname()
+def advertise_database_server(hostname=None, port=3306):
+    
+    if hostname is None:
+        raise ValueError("hostname must be provided")
 
     service_name = f"{hostname}.{SERVICE_TYPE}"
 

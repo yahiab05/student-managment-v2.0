@@ -20,6 +20,8 @@ class WizardPage(QWidget):
         self.connection = None
         self.connection_factory = pymysql.connect
         self.setup_ui()
+        self.set_host_and_port()
+        
 
     def setup_ui(self):
         ui_path = Path(__file__).resolve().parents[1] / "ui" / "wizard.ui"
@@ -30,7 +32,10 @@ class WizardPage(QWidget):
         if is_mysql_running_locally():
             self.host = "127.0.0.1"
             self.port = 3306
-            broadcast, _ = advertise_database_server(port=self.port)
+            broadcast, _ = advertise_database_server(
+                            hostname=self.host, 
+                            port=self.port
+                            )
         else:
             try:
                 self.host, self.port = discover_database_server()
@@ -64,9 +69,6 @@ class WizardPage(QWidget):
         self.test_connection()
     
     def connect_to_database(self, database=None):
-        self.set_host_and_port()
-        self.root_password = self.password.text().strip()
-        self.root_password = self.root_password if self.root_password else "root"
         if self.connection is not None:
             self.connection.close()
 
@@ -92,7 +94,10 @@ class WizardPage(QWidget):
         return True
     
     def migrate_data(self):
-        old_db = self.name.text().strip()
+        old_db = self.database_name.text().strip()
+        self.root_password = self.password.text().strip()
+        self.root_password = self.root_password if self.root_password else "root"
+                
         if not re.fullmatch(r"[A-Za-z0-9_$]+", old_db):
             self._show_error("Enter a valid old database name.")
             return False
