@@ -81,7 +81,7 @@ jobs:
           docker run --rm --network host
           --env QT_QPA_PLATFORM=offscreen
           --env WIZARD_DB_INTEGRATION=1
-          --env MYSQL_HOST=127.0.0.1
+          --env MYSQL_HOST=192.168.1.5
           --env MYSQL_PORT=3306
           --env MYSQL_DATABASE=legacy_db
           --env MYSQL_USER=root
