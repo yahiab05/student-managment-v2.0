@@ -24,4 +24,4 @@ COPY app ./app
 COPY mysql_wizard ./mysql_wizard
 COPY wizard.py main.py ./
 
-RUN uv sync --frozen
+RUN uv sync --group test --frozen

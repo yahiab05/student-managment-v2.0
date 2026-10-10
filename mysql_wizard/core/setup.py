@@ -20,7 +20,6 @@ class WizardPage(QWidget):
         self.connection = None
         self.connection_factory = pymysql.connect
         self.setup_ui()
-        self.set_host_and_port()
         
 
     def setup_ui(self):
@@ -94,6 +93,9 @@ class WizardPage(QWidget):
         return True
     
     def migrate_data(self):
+        if not self.set_host_and_port():
+            raise RuntimeError("Failed to set host and port for database connection.")
+        
         old_db = self.database_name.text().strip()
         self.root_password = self.password.text().strip()
         self.root_password = self.root_password if self.root_password else "root"

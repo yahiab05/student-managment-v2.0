@@ -4,6 +4,7 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import declarative_base, sessionmaker
+from app.config import set_host_and_port
 
 class DBConfig:
     def __init__(self):
@@ -22,8 +23,11 @@ class DBConfig:
 
         db = config["database"]
 
-        self.host = db["host"]
-        self.port = db.getint("port")
+        self.host , self.port = set_host_and_port()
+        if self.host is None or self.port is None:
+            raise RuntimeError(
+                "Failed to set database host and port."
+            )
         self.name = db["database"]
         self.user = db["user"]
         self.password = db["password"]

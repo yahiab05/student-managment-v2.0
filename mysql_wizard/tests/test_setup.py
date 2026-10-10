@@ -83,6 +83,7 @@ def test_migrate_data_rejects_invalid_database_name(page, monkeypatch):
     page.database_name.setText("legacy-db; DROP DATABASE darcoran")
     show_error = MagicMock()
     monkeypatch.setattr(page, "_show_error", show_error)
+    monkeypatch.setattr(page, "set_host_and_port", lambda: True)
 
     assert page.migrate_data() is False
     show_error.assert_called_once_with("Enter a valid old database name.")
@@ -97,6 +98,7 @@ def test_migrate_data_runs_all_steps_and_substitutes_database(page, connection, 
     page.create_new_user = MagicMock()
     page.test_connection = MagicMock(return_value=True)
     monkeypatch.setattr(QMessageBox, "information", MagicMock())
+    monkeypatch.setattr(page, "set_host_and_port", lambda: True)
 
     assert page.migrate_data() is True
 
@@ -116,6 +118,7 @@ def test_migrate_data_rolls_back_and_reports_failures(page, connection, monkeypa
     page.connect_to_database = MagicMock(side_effect=RuntimeError("database down"))
     show_error = MagicMock()
     monkeypatch.setattr(page, "_show_error", show_error)
+    monkeypatch.setattr(page, "set_host_and_port", lambda: True)
 
     assert page.migrate_data() is False
 
