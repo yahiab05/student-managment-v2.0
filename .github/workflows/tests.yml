@@ -92,6 +92,19 @@ jobs:
     name: App tests
     runs-on: ubuntu-latest
     needs: wizard-tests
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -106,8 +119,13 @@ jobs:
 
       - name: Run app tests
         run: >-
-          docker run --rm
+          docker run --rm --network host
           --env QT_QPA_PLATFORM=offscreen
+          --env MYSQL_HOST=127.0.0.1
+          --env MYSQL_PORT=3306
+          --env MYSQL_DATABASE=legacy_db
+          --env MYSQL_USER=root
+          --env MYSQL_PASSWORD=root
           "$TEST_IMAGE" uv run python -m pytest -q app/tests
   build:
     name: Build executables
