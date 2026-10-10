@@ -86,7 +86,6 @@ class DBFacade:
         with SessionLocal() as session:
             try:
                 obj = session.query(self.table).filter(*filters).first()
-                print(f"Updating object: {obj} with data: {data}")
                 if not obj:
                     raise ModuleNotFoundError("Object not found")
                 for key, value in data.items():
@@ -144,7 +143,6 @@ class DBFacade:
                 ).scalar()
             return total or 0
         except NoSuchColumnError as e:
-            print(f"Error calculating total: {e}")
             return 0
         
     def update_price(self, id, new_price):
@@ -158,11 +156,9 @@ class DBFacade:
                 return obj
                 
             except AttributeError:
-                print(f"Error updating price: Object does not have a 'price' attribute.")
                 session.rollback()
                 raise            
             except NoSuchColumnError as e:
-                print(f"Error updating price: {e}")
                 session.rollback()
                 raise
             
@@ -175,7 +171,6 @@ class DBFacade:
                 session.commit()
             except Exception as e:
                 session.rollback()
-                print(f"Transaction failed: {e}")
                 raise
 
 from app.repo.models import Entery, OutMoney

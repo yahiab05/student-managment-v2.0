@@ -96,11 +96,7 @@ class SettingsWithCode(BaseSettings, SettingWithCodeFormUI):
 
     def select_row(self, index):
         row = index.row()
-        print("Selected row index:", row)
         self.identifier = int(self.list.item(row, 0).text())
-        print("Selected identifier:", self.identifier)
-        print("Selected entery:", self.list.item(row, 1).text())
-        print("Selected entery:", self.list.item(row, 2))
         self.code.setValue(int(self.list.item(row, 2).text()))
         self.entery.setText(self.list.item(row, 1).text())
         
@@ -262,7 +258,6 @@ class WaySettings(SettingsWithoutCode):
 
     def show_data(self, name=""):
         filters = self.manager.get_filter(way_teaching=name)
-        print("specific filters: ", filters)
         super().show_data(filters)
 
 class PaymentSettings(SettingsWithoutCode):

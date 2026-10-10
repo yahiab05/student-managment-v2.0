@@ -122,19 +122,17 @@ class StudentsLogic(QWidget, StudentsUI):
                     self.manager.create(entity, session=session)
                     session.flush()  # Ensure the new student is written to the database
                     student_id = self.manager.get_last_student(session=session)
-                    print(f"Student ID: {student_id}")
                     self.add_ensurance(student_id, "تأمين", session=session)
                     self.add_history(student_id, _date, session=session)
             except Exception as e:
                 error(str(e))
-                print(traceback_to_string(e))
                 return
         else:
             try:
                 self.manager.update(id=self.identifier, data_obj=entity)
                 self.deselection()
             except Exception as e:
-                error(str(e))
+                error(traceback_to_string(e))
                 return
 
         self.show_table()
@@ -183,7 +181,7 @@ class StudentsLogic(QWidget, StudentsUI):
             self.animation.setStartValue(0)
             self.animation.setEndValue(200)
         else:
-            print("not recognized")
+            error("not recognized")
         
         self.animation.start()
         

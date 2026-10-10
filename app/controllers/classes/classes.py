@@ -219,7 +219,6 @@ class ClasseleveLogic(QWidget, ClasseleveUI):
             return
         
         if self.manager.check(student_id, class_name):
-            print(f"Student {student_id} is already enrolled in class {class_name}")
             error("هذا التلميذ موجود في هذا الصف")
             return
         

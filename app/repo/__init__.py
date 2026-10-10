@@ -1,6 +1,6 @@
 from app.repo.facade import DBFacade, BalanceFacade
 from app.repo.models import *
-from app.repo.database import create_db, SessionLocal
+from app.repo.database import create_db, SessionLocal, configs
 
 class Repositories:
     """Repository container that requires a SQLAlchemy `session` at creation.

@@ -24,9 +24,7 @@ class ComboManager:
 
         with SessionLocal() as session:
             rows = session.query(model).with_entities(getattr(model, column_name)).all()
-        print([row[0] for row in rows])
         self.cached[data_name] = [row[0] for row in rows if row[0] is not None]
-        print(f"Updated {data_name} cache with {self.cached[data_name]} entries")
         return self.cached[data_name]
 
     def update_all_cache(self):

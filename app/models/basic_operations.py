@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 from sqlalchemy.exc import IntegrityError
 from app.repo.schemas.base_schema import BaseDataClass
-from app.utils import export_report, ReportType, ReportContext
+from app.utils import traceback_to_string, export_report, ReportType, ReportContext
 from app.repo import Repositories
 
 
@@ -110,7 +110,7 @@ class CRUD(ABC):
                 foot=self.footer
             )
         except ValueError as e:
-            print(e)
+            traceback_to_string(e)
         finally:
             self.data_to_export = None
             

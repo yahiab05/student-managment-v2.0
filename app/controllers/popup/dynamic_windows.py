@@ -3,7 +3,7 @@ from PyQt6.QtCore import QDate
 from typing import Protocol
 
 from app.repo.schemas import SchemaFactory, EntrySchema
-from app.utils import get_combo_manager, ComboName, get_student_list, get_username, error, info, load_gui, UiPath
+from app.utils import traceback_to_string, get_combo_manager, ComboName, get_student_list, get_username, error, info, load_gui, UiPath
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
 
@@ -409,7 +409,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         try:
             self.manager.bulk_create(self.momentane)
         except Exception as e:
-            print(e)
+            traceback_to_string(e)
         finally:
             self.momentane = []
             self.reset()

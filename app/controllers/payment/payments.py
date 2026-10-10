@@ -125,10 +125,7 @@ class ViewPayment(QWidget, V):
 
     def set_old_price(self):
         if self.identifier is not None:
-            print(self.identifier)
             old_payment = self.manager.get_by_id(self.identifier)
-
-            print(old_payment.price)
             self.previous_price.setText(str(old_payment.price))  
             self.stackedWidget.setCurrentIndex(1)
         else:
@@ -143,7 +140,6 @@ class ViewPayment(QWidget, V):
             try:
                 self.manager.update_price(self.identifier, self.new_price.value())
             except Exception as e:
-                print(e)
                 error("لا يمكنك التحديث بعد الآن")
             finally:
                 self.cancel()
@@ -169,7 +165,6 @@ class ViewPayment(QWidget, V):
             self.search()
             self.search_frame.setEnabled(True)
         except IntegrityError as e:
-            print(traceback_to_string(e))
             error("لا يمكنك حذف هذا الدفعة")
         
     def export(self, output_channel: ReportType):

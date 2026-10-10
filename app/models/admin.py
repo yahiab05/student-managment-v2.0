@@ -44,4 +44,4 @@ class Login(CRUD):
         if not self.exists(filters):
             return False, 2  # Password is incorrect
         
-        return True
+        return True, 0

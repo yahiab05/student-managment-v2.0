@@ -135,7 +135,6 @@ class TeacherLogic(QWidget, TeacherUI):
                 else:
                     error(f"لا يمكن حذف المعلم {name} لوجود قسم له")
             except IntegrityError as e:
-                print(traceback_to_string(e))
                 error("حدث خطأ أثناء حذف المعلم.")
                 return
         else:	

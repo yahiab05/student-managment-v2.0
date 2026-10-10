@@ -107,8 +107,7 @@ class OutMoneyLogic(QWidget, OutMoneyUI):
                 self.manager.update(self.identifier, entity)
                 self.deselection()  
         except Exception as e:
-            print(traceback_to_string(e))
-            error("حدث خطأ")
+            error(traceback_to_string(e))
         finally:
             self.reset_filter()
             self.show_out()

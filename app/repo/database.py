@@ -36,20 +36,19 @@ Base = declarative_base()
 
 while True:
     try:
-        settings = DBConfig()
+        configs = DBConfig()
 
         url = URL.create(
             "mysql+pymysql",
-            username=settings.user,
-            password=settings.password,
-            host=settings.host,
-            port=settings.port,
-            database=settings.name
+            username=configs.user,
+            password=configs.password,
+            host=configs.host,
+            port=configs.port,
+            database=configs.name
         )
         engine = create_engine(url)
         break
     except Exception as e:
-        print(e)
         import time
         time.sleep(2)
 

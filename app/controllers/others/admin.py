@@ -59,7 +59,6 @@ class RoleLogic(QWidget, RoleUI):
                 error("الرجاء التحقق من صحة البيانات")
                 return
         except ValueError as e:
-            print(f"Validation error: {e}")
             error(str(e))
             return
 
@@ -178,7 +177,6 @@ class UserLogic(QWidget, UserUI):
                 return
         except ValueError as e:
             error(str(e))
-            print(f"Validation error: {e}")
             return
         
         if action == WorkingMode.ADD:
