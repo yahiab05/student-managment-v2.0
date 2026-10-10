@@ -276,7 +276,7 @@ def test_login_model_checks_credentials(repository):
     with patch("app.models.basic_operations.Repositories", return_value=repository):
         model = Login()
         db.exists.side_effect = [True, True]
-        assert model.check_login("admin", "secret") is True
+        assert model.check_login("admin", "secret") == (True, 0)
         db.exists.side_effect = [False]
         assert model.check_login("missing", "secret") == (False, 1)
         db.exists.side_effect = [True, False]
