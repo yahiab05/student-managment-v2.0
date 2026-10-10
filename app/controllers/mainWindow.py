@@ -8,6 +8,7 @@ from app.ui.ui_forms import MainUI
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
 from app.models import get_model, ModelName
 from app.utils import load_gui, UiPath, get_combo_manager, get_username
+from app.repo import configs
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
@@ -51,11 +52,11 @@ class mainWindow(QMainWindow, MainUI):
                                                     '',
                                                     QFileDialog.Option.ShowDirsOnly)
         
-        database = getenv("MYSQL_DATABASE")
-        password = getenv("MYSQL_PWD")
-        host = getenv("MYSQL_HOST")
-        port = getenv("MYSQL_PORT")
-        user = getenv("MYSQL_USER")
+        database = configs.name
+        password = configs.password
+        host = configs.host
+        port = configs.port
+        user = configs.user
         
         if not backup_dir:
             return None
@@ -68,15 +69,7 @@ class mainWindow(QMainWindow, MainUI):
         # Use env var for password to avoid showing it in process list
         env = environ.copy()
         env["MYSQL_PWD"] = password
-
-        if not all([database, password, host, port, user]):
-            print("database: ", database)
-            print("password: ", password)
-            print("host: ", host)
-            print("port: ", port)
-            print("user: ", user)
             
-            raise ValueError("Missing database environment variables")
         cmd = [
             "mysqldump",
             "-h", host,
@@ -89,8 +82,10 @@ class mainWindow(QMainWindow, MainUI):
         ]
 
         with out_file.open("wb") as f:
-            result = run(cmd, stdout=f, stderr=PIPE, env=env)
-
+            try:
+                result = run(cmd, stdout=f, stderr=PIPE, env=env)
+            except Exception as e:
+                raise RuntimeError(f"mysqldump failed: {str(e)}")
         if result.returncode != 0:
             # Clean partial dump if failed
             try:
