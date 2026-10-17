@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.QtCore import Qt
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
 from jinja2 import Template
-from .utils import load_gui, UiPath
+from app.utils import load_gui, UiPath
 from app.ui.ui_forms import PrintingUI
     
 class ExcelGenerator:
