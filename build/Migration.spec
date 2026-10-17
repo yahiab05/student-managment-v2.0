@@ -3,7 +3,7 @@ from pathlib import Path
 from PyInstaller.utils.hooks import collect_submodules
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__name__).resolve().parent.parent
 
 
 # Python modules that may be imported dynamically
