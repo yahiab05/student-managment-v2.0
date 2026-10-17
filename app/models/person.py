@@ -1,94 +1,192 @@
-from abc import ABC
-from ..repo.facade import DBFacade
-from ..repo.models import Students, Teachers
-from ..repo.schemas.base_schema import BaseDataClass
-from ..utils import PrintingStrategy, ExcelStrategy, ReportContext
+from app.models.names import ModelName
+from app.models.basic_operations import CRUD
+from app.models.classes import Enrollment
+from app.utils.utils import error
 
+from PyQt6.QtCore import QDate
 
-class Person(ABC):
-    intro: str = None
-    data_to_export: list = None
-    footer: str = None
-    headers: list = None
-    title: str = None
-    
-
-    def __init__(self, session, table):
-        self.db = DBFacade(table, session)
-        self.report_context = ReportContext()
-
-    def create(self, data_obj: BaseDataClass):
-        data = data_obj.to_dict()
-        return self.db.add(data)
-
-    def update(self, id, data_obj: BaseDataClass):
-        data = data_obj.to_dict()
-        try:
-            return self.db.update(id, data)
-        except ModuleNotFoundError:
-            return
-
-    def sup_security(self, id):
-        msg = QMessageBox()
-        ret = msg.question(self, 'حذف', "متأكد من حذف هذا الشخص ؟", msg.StandardButton.Yes | msg.StandardButton.No)
-
-        if ret == msg.StandardButton.Yes:
-            self.delete(id)
-        else:
-            self.reset()
-
-    def delete(self, id):
-        try:
-            return self.db.delete(id)
-        except ModuleNotFoundError:
-            return
-
-    def get_all(self):
-        return self.db.get_all()
-
-    def get_by_id(self, id):
-        return self.db.get_by_id(id)
-
-    def get_by_filter(self, filters: list):
-        # Delegate filter-based queries to the shared database facade.
-        return self.db.get_by_filter(filters)
-
-    def print_preview(self, parent):
-        strategy = PrintingStrategy(
-            headers=self.headers,
-            data=self.data_to_export,
-            parent=parent,
-            title=self.title,
-            intro=self.intro,
-            foot=self.footer
-        )
-        self.report_context.strategy = strategy
-        try:
-            self.report_context.export()
-        except ValueError as e:
-            print(e)
-
-    def export_to_excel(self, parent):
-        strategy = ExcelStrategy(
-            headers=self.headers,
-            data=self.data_to_export,
-            parent=parent
-        )
-        self.report_context.strategy = strategy
-        try:
-            self.report_context.export()
-        except ValueError as e:
-            print(e)
-
-
-class Student(Person):
+class Student(CRUD):
     # Concrete child class for student records that uses the students table.
-    def __init__(self, session):
-        super().__init__(session, Students)
+    def __init__(self):
+        super().__init__(ModelName.STUDENTS)
+        self.enrollments = Enrollment()
+        self.history = StudentHistory()
+        
+        self.set_static_metadata()
+        
+    def exists(self, name, parent):
+        filters = [
+            self.db.table.name == name,
+            self.db.table.parent == parent
+        ]
+        verdict = self.db.exists(filters)
 
+        return verdict
+    
+    def delete(self, id):
+        if self.permenant(id):
+            super().delete(id)
+        else:
+            self.deactivate(id)
+            
+    def deactivate(self, id):
+        filters = self.enrollments.get_filters(
+            student_id=id,
+            not_class_name="تأمين"
+        )
+        enrollments = self.enrollments.get_by_filter(filters)
+        if len(enrollments) > 0:
+            error("لا يمكن حذف هذا الشخص لأنه مرتبط ببيانات أخرى في النظام.")
+            return
+        
+        with self.db.transaction() as session:
+            student = self.get_by_id(id, session=session)
+            
+            if student is not None:
+                student.activity = "غير فاعل"
 
-class Teacher(Person):
+    def permenant(self, id):
+        
+        student = self.get_by_id(id)
+        if student is not None:
+            return student.activity == "غير فاعل"
+        
+        return False
+                
+    def get_last_student(self, session=None) -> int:
+        return self.db.get_biggest_id(_session=session)
+
+    def get_filters(self, name=None, gender=None, _from=None, _to=None, 
+                    excused=None, activity=None, not_included: list=None):
+        # Return a list of filters based on the provided name and gender.
+        filters = []
+        self.intro = ""
+        
+        if name:
+            filters.append(self.db.table.name.ilike(f"%{name}%"))
+
+        if _from and _to:
+            _from = _from.toPyDate() if isinstance(_from, QDate) else _from
+            _to = _to.toPyDate() if isinstance(_to, QDate) else _to
+            filters.append(self.db.table.date_inscrit >= _from)
+            filters.append(self.db.table.date_inscrit <= _to)
+            self.intro = """ بين  """ + _from.strftime("%Y-%m-%d") + "  و  " + _to.strftime("%Y-%m-%d") + "\n"
+        if excused:
+            filters.append(self.db.table.excused == excused)
+            self.intro += "معفى: " + excused + "\n"
+        if activity:
+            filters.append(self.db.table.activity == activity)
+            self.intro += "نشاط: " + activity
+        if gender:
+            filters.append(self.db.table.gender == gender)
+            self.intro += "جنس: " + gender
+        if not_included:
+            filters.append(self.db.table.num_inscrit.not_in(not_included))
+        return filters
+    
+    def set_static_metadata(self):
+        self.title = "قائمة التلميذ"
+
+        self.headers = ["معفى", "رقم الهاتف", "تاريخ الولادة", "الإسم"]
+            
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.footer = f"عدد التلاميذ: {row_count}"
+        self.data_to_export = []
+        for student in data_to_export:
+            row = [
+                student.excused,
+                str(student.num_tel),
+                student.birthday.strftime("%Y-%m-%d"),
+                student.name
+            ]
+            self.data_to_export.append(row)
+class Teacher(CRUD):
     # Concrete child class for teacher records that uses the teachers table.
-    def __init__(self, session):
-        super().__init__(session, Teachers)
+    def __init__(self):
+        super().__init__(ModelName.TEACHERS)
+        
+        self.set_static_metadata()
+        
+    def get_filters(self, name=None):
+        filters = []
+        if name is not None:
+            filters.append(self.db.table.name.ilike(f"%{name}%"))
+            
+        return filters
+    
+    def set_static_metadata(self):
+        self.title = "قائمة الأساتذة"
 
+        self.headers = ["رقم الهاتف", "تاريخ الولادة", "الإسم"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.footer = "المجموع: " + str(row_count)
+        self.data_to_export = []
+        for teacher in data_to_export:
+            row = [
+                str(teacher.phone),
+                teacher.birthday.strftime("%Y-%m-%d"),
+                teacher.name
+            ]
+            self.data_to_export.append(row)
+        
+    def get_last_id(self, session=None):
+        return self.db.get_biggest_id(_session=session)
+
+class StudentHistory(CRUD):
+    # Concrete child class for student history records that uses the students_history table.
+    def __init__(self):
+        super().__init__(ModelName.STUDENTS_HISTORY)
+
+    def search_by_num_inscrit(self, num_inscrit: int):
+        """Search history records by student number, joined with the student table."""
+
+        filters = [self.db.table.num_inscrit == num_inscrit]
+        return self.get_with_joined_load("student", filters)
+
+    def set_static_metadata(self):
+        self.title = "قائمة التلميذ"
+        self.headers = ["معفى", "رقم الهاتف", 'سنوات الدراسة', "تاريخ الولادة", "الإسم"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.data_to_export = []
+        for student in data_to_export:
+            row = [
+                str(student.excused),
+                str(student.students.num_tel),
+                str(student.students.years_of_study),
+                student.students.birthday.strftime("%Y-%m-%d"),
+                student.students.name
+            ]
+            self.data_to_export.append(row)
+        self.footer = "المجموع: " + str(row_count)
+        self.intro = "تلميذ برقم الهوية: " + str(self.data_to_export[0].id) if self.data_to_export else "تلميذ غير موجود"
+
+
+class TeacherHistory(CRUD):
+    # Concrete child class for teacher history records that uses the teachershistory table.
+    def __init__(self):
+        super().__init__(ModelName.TEACHERS_HISTORY)
+        
+        self.set_static_metadata()
+
+    def search_by_id(self, teacher_id: int):
+        """Search history records by teacher ID, joined with the teacher table."""
+
+        filters = [self.db.table.teacher_id == teacher_id]
+        return self.get_with_joined_load("teacher", filters)
+    
+    def set_static_metadata(self):
+        self.title = "قائمة الأساتذة"
+
+        self.headers = ["تاريخ الولادة", "الإسم", "رقم التسجيل"]
+
+    def set_dynamic_metadata(self, data_to_export, row_count):
+        self.footer = f"""عدد السنوات: {row_count}"""
+        self.data_to_export = []
+        for row in data_to_export:
+            self.data_to_export.append([
+                row.teacher.birthday.strftime("%Y-%m-%d"),
+                row.teacher.name,
+                str(row.teacher_id)
+            ])

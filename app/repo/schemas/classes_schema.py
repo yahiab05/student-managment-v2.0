@@ -1,4 +1,4 @@
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
 from dataclasses import dataclass
 
 @dataclass
@@ -8,13 +8,10 @@ class ClassesSchema(BaseDataClass):
     teacher: str
     note: str
     price: float
-    seance: int
-    exchange: str
-    teacher_part: float
     
     def validate(self):
         if not super().validate():
-            return False
+            raise ValueError("Validation failed in BaseDataClass")
         if self.name is None or self.name == "":
             raise ValueError("اسم الصف مطلوب")
         if self.way is None or self.way == "":
@@ -23,15 +20,18 @@ class ClassesSchema(BaseDataClass):
             raise ValueError("اسم المعلم مطلوب")
         if self.price is None or self.price == 0:
             raise ValueError("سعر الصف مطلوب")
-        if self.seance is None or self.seance == 0:
-            raise ValueError("عدد الحصص مطلوب")
-        if self.exchange is None or self.exchange == "":
-            raise ValueError("المقابل مطلوب")
-        if self.teacher_part is None:
-            raise ValueError("حصة المعلم مطلوبة")
         return True
     
 @dataclass
 class EnrollmentSchema(BaseDataClass):
     student_id: int
     class_name: str
+    
+    def validate(self):
+        if not super().validate():
+            raise ValueError("Validation failed in BaseDataClass")
+        if self.student_id is None or self.student_id == 0:
+            raise ValueError("رقم التلميذ مطلوب")
+        if self.class_name is None or self.class_name == "":
+            raise ValueError("اسم الصف مطلوب")
+        return True

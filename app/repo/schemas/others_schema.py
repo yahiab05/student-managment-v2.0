@@ -1,22 +1,23 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
-from .base_schema import BaseDataClass
+from app.repo.schemas.base_schema import BaseDataClass
+from typing import Protocol
 
 @dataclass
-class CommonSchema(BaseDataClass, ABC):
-    @abstractmethod
+class CommonSchema(Protocol):
     def validate(self):
         pass
+    
+    def to_dict(self):
+        return self.__dict__
 
 @dataclass
-class RoleSchema(CommonSchema):
+class RoleSchema(BaseDataClass):
     name:str
     classes:bool
     students:bool
     teachers:bool
     payment:bool
     money:bool
-    absent:bool
     settings:bool
     user:bool
     payment_editting:bool
@@ -34,8 +35,6 @@ class RoleSchema(CommonSchema):
             raise ValueError("صلاحية الدفع مطلوب")
         if self.money is None:
             raise ValueError("صلاحية المال مطلوب")
-        if self.absent is None:
-            raise ValueError("صلاحية الغياب مطلوب")
         if self.settings is None:
             raise ValueError("صلاحية الاعدادات مطلوب")
         if self.user is None:
@@ -45,7 +44,7 @@ class RoleSchema(CommonSchema):
         return True
     
 @dataclass
-class SettingsSchema(CommonSchema):
+class SettingsSchema(BaseDataClass):
     way_teaching:str=None
     entery:str=None
     entery_code:int=None
