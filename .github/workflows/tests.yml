@@ -136,7 +136,7 @@ jobs:
     permissions:
       contents: write
 
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
 
     runs-on: windows-latest
     steps:
