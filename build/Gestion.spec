@@ -5,7 +5,7 @@ from pathlib import Path
 from PyInstaller.utils.hooks import collect_submodules
 
 
-ROOT = Path(__name__).resolve().parent.parent
+ROOT = Path(SPECPATH).resolve().parent.parent
 
 
 # Collect Python modules from app
