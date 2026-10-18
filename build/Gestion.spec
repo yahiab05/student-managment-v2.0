@@ -9,7 +9,7 @@ ROOT = Path(SPECPATH).resolve().parent
 
 
 # Collect Python modules from app
-hiddenimports = collect_submodules("app")
+hiddenimports = []
 
 
 a = Analysis(
