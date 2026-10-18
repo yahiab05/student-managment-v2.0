@@ -152,7 +152,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: "3.12"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -166,7 +166,9 @@ jobs:
         run: uv add pyinstaller 
       
       - name: Build Gestion
-        run: uv run pyinstaller --noconfirm --clean build/Gestion.spec
+        timeout-minutes: 15
+        shell: powershell
+        run: uv run pyinstaller --noconfirm --clean --log-level=DEBUG build/Gestion.spec
 
       - name: Build Migration Wizard
         run: uv run pyinstaller --noconfirm --clean build/Migration.spec
@@ -181,7 +183,7 @@ jobs:
 
           if (!(Test-Path "dist/Migration Wizard.exe")) {
               Write-Error "Migration Wizard.exe was not created"
-              exit 1
+              exit 1  
           }
 
           Write-Host "Both executables were successfully created."
