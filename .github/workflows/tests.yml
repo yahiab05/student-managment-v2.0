@@ -7,21 +7,18 @@ on:
 permissions:
   contents: read
 
-env: &shared-env
-  TEST_IMAGE: dar-coran-test:${{ github.sha }}
-  MYSQL_DATABASE: legacy_db
-  MYSQL_USER: root
-  MYSQL_PASSWORD: root
-  MYSQL_ROOT_PASSWORD: root
-  QT_QPA_PLATFORM: offscreen
-
 jobs:
   build-test-image:
     name: Build test image
     runs-on: ubuntu-latest
       
-    env:
-      <<: *shared-env
+    env: &shared-env
+      TEST_IMAGE: dar-coran-test:${{ github.sha }}
+      MYSQL_DATABASE: legacy_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      QT_QPA_PLATFORM: offscreen
     
     steps:
       - name: Check out repository
