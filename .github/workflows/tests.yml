@@ -7,18 +7,19 @@ on:
 permissions:
   contents: read
 
-env:
-  TEST_IMAGE: dar-coran-test:${{ github.sha }}
-  MYSQL_DATABASE: legacy_db
-  MYSQL_USER: root
-  MYSQL_PASSWORD: root
-  MYSQL_ROOT_PASSWORD: root
-  QT_QPA_PLATFORM: offscreen
-
 jobs:
   build-test-image:
     name: Build test image
     runs-on: ubuntu-latest
+      
+    env:
+      TEST_IMAGE: dar-coran-test:${{ github.sha }}
+      MYSQL_DATABASE: legacy_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      QT_QPA_PLATFORM: offscreen
+    
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -40,6 +41,15 @@ jobs:
     name: Wizard tests
     runs-on: ubuntu-latest
     needs: build-test-image
+
+    env:
+      TEST_IMAGE: dar-coran-test:${{ github.sha }}
+      MYSQL_DATABASE: legacy_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      QT_QPA_PLATFORM: offscreen
+
     services:
       mysql:
         image: mysql:8.0
@@ -164,6 +174,13 @@ jobs:
 
       - name: Install PyInstaller
         run: uv add pyinstaller 
+
+      - name: Diagnose build environment
+        shell: powershell
+        run: |
+          uv run python --version
+          uv run python -c "import sys; print(sys.executable)"
+          uv run python -c "import PyInstaller; print(PyInstaller.__version__)"
       
       - name: Build Gestion
         timeout-minutes: 15
