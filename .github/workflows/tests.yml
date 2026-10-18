@@ -7,18 +7,21 @@ on:
 permissions:
   contents: read
 
+env: &shared-env
+  TEST_IMAGE: dar-coran-test:${{ github.sha }}
+  MYSQL_DATABASE: legacy_db
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: root
+  QT_QPA_PLATFORM: offscreen
+
 jobs:
   build-test-image:
     name: Build test image
     runs-on: ubuntu-latest
       
     env:
-      TEST_IMAGE: dar-coran-test:${{ github.sha }}
-      MYSQL_DATABASE: legacy_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-      QT_QPA_PLATFORM: offscreen
+      <<: *shared-env
     
     steps:
       - name: Check out repository
@@ -43,12 +46,7 @@ jobs:
     needs: build-test-image
 
     env:
-      TEST_IMAGE: dar-coran-test:${{ github.sha }}
-      MYSQL_DATABASE: legacy_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-      QT_QPA_PLATFORM: offscreen
+      <<: *shared-env
 
     services:
       mysql:
@@ -102,6 +100,8 @@ jobs:
     name: App tests
     runs-on: ubuntu-latest
     needs: wizard-tests
+    env:
+      <<: *shared-env
     services:
       mysql:
         image: mysql:8.0
