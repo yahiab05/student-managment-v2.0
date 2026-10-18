@@ -167,10 +167,7 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync
-
-      - name: Install PyInstaller
-        run: uv add pyinstaller 
+        run: uv sync --locked --group build
 
       - name: Diagnose build environment
         shell: powershell
@@ -209,15 +206,6 @@ jobs:
           path: dist/Migration Wizard.exe
           if-no-files-found: error
 
-      - name: Install Inno setup
-        shell: powershell
-        run: |
-          winget install --id JRSoftware.InnoSetup `
-            --exact `
-            --silent `
-            --accept-package-agreements `
-            --accept-source-agreements
-
       - name: Create installer
         shell: powershell
         run: |       
@@ -226,12 +214,15 @@ jobs:
 
       - name: Read Version
         id: version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: powershell
         run: |
           $version = (Get-Content VERSION).Trim()
-          "version=$version" | Out-File -FilePath $GITHUB_ENV -Encoding utf8
+          "version=$version" | Out-File -FilePath $GITHUB_OUTPUT -Encoding utf8
     
       - name: create release
         uses: softprops/action-gh-release@v2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with: 
           tag_name: v${{ steps.version.outputs.version }}
           name: Dar Coran v${{ steps.version.outputs.version }}
