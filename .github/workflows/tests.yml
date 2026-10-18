@@ -179,8 +179,10 @@ jobs:
       - name: Build Gestion
         timeout-minutes: 15
         shell: powershell
-        run: uv run pyinstaller --noconfirm --clean --log-level=DEBUG build/Gestion.spec
-
+        run: |
+          uv run --no-sync python -c "import faulthandler, PyInstaller.__main__ as m;
+          faulthandler.dump_traceback_later(480, exit=True);
+          m.run(['--noconfirm','--clean','--log-level=DEBUG','build/Gestion.spec'])"
       - name: Build Migration Wizard
         run: uv run pyinstaller --noconfirm --clean build/Migration.spec
 
