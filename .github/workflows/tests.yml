@@ -165,6 +165,10 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --locked --group build
+
+      - name: Check Pysimple gui instalation
+        shell: powershell
+        run: uv run python -c "import PySimpleGUI; print('PySimpleGUI is installed')"
         
       - name: Build Gestion
         timeout-minutes: 15
