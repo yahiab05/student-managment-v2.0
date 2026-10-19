@@ -170,10 +170,14 @@ jobs:
         timeout-minutes: 15
         shell: powershell
         run: uv run pyinstaller --noconfirm --clean build/Gestion.spec
+        env:
+          PYTHONUNBUFFERED: 1
 
       - name: Build Migration Wizard
         shell: powershell
         run: uv run pyinstaller --noconfirm --clean build/Migration.spec
+        env:
+          PYTHONUNBUFFERED: 1
 
       - name: Verify executables
         shell: powershell
