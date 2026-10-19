@@ -168,7 +168,7 @@ jobs:
 
       - name: Check Pysimple gui instalation
         shell: powershell
-        run: uv run python -c "import PySimpleGUI; print('PySimpleGUI is installed')"
+        run: uv run python -c "import PySimpleGUI; print('PySimpleGUI is installed well')"
         
       - name: Build Gestion
         timeout-minutes: 15
