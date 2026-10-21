@@ -169,7 +169,7 @@ jobs:
       - name: Build Gestion
         timeout-minutes: 15
         shell: powershell
-        run: uv run pyinstaller --noconfirm --clean build/Gestion.spec
+        run: uv run python -m PyInstaller --noconfirm --clean build/Gestion.spec
         env:
           PYTHONUNBUFFERED: 1
 
