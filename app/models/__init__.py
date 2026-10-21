@@ -1,7 +1,5 @@
 from typing import Literal, overload
 
-from app.repo.database import SessionLocal
-
 from app.models.admin import Roles, Users, Login
 from app.models.classes import Classes, Enrollment
 from app.models.finance import Expense, Income, Balance, Transfer, Payment

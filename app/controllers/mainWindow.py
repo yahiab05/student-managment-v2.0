@@ -1,14 +1,14 @@
 import gc
-from os import environ, getenv
+from os import environ
 from pathlib import Path
 from subprocess import PIPE, run
 from datetime import datetime
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QStackedWidget, QWidget
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 from app.ui.ui_forms import MainUI
 from app.controllers.controller_factory import ControllerFactory, ControllerSection
 from app.models import get_model, ModelName
 from app.utils import load_gui, UiPath, get_combo_manager, get_username
-from app.repo import configs
+from app.repo import get_configs
 
 class mainWindow(QMainWindow, MainUI):
     def __init__(self, parent=None):
@@ -52,6 +52,7 @@ class mainWindow(QMainWindow, MainUI):
                                                     '',
                                                     QFileDialog.Option.ShowDirsOnly)
         
+        configs = get_configs()
         database = configs.name
         password = configs.password
         host = configs.host
