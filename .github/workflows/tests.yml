@@ -169,7 +169,8 @@ jobs:
       - name: Build Gestion
         timeout-minutes: 15
         shell: powershell
-        run: uv run python -m PyInstaller --noconfirm --clean build/Gestion.spec
+        run: |
+          uv run python -X faulthandler -c "import faulthandler, sys; faulthandler.dump_traceback_later(180, exit=True); from PyInstaller.__main__ import run; run(['--noconfirm','--clean','--log-level','DEBUG','build/Gestion.spec'])"
         env:
           PYTHONUNBUFFERED: 1
 
