@@ -1,17 +1,44 @@
 # build/Gestion.spec
+# -*- mode: python ; coding: utf-8 -*-
 
 from pathlib import Path
+from PyInstaller.utils.hooks import collect_submodules
 
 ROOT = Path(SPECPATH).resolve().parent
 
-# -*- mode: python ; coding: utf-8 -*-
+APP = ROOT / 'app'
+
+EXCLUDED_DIRS = {'tests', '__pycache__'}
+EXCLUDED_SUFFIXES = {'.pyc', '.pyo'}
+
+hiddenimports = (
+    ['pymysql']
+    + collect_submodules('sqlalchemy.dialects.mysql')
+    + collect_submodules('app', filter=lambda n: 'tests' not in n.split('.'))
+)
+
+def collect_app_files():
+    datas = []
+    for path in APP.rglob('*'):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(APP)
+        # skip any file that lives under an excluded directory
+        if any(part in EXCLUDED_DIRS for part in rel.parts[:-1]):
+            continue
+        if path.suffix in EXCLUDED_SUFFIXES:
+            continue
+        datas.append((str(path), str(Path('app') / rel.parent)))
+    return datas
+
 a = Analysis(
     ['../main.py'],
     pathex=[],
     binaries=[],
-    datas=[('../app/', 'app/')],  # Add relative paths for assets
+    datas=collect_app_files(),  # Add relative paths for assets
     hookspath=[],
     hooksconfig={},
+    hiddenimports=hiddenimports,
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
