@@ -166,6 +166,29 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen --group build
 
+      - name: Trace PyInstaller package imports
+        shell: powershell
+        run: |
+          $file = ".venv\Lib\site-packages\PyInstaller\building\build_main.py"
+
+          if (!(Test-Path $file)) {
+              throw "PyInstaller build_main.py not found"
+          }
+
+          $source = Get-Content $file -Raw
+          $target = "__import__(package)"
+
+          if (!$source.Contains($target)) {
+              throw "Could not find the expected import statement"
+          }
+
+          $replacement = 'print("PYI_IMPORTING_PACKAGE:", package, flush=True); __import__(package)'
+          $source = $source.Replace($target, $replacement)
+
+          Set-Content -Path $file -Value $source -Encoding utf8
+
+          Write-Host "Enabled temporary package-import tracing." 
+
       - name: Build Gestion
         timeout-minutes: 15
         shell: powershell
