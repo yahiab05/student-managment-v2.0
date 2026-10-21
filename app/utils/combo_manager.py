@@ -4,7 +4,7 @@ from builtins import KeyError
 from PyQt6.QtWidgets import QComboBox
 from .combo_names import ComboName, ComboSource
 
-from app.repo.database import SessionLocal
+from app.repo import SessionLocal
 
 
 class ComboManager:
