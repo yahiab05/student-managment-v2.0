@@ -33,7 +33,7 @@ class DBConfig:
         self.password = db["password"]
         
 Base = declarative_base()
-
+attempts = 0
 while True:
     try:
         configs = DBConfig()
@@ -51,7 +51,11 @@ while True:
     except Exception as e:
         import time
         time.sleep(2)
-
+        attempts += 1
+        if attempts == 5:
+            raise RuntimeError(
+                "Failed to connect to the database after 5 attempts."
+            ) from e
 SessionLocal = sessionmaker(autocommit=False, autoflush=True, bind=engine)
 
 def create_db():
