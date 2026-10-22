@@ -1,0 +1,29 @@
+[project]
+name = "dar-coran"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "yahiab05", email = "yahiaboukharrata092@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "pymysql>=1.2.0",
+    "pyqt6>=6.11.0",
+    "sqlalchemy>=2.0.51",
+    "xlsxwriter>=3.2.9",
+    "zeroconf>=0.151.5",
+]
+
+[dependency-groups]
+test = [
+    "pytest>=9.1.1",
+]
+
+build = [
+    "pyinstaller==6.11.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*", "mysql_wizard*"]

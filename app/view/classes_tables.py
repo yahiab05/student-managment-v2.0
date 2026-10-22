@@ -1,11 +1,11 @@
-from .base_table import BaseTable
+from app.view.base_table import BaseTable
 from PyQt6.QtCore import Qt
 
 class ClassesTableModel(BaseTable):
     def __init__(self):
         super().__init__()
         
-        self.headers = ["ID", "الاسم", "طريقة التدريس", "المعلم", "ملاحظة", "المبلغ", "مقابل", "عدد الحصص", "حصّة المعلم", "المستخدم"]
+        self.headers = ["ID", "الاسم", "طريقة التدريس", "المعلم", "ملاحظة", "المبلغ", "المستخدم"]
 
     def data(self, index, role):
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
@@ -26,12 +26,6 @@ class ClassesTableModel(BaseTable):
             return class_obj.note
         elif column == 5:
             return class_obj.price
-        elif column == 6:
-            return class_obj.exchange
-        elif column == 7:
-            return class_obj.seance
-        elif column == 8:
-            return class_obj.teacher_part
         elif column == 9:
             return class_obj.user
         return None
@@ -50,19 +44,21 @@ class ClasseleveTableModel(BaseTable):
         column = index.column()
 
         if column == 0:
-            return class_obj[0]
+            return class_obj.id
         elif column == 1:
-            return class_obj[1]
+            return class_obj.students.name
         elif column == 2:
-            return class_obj[2]
+            return class_obj.student_id
         elif column == 3:
-            return class_obj[3]
+            return class_obj.class_name
         elif column == 4:
-            return class_obj[4].strftime("%Y-%m-%d") if class_obj[4] else ""
+            item = class_obj.students.date_inscrit
+            return item.strftime("%Y-%m-%d") if item else ""
         elif column == 5:
-            return class_obj[5].strftime("%Y-%m-%d") if class_obj[5] else ""
+            item = class_obj.students.birthday
+            return item.strftime("%Y-%m-%d") if item else ""
         elif column == 6:
-            return class_obj[6]
+            return class_obj.students.num_tel
         elif column == 7:
-            return class_obj[7]
+            return class_obj.user
         return None
