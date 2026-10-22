@@ -213,10 +213,15 @@ jobs:
         shell: powershell
         run: |
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=${{ steps.version.outputs.version }}" "installer\DarCoran.iss"
-          
+
       - name: create release
         uses: softprops/action-gh-release@v2
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: |
+          (github.event_name == 'push' &&
+          github.ref == 'refs/heads/main' ) ||
+          (github.event_name == 'pull_request' &&
+          (github.base_ref == 'main' ||
+            github.base_ref == 'development') )
         with: 
           tag_name: v${{ steps.version.outputs.version }}
           name: Dar Coran v${{ steps.version.outputs.version }}
