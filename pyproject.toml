@@ -21,5 +21,9 @@ test = [
     "pytest>=9.1.1",
 ]
 
+build = [
+    "pyinstaller==6.11.1",
+]
+
 [tool.setuptools.packages.find]
 include = ["app*", "mysql_wizard*"]

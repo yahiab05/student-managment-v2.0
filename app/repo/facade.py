@@ -1,7 +1,7 @@
 from sqlalchemy import func, union_all, literal
 from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import NoSuchColumnError
-from app.repo.database import SessionLocal
+from app.repo.database import get_session
 
 from contextlib import contextmanager
 class DBFacade:
@@ -9,7 +9,7 @@ class DBFacade:
         self.table = table
         
     def get_all(self):
-        with SessionLocal() as session:
+        with get_session() as session:
             return session.query(self.table).all()
     
     def get_by_id(self, id, multiple=False, _session=None):
@@ -17,7 +17,7 @@ class DBFacade:
             if multiple:
                 return _session.query(self.table).filter(self.table.id == id).all()
             return _session.query(self.table).filter(self.table.id == id).first()
-        with SessionLocal() as session:
+        with get_session() as session:
             if multiple:
                 return session.query(self.table).filter(self.table.id == id).all()
             return session.query(self.table).filter(self.table.id == id).first()
@@ -28,7 +28,7 @@ class DBFacade:
             _session.add(obj)
             return obj
         obj = self.table(**data)
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 session.add(obj)
                 session.commit()
@@ -39,7 +39,7 @@ class DBFacade:
     
     def bulk_add(self, data_list):
         data = [self.table(**data) for data in data_list]
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 session.bulk_save_objects(data)
                 session.commit()
@@ -51,12 +51,12 @@ class DBFacade:
         if _session is not None:
             last_id = _session.query(func.max(self.table.id)).scalar()
             return last_id if last_id is not None else 0
-        with SessionLocal() as session:    
+        with get_session() as session:    
             last_id = session.query(func.max(self.table.id)).scalar()
             return last_id if last_id is not None else 0
 
     def update(self, id, data):
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 obj = session.query(self.table).filter(self.table.id == id).first()
                 if not obj:
@@ -71,7 +71,7 @@ class DBFacade:
         return obj
     
     def delete(self, id):
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 obj = session.query(self.table).filter(self.table.id == id).first()
                 if not obj:
@@ -83,7 +83,7 @@ class DBFacade:
                 raise e
         
     def update_by_filter(self, filters: list, data: dict):
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 obj = session.query(self.table).filter(*filters).first()
                 if not obj:
@@ -98,7 +98,7 @@ class DBFacade:
         return obj
     
     def delete_by_filter(self, filters: list):
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 obj = session.query(self.table).filter(*filters).first()
                 if not obj:
@@ -110,12 +110,12 @@ class DBFacade:
                 raise e
                 
     def get_by_filter(self, filters:list):
-        with SessionLocal() as session:
+        with get_session() as session:
             data = session.query(self.table).filter(*filters).all()
         return data
     
     def exists(self, filters):
-        with SessionLocal() as session:
+        with get_session() as session:
             return session.query(self.table).filter(*filters).first() is not None
     
     def get_with_joined_load(self, relationship_name: str, filters: list = None):
@@ -128,7 +128,7 @@ class DBFacade:
             repo.get_with_joined_load("student", [StudentsHistory.num_inscrit == 5])
         """
         filters = filters or []
-        with SessionLocal() as session:
+        with get_session() as session:
             return session.query(self.table).options(
                 joinedload(getattr(self.table, relationship_name))
             ).filter(*filters).all()
@@ -137,7 +137,7 @@ class DBFacade:
         """Calculate the total price of records matching the provided filters."""
         try:
             filters = filters or []
-            with SessionLocal() as session:
+            with get_session() as session:
                 total = session.query(self.table).filter(*filters).with_entities(
                     func.sum(self.table.price)
                 ).scalar()
@@ -146,7 +146,7 @@ class DBFacade:
             return 0
         
     def update_price(self, id, new_price):
-        with SessionLocal() as session: 
+        with get_session() as session: 
             obj = session.query(self.table).filter(self.table.id == id).first()
             try:
                 if not obj:
@@ -165,7 +165,7 @@ class DBFacade:
     @contextmanager
     def transaction(self):
         """Context manager for handling transactions."""
-        with SessionLocal() as session:
+        with get_session() as session:
             try:
                 yield session
                 session.commit()
@@ -201,7 +201,7 @@ class BalanceFacade():
         return income_filters, expense_filters
     
     def get_balance(self, income_filters= [], expense_filters= []):
-        with SessionLocal() as session:
+        with get_session() as session:
             income = session.query(
                 Entery.name.label("name"),
                 Entery.price.label("income"),

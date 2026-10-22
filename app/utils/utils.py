@@ -48,9 +48,9 @@ def set_header_resize_mode(table_view, model):
         
     
 def get_student_list(search_text: str) -> list:
-    from app.repo import SessionLocal, Students
+    from app.repo import get_session, Students
 
-    session = SessionLocal()
+    session = get_session()
 
     try:
         pattern = f"%{search_text}%"

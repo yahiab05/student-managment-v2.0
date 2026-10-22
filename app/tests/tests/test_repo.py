@@ -98,7 +98,7 @@ def test_db_facade_crud_and_queries(facade):
     repo, table = facade
     obj = MagicMock(id=1, price=10)
     session = FakeSession(result=[obj])
-    with patch("app.repo.facade.SessionLocal", return_value=session):
+    with patch("app.repo.facade.get_session", return_value=session):
         data = {"name": "Salary", "price": 10}
         assert repo.add(data).name == "Salary"
         multiple_data = [{"name": "Salary", "price": 10}, {"name": "Bonus", "price": 20}]
@@ -120,7 +120,7 @@ def test_db_facade_crud_and_queries(facade):
 def test_db_facade_error_paths_and_transaction(facade):
     repo, _ = facade
     session = FakeSession(result=None)
-    with patch("app.repo.facade.SessionLocal", return_value=session):
+    with patch("app.repo.facade.get_session", return_value=session):
         with pytest.raises(ModuleNotFoundError):
             repo.update(1, {})
         with pytest.raises(ModuleNotFoundError):
@@ -131,7 +131,7 @@ def test_db_facade_error_paths_and_transaction(facade):
             repo.delete_by_filter([])
 
     failing = FakeSession(fail=True)
-    with patch("app.repo.facade.SessionLocal", return_value=failing):
+    with patch("app.repo.facade.get_session", return_value=failing):
         with pytest.raises(RuntimeError):
             repo.add({})
         with pytest.raises(RuntimeError):

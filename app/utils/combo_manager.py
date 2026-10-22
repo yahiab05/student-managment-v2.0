@@ -4,7 +4,7 @@ from builtins import KeyError
 from PyQt6.QtWidgets import QComboBox
 from .combo_names import ComboName, ComboSource
 
-from app.repo.database import SessionLocal
+from app.repo import get_session
 
 
 class ComboManager:
@@ -22,7 +22,7 @@ class ComboManager:
         except KeyError as error:
             raise KeyError(f"Unknown cached data name: {data_name}") from error
 
-        with SessionLocal() as session:
+        with get_session() as session:
             rows = session.query(model).with_entities(getattr(model, column_name)).all()
         self.cached[data_name] = [row[0] for row in rows if row[0] is not None]
         return self.cached[data_name]
