@@ -1,10 +1,11 @@
 #define MyAppName "Dar Coran"
-#define MyAppVersion GetEnv("version")
+#define VersionHandler FileOpen(../VERSION)
+#define MyAppVersion FileRead(VersionHandler)
 #define MyAppPublisher "Dar Coran"
 #define MyAppExeName "Gestion.exe"
 
 [Setup]
-AppId={{YOUR-GUID-HERE}}
+AppId={{053dbfa0-767d-4e58-a27a-77c8b2665426}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}

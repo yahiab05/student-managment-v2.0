@@ -166,36 +166,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen --group build
 
-      - name: Trace PyInstaller package imports
-        shell: powershell
-        run: |
-          $file = ".venv\Lib\site-packages\PyInstaller\building\build_main.py"
-
-          if (!(Test-Path $file)) {
-              throw "PyInstaller build_main.py not found"
-          }
-
-          $source = Get-Content $file -Raw
-          $target = "__import__(package)"
-
-          if (!$source.Contains($target)) {
-              throw "Could not find the expected import statement"
-          }
-
-          $replacement = 'print("PYI_IMPORTING_PACKAGE:", package, flush=True); __import__(package)'
-          $source = $source.Replace($target, $replacement)
-
-          Set-Content -Path $file -Value $source -Encoding utf8
-
-          Write-Host "Enabled temporary package-import tracing." 
-
       - name: Build Gestion
         timeout-minutes: 15
         shell: powershell
         run: |
-          uv run python -X faulthandler -c "import faulthandler, sys; faulthandler.dump_traceback_later(180, exit=True); from PyInstaller.__main__ import run; run(['--noconfirm','--clean','--log-level','DEBUG','build/Gestion.spec'])"
-          uv run python -X faulthandler -c "import app.utils; print('app.utils imported successfully')"
-
+          uv run pyinstaller --noconfirm --clean build/Gestion.spec
         env:
           PYTHONUNBUFFERED: 1
 
