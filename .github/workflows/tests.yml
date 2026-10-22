@@ -217,11 +217,8 @@ jobs:
       - name: create release
         uses: softprops/action-gh-release@v2
         if: |
-          (github.event_name == 'push' &&
-          github.ref == 'refs/heads/main' ) ||
-          (github.event_name == 'pull_request' &&
-          (github.base_ref == 'main' ||
-            github.base_ref == 'development') )
+          github.event_name == 'pull_request' && 
+          github.base_ref == 'main' 
         with: 
           tag_name: v${{ steps.version.outputs.version }}
           name: Dar Coran v${{ steps.version.outputs.version }}
