@@ -1,11 +1,13 @@
 #define MyAppName "Dar Coran"
-#define VersionHandler FileOpen(../VERSION)
-#define MyAppVersion FileRead(VersionHandler)
-#define MyAppPublisher "Dar Coran"
+#ifndef MyAppVersion
+  #error "MyAppVersion is not defined. Compile with /DMyAppVersion=x.y.z"
+#endif
+#define MyAppPublisher "Yahia Boukharrata"
 #define MyAppExeName "Gestion.exe"
+#define AppGUID "053dbfa0-767d-4e58-a27a-77c8b2665426"
 
 [Setup]
-AppId={{053dbfa0-767d-4e58-a27a-77c8b2665426}}
+AppId={#AppGUID}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -17,6 +19,7 @@ OutputDir=installer_output
 OutputBaseFilename=DarCoran-Setup
 
 SetupIconFile=..\icon.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
 
 Compression=lzma
 SolidCompression=yes
