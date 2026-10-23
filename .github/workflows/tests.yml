@@ -212,12 +212,27 @@ jobs:
       - name: Create installer
         shell: powershell
         run: |
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=${{ steps.version.outputs.version }}" "installer\DarCoran.iss"
+          $outputDir = "installer_output"
+          New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            "/DMyAppVersion=${{ steps.version.outputs.version }}" `
+            "/O$outputDir" `
+            "/FDarCoran-Setup" `
+            "installer\DarCoran.iss"
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed."
+          }
+
+          if (!(Test-Path "$outputDir/DarCoran-Setup.exe")) {
+            throw "Installer was not created at the expected path."
+          }
 
       - name: create release
         uses: softprops/action-gh-release@v2
         if: |
-          github.event_name == 'pull_request' && 
+          github.event_name == 'push' && 
           github.base_ref == 'main' 
         with: 
           tag_name: v${{ steps.version.outputs.version }}
