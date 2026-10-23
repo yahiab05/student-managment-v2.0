@@ -15,7 +15,7 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\Dar Coran
 DefaultGroupName=Dar Coran
 
-OutputDir=installer_output
+OutputDir=..\installer_output
 OutputBaseFilename=DarCoran-Setup
 
 SetupIconFile=..\icon.ico
