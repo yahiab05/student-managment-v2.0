@@ -240,7 +240,7 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true and github.event.pull_request.base.ref == 'main'
     steps:
       - uses: actions/download-artifact@v4
         with:
