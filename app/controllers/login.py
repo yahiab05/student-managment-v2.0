@@ -13,10 +13,6 @@ class Login(QWidget, LoginUI):
         create_db()  # Ensure the database is created before proceeding
         super().__init__()
         load_gui(UiPath.LOGIN, "login.ui", self)
-        
-        # for development purposes, pre-fill the username and password fields
-        self.username.setText("yahia")
-        self.password.setText("123")
 
         self.manager = get_model(ModelName.LOGIN)
         self.access_manager = get_model(ModelName.ACCESS)
