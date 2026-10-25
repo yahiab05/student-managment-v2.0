@@ -7,8 +7,10 @@ ROOT = Path(SPECPATH).resolve().parent
 
 
 # Python modules that may be imported dynamically
-hiddenimports = collect_submodules("mysql_wizard")
-
+hiddenimports = (
+    collect_submodules("mysql_wizard")
+    + collect_submodules("zeroconf")
+)
 
 a = Analysis(
     [str(ROOT / "wizard.py")],

@@ -15,6 +15,7 @@ hiddenimports = (
     ['pymysql']
     + collect_submodules('sqlalchemy.dialects.mysql')
     + collect_submodules('app', filter=lambda n: 'tests' not in n.split('.'))
+    + collect_submodules('zeroconf')
 )
 
 def collect_app_files():
