@@ -6,7 +6,7 @@ from app.controllers.finance.balance import BalanceLogic
 from app.controllers.finance.transfer import TransferLogic
 
 from app.ui.ui_forms import MoneyUI
-from app.utils import load_gui, UiPath
+from app.utils import load_gui, UiPath, buttons
 
 class MoneyPart(QWidget, MoneyUI):
     def __init__(self, parent=None):
@@ -23,11 +23,10 @@ class MoneyPart(QWidget, MoneyUI):
         self.stackedWidget.addWidget(self.o)
         self.stackedWidget.addWidget(self.s)
         self.stackedWidget.addWidget(self.t)
-
+        
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.add_money)
-
-
+        buttons(self, self.add_money, self.out_money, self.solde, self.transfer)
+        
         self.setup()
 
     def setup(self):
@@ -40,30 +39,22 @@ class MoneyPart(QWidget, MoneyUI):
         self.stackedWidget.setCurrentIndex(0)
         self.e.setup_table()
         self.e.populate_combo()
-        self.buttons(self.add_money)
+        buttons(self, self.add_money, self.out_money, self.solde, self.transfer)
 
     def expenses(self):
         self.stackedWidget.setCurrentIndex(1)
         self.o.setup_table()
         self.o.populate_combo()
-        self.buttons(self.out_money)
+        buttons(self, self.out_money, self.add_money, self.solde, self.transfer)
 
     def balance(self):
         self.stackedWidget.setCurrentIndex(2)
         self.s.setup_table()
         self.s.populate_combo()  
-        self.buttons(self.solde)    
+        buttons(self, self.solde, self.add_money, self.out_money, self.transfer)    
 
     def go_to_transfer(self):
         self.stackedWidget.setCurrentIndex(3)
         self.t.setup_table()
-        self.buttons(self.transfer)   
-
-    def buttons(self, button:QPushButton):
-        self.add_money.setStyleSheet("color: white")
-        self.out_money.setStyleSheet("color: white")
-        self.solde.setStyleSheet("color: white")
-        self.transfer.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: green")
+        buttons(self, self.transfer, self.add_money, self.out_money, self.solde)   
 

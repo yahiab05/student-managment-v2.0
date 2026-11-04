@@ -5,7 +5,7 @@ from .settings import (SettingsUI, WaySettings, IncomeSettings,
 from PyQt6.QtWidgets import QWidget, QPushButton
 
 from app.ui.ui_forms import UserPartUI
-from app.utils import load_gui, UiPath
+from app.utils import load_gui, UiPath, buttons
 
 class UserPart(QWidget, UserPartUI):
     def __init__(self, parent=None):
@@ -20,7 +20,7 @@ class UserPart(QWidget, UserPartUI):
         self.stackedWidget.addWidget(self.r)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.user)
+        buttons(self, self.user, self.add_role)
 
         self.setup()
 
@@ -31,17 +31,11 @@ class UserPart(QWidget, UserPartUI):
     def go_to_users(self):
         self.stackedWidget.setCurrentIndex(0)
         self.u.populate_combo()
-        self.buttons(self.user)
+        buttons(self, self.user, self.add_role)
 
     def go_to_roles(self):
         self.stackedWidget.setCurrentIndex(1)
-        self.buttons(self.add_role)
-
-    def buttons(self, button:QPushButton):
-        self.user.setStyleSheet("color: white")
-        self.add_role.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: green")
+        buttons(self, self.add_role, self.user)
 
 class SettingsLogic(QWidget, SettingsUI):
     def __init__(self, parent=None):
