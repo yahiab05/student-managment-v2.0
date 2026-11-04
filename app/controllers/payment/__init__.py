@@ -1,10 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QPushButton
+from PyQt6.QtWidgets import QWidget
 
 from app.controllers.payment.payments import ViewPayment
 from app.controllers.payment.not_payed_view import ViewNotPayedLogic
 
 from app.ui.ui_forms import PaymentPartUI
-from app.utils import load_gui, UiPath
+from app.utils import load_gui, UiPath, buttons
 
 class PaymentPart(QWidget, PaymentPartUI):
     def __init__(self, parent=None):
@@ -18,7 +18,7 @@ class PaymentPart(QWidget, PaymentPartUI):
         self.stackedWidget.addWidget(self.vnp)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.view_payment)
+        buttons(self, self.view_payment, self.view_not_payed)
 
         self.setup()
 
@@ -31,15 +31,9 @@ class PaymentPart(QWidget, PaymentPartUI):
         self.vp.populate_combos()
         self.vp.setup_table()
         self.vp.show_students_list()
-        self.buttons(self.view_payment)
+        buttons(self, self.view_payment, self.view_not_payed)
 
     def go_to_view_not_payed(self):
         self.stackedWidget.setCurrentIndex(1)
         self.vnp.populate_classes()
-        self.buttons(self.view_not_payed)
-
-    def buttons(self, button:QPushButton):
-        self.view_payment.setStyleSheet("color: white")
-        self.view_not_payed.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: green")
+        buttons(self, self.view_not_payed, self.view_payment)

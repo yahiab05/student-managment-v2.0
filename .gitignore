@@ -3,3 +3,4 @@
 __pycache__/
 *.pyc
 app/repo/__pycache__/
+app/repo/schemas/__pycache__/

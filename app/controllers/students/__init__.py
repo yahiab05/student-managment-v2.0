@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QWidget, QPushButton
+from PyQt6.QtWidgets import QWidget
 
 from app.ui.ui_forms import StudentPartUI
 from .students import StudentsLogic, StudentsHistoryLogic, ClassesPerStudentLogic
-from app.utils import load_gui, UiPath
+from app.utils import load_gui, UiPath, buttons
 
 class StudentsPart(QWidget, StudentPartUI):
     def __init__(self, parent=None):
@@ -18,7 +18,7 @@ class StudentsPart(QWidget, StudentPartUI):
         self.stackedWidget.addWidget(self.cps)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.students)
+        buttons(self, self.students, self.students_history, self.classes_per_student)
 
         self.setup()
 
@@ -29,21 +29,14 @@ class StudentsPart(QWidget, StudentPartUI):
 
     def go_to_students(self):
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.students)
+        buttons(self, self.students, self.students_history, self.classes_per_student)
 
     def go_to_history(self):
         self.stackedWidget.setCurrentIndex(1)
         self.sh.setup_table()
-        self.buttons(self.students_history)
+        buttons(self, self.students_history, self.students, self.classes_per_student)
 
     def go_to_classes_per_student(self):
         self.stackedWidget.setCurrentIndex(2)
         self.cps.setup_table()
-        self.buttons(self.classes_per_student)
-
-    def buttons(self, button:QPushButton):
-        self.students.setStyleSheet("color: white")
-        self.students_history.setStyleSheet("color: white")
-        self.classes_per_student.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: green")
+        buttons(self, self.classes_per_student, self.students, self.students_history)
