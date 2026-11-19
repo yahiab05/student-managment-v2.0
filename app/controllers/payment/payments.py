@@ -169,7 +169,7 @@ class ViewPayment(QWidget, V):
         
     def export(self, output_channel: ReportType):
         data = self.model.get_current_data()
-        total = self.manager.get_total()
+        total = self.total.text()
         self.manager.set_dynamic_metadata(
             data_to_export=data,
             total_price=total

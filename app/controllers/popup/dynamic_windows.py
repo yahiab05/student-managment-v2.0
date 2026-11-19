@@ -31,15 +31,6 @@ class StudentForm(QWidget, StudentFormUI):
         super().__init__(parent)
         load_gui(UiPath.FORMS, "student_form.ui", self)
         
-        self.dev_populate_fields()
-        
-    def dev_populate_fields(self) -> None:
-        self.name.setText("محمد")
-        self.parent_ent.setText("أحمد")
-        self.num_tel.setText("12345678")
-        self.date_inscrit.setDate(QDate(2023, 1, 1))
-        self.birthday.setDate(QDate(2000, 1, 1))
-        
     def get_data(self):
         return {
             "name": self.name.text(),
@@ -434,6 +425,7 @@ class PaymentForm(QWidget, AddPaymentUI):
         self.cheq_num.setText("")
         self.date.setDate(QDate.currentDate())
         self.identifier = 0
+        self.bill_number.setText("")
 
     def set_price(self, classroom):
         if classroom != "":
