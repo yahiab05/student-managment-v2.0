@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QHeaderView, QMessageBox
+from PyQt6.QtWidgets import QHeaderView, QMessageBox, QPushButton, QWidget
 from PyQt6.uic import loadUi
 from os import path
+from PyQt6.QtGui import QPalette    
 
 from PyQt6.QtCore import QSettings
 
@@ -104,3 +105,13 @@ def load_gui(prefix: UiPath="", ui_file: str="", widget=None) -> None:
 def traceback_to_string(exc: Exception) -> str:
     import traceback
     return ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+
+def buttons(self: QWidget, active_button: QPushButton, *all_buttons: QPushButton) -> None:
+    default_color = self.palette().color(
+        QPalette.ColorRole.WindowText
+    ).name()
+
+    for button in all_buttons:
+        button.setStyleSheet(f"color: {default_color}")
+
+    active_button.setStyleSheet("color: green")

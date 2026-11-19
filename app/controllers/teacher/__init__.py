@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QWidget, QPushButton
+from PyQt6.QtWidgets import QWidget
 
 from app.controllers.teacher.teachers import TeacherLogic, TeachersHistoryLogic
 from app.ui.ui_forms import TeacherPartUI
-from app.utils import load_gui, UiPath
+from app.utils import load_gui, UiPath, buttons
 
 class TeachersPart(QWidget, TeacherPartUI):
     def __init__(self, parent=None):
@@ -17,7 +17,7 @@ class TeachersPart(QWidget, TeacherPartUI):
         self.stackedWidget.addWidget(self.th)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.teacher)
+        buttons(self, self.teacher, self.teacher_history)
 
         self.setup()
 
@@ -27,15 +27,9 @@ class TeachersPart(QWidget, TeacherPartUI):
 
     def go_to_teachers(self):
         self.stackedWidget.setCurrentIndex(0)
-        self.buttons(self.teacher)
+        buttons(self, self.teacher, self.teacher_history)
 
     def go_to_history(self):
         self.stackedWidget.setCurrentIndex(1)
         self.th.setup_table()
-        self.buttons(self.teacher_history)
-
-    def buttons(self, button:QPushButton): 
-        self.teacher.setStyleSheet("color: white")
-        self.teacher_history.setStyleSheet("color: white")
-
-        button.setStyleSheet("color: green")
+        buttons(self, self.teacher_history, self.teacher)

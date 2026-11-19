@@ -1,6 +1,5 @@
-from os import error, path
-from PyQt6.QtWidgets import QApplication, QWidget
-from PyQt6.uic import loadUi
+from os import error
+from PyQt6.QtWidgets import QWidget
 from app.repo import create_db
 from app.models import ModelName, get_model
 

@@ -65,7 +65,7 @@ def _build_engine(max_attempts: int = 5, delay: float = 2.0) -> Engine:
 
             return engine
         except Exception as e:
-            last_error = e
+            print(f"Database connection attempt failed: {e}. Retrying in {delay} seconds...")
             time.sleep(delay)
 
     raise RuntimeError(
