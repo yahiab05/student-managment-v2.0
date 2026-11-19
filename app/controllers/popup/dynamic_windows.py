@@ -3,7 +3,10 @@ from PyQt6.QtCore import QDate
 from typing import Protocol
 
 from app.repo.schemas import SchemaFactory, EntrySchema
-from app.utils import traceback_to_string, get_combo_manager, ComboName, get_student_list, get_username, error, info, load_gui, UiPath
+from app.utils import (traceback_to_string, get_combo_manager, 
+            ComboName, get_student_list, get_username, 
+            error, info, load_gui, UiPath, ReportType
+            )
 from app.view import create_table_model, TableType
 from app.models import get_model, ModelName
 
@@ -398,14 +401,30 @@ class PaymentForm(QWidget, AddPaymentUI):
 
     def confirm_bill(self):
         try:
+            self.print_bill()
             self.manager.bulk_create(self.momentane)
         except Exception as e:
-            traceback_to_string(e)
+            print(traceback_to_string(e))
         finally:
             self.momentane = []
             self.reset()
             self.show_bill()
-
+            
+    def print_bill(self):
+        data = self.momentane
+        total = self.calculate_total()
+        self.manager.set_dynamic_metadata(
+            data_to_export=data,
+            total_price=total
+        )
+        
+        self.manager.export_data(
+            report_type=ReportType.PRINT, 
+            parent=self
+        )
+        
+    def calculate_total(self) -> float:
+        return sum(float(entry.price) for entry in self.momentane)
 
     def populate_combo(self):
         self.combo_manager.update_combo(self.way, ComboName.WAY_PAYMENT)
