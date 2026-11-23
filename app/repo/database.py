@@ -8,8 +8,6 @@ from sqlalchemy import create_engine, URL
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
-from app.config import set_host_and_port
-
 Base = declarative_base()
 
 # Lazily initialised globals (nothing runs at import time)
