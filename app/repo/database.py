@@ -26,7 +26,7 @@ def _build_engine(max_attempts: int = 5, delay: float = 2.0) -> Engine:
                 _configs = configurer.get_configuration()
                 print(f"Database configuration loaded from {configurer.path}.")
             else:
-                configurer.create_config_file(host="127.0.0.1", password="StrongPassword123!")
+                configurer.create_config_file(host="10.173.215.13", password="StrongPassword123!")
                 _configs = configurer.get_configuration()
                 print(f"Database configuration created and loaded from {configurer.path}.")
                 

@@ -56,14 +56,14 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="password">
+       <widget class="QLabel" name="pa">
         <property name="text">
          <string>Mot de pass:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="ip_3"/>
+       <widget class="QLineEdit" name="password"/>
       </item>
      </layout>
     </widget>
