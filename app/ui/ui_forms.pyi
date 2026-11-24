@@ -502,3 +502,9 @@ class PrintingUI:
     printing_plain: QTextEdit
     cancel: QPushButton
     printing: QPushButton
+    
+class DBConfigUI:
+    ip: QLineEdit
+    password: QLineEdit
+    test_btn: QPushButton
+    confirm_btn: QPushButton
