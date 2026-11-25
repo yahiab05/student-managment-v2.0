@@ -27,4 +27,4 @@ build = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["app*", "mysql_wizard*"]
+include = ["app*"]
