@@ -135,3 +135,6 @@ class TeacherPartUI:
 
 class PrintingUI:
     pass
+
+class DBConfigUI:
+    pass

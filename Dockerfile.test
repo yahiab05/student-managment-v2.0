@@ -21,7 +21,6 @@ WORKDIR /workspace
 COPY pyproject.toml uv.lock README.md ./
 
 COPY app ./app
-COPY mysql_wizard ./mysql_wizard
-COPY wizard.py main.py ./
+COPY main.py ./
 
 RUN uv sync --group test --frozen

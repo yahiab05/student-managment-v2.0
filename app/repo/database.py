@@ -1,54 +1,35 @@
 # app/database.py
 import time
-from configparser import ConfigParser
-from pathlib import Path
 from typing import Optional
-
 from sqlalchemy import create_engine, URL
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
-from app.config import set_host_and_port
+from app.repo.configs.db_configurer import DBConfig, DBConfigData
 
 Base = declarative_base()
 
 # Lazily initialised globals (nothing runs at import time)
 _engine: Optional[Engine] = None
 _SessionLocal: Optional[sessionmaker] = None
-_configs: Optional[ConfigParser] = None
-
-
-class DBConfig:
-    def __init__(self):
-        config_path = (
-            Path(__file__).resolve().parents[1]
-            / "config"
-            / "db.ini"
-        )
-
-        config = ConfigParser()
-        if not config.read(config_path):
-            raise FileNotFoundError(
-                f"Configuration file not found: {config_path}"
-            )
-
-        db = config["database"]
-
-        self.host, self.port = set_host_and_port()
-        if self.host is None or self.port is None:
-            raise RuntimeError("Failed to set database host and port.")
-
-        self.name = db["database"]
-        self.user = db["user"]
-        self.password = db["password"]
+_configs: Optional[DBConfigData] = None  # Load configs at module import time
 
 
 def _build_engine(max_attempts: int = 5, delay: float = 2.0) -> Engine:
     last_error: Optional[Exception] = None
+    configurer = DBConfig()
 
     for _ in range(max_attempts):
         try:
-            _configs = DBConfig()
+            global _configs
+            if configurer.check_config_file_exists():
+                _configs = configurer.get_configuration()
+                print(f"Database configuration loaded from {configurer.path}.")
+            else:
+                configurer.create_config_file(host="10.173.215.13", password="StrongPassword123!")
+                _configs = configurer.get_configuration()
+                print(f"Database configuration created and loaded from {configurer.path}.")
+                
             url = URL.create(
                 "mysql+pymysql",
                 username=_configs.user,
@@ -88,13 +69,12 @@ def init_db() -> Engine:
 def get_engine() -> Engine:
     return init_db()
 
-
 def get_session() -> Session:
     if _SessionLocal is None:
         init_db()
     return _SessionLocal()
 
-def get_configs() -> ConfigParser:
+def get_configs() -> DBConfigData:
     global _configs
     if _configs is None:
         init_db()  # Ensure configs are loaded when initializing the engine

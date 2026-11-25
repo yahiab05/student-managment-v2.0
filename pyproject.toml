@@ -13,7 +13,8 @@ dependencies = [
     "pyqt6>=6.11.0",
     "sqlalchemy>=2.0.51",
     "xlsxwriter>=3.2.9",
-    "zeroconf>=0.151.5",
+    "keyring>=25.6.0",
+    "platformdirs>=4.14.8",
 ]
 
 [dependency-groups]
@@ -26,4 +27,4 @@ build = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["app*", "mysql_wizard*"]
+include = ["app*"]

@@ -4,3 +4,9 @@ __pycache__/
 *.pyc
 app/repo/__pycache__/
 app/repo/schemas/__pycache__/
+
+# Local database configuration and credentials
+app/config/db.ini
+*.local.ini
+.env
+.env.*
